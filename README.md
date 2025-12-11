@@ -1,2 +1,9 @@
 # web14-B4
 부스트캠프 웹 풀스택 web14팀 "B4(BE4)"입니다! 
+
+## 🧑‍🤝‍🧑 팀원 구성
+
+| 류지수 | 박혜린 | 정석찬 | 지은미 |
+|:--------:|:--------:|:--------:|:--------:|
+| <img src="https://github.com/sw-dev-j.png" width="120"/> | <img src="https://github.com/mangoooooo1.png" width="120"/> | <img src="https://github.com/Standard-Chan.png" width="120"/> | <img src="https://github.com/jum0624.png" width="120"/> |
+| [@sw-dev-j](https://github.com/sw-dev-j) | [@mangoooooo1](https://github.com/mangoooooo1) | [@Standard-Chan](https://github.com/Standard-Chan) | [@jum0624](https://github.com/jum0624) |
