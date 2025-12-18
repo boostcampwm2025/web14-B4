@@ -1,3 +1,3 @@
 export class SttRequestDto {
-  audio: Buffer;
+  record: Buffer;
 }
