@@ -47,6 +47,11 @@ export class RecordsService {
   }
 
   checkValidation(recordFile: Multer.File): void {
+    // 임시로 녹음 파일의 크기를 바탕으로 녹음 길이 제한 설정
+    // TODO : 정확한 녹음 시간 길이를 바탕으로 제한 처리 필요
+    const MAX_SIZE_BYTES = 15 * 1024 * 1024; // 15MB
+    if (recordFile.buffer.length > MAX_SIZE_BYTES)
+      throw new Error('녹음 시간이 N초가 넘는 파일입니다.');
     if (!recordFile || !recordFile.buffer)
       throw new Error('유효하지 않는 녹음 파일입니다.');
     if (!allowedMimeTypes.includes(recordFile.mimetype))
