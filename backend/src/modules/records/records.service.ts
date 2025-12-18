@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import type { Multer } from 'multer';
+import { Request } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { allowedMimeTypes, CLOVA_STT } from './records.constants';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
@@ -8,7 +8,7 @@ import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 export class RecordsService {
   constructor(private configService: ConfigService) {}
 
-  async speechToText(audioFile: Multer.File): Promise<string> {
+  async speechToText(audioFile: Express.Multer.File): Promise<string> {
     if (!audioFile || !audioFile.buffer) {
       throw new Error('Invalid audio file');
     }
@@ -46,7 +46,7 @@ export class RecordsService {
     return sttResponse.text;
   }
 
-  checkValidation(recordFile: Multer.File): void {
+  checkValidation(recordFile: Express.Multer.File): void {
     // 임시로 녹음 파일의 크기를 바탕으로 녹음 길이 제한 설정
     // TODO : 정확한 녹음 시간 길이를 바탕으로 제한 처리 필요
     const MAX_SIZE_BYTES = 15 * 1024 * 1024; // 15MB
