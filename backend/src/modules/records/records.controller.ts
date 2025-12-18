@@ -18,6 +18,7 @@ export class RecordsController {
   async speechToText(
     @UploadedFile() recordFile: Multer.File,
   ): Promise<SttResponseDto> {
+    this.recordsService.checkValidation(recordFile);
     const text = await this.recordsService.convertStt(recordFile);
 
     return { text };
