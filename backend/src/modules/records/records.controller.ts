@@ -1,13 +1,25 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { RecordsService } from './records.service';
-import { CreateRecordDto } from './dto/create-record.dto';
+import { SttResponseDto } from './dto/SttResponseDto.dto';
+import type { Multer } from 'multer';
 
 @Controller('records')
 export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
 
   @Post()
-  create(@Body() createRecordDto: CreateRecordDto) {
-    return 'POST 테스트';
+  @UseInterceptors(FileInterceptor('audio'))
+  async speechToText(
+    @UploadedFile() recordFile: Multer.File,
+  ): Promise<SttResponseDto> {
+    const text = await this.recordsService.convertStt(recordFile);
+
+    return { text };
   }
 }
