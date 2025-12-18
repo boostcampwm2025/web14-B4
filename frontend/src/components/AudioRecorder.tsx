@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function AudioRecorder() {
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -9,6 +10,9 @@ export default function AudioRecorder() {
 
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+
+  const router = useRouter();
 
   const startRecording = async () => {
     // 마이크 권한 요청
@@ -27,6 +31,7 @@ export default function AudioRecorder() {
 
     recorder.onstop = () => {
       const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      setAudioBlob(blob);
 
       // 브라우저에서 재생 가능한 URL 생성
       setAudioUrl((prev) => {
@@ -47,6 +52,31 @@ export default function AudioRecorder() {
     setIsRecording(false);
   };
 
+  const submitAnswer = async () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append(
+      "record",
+      new File([audioBlob], "answer.webm", { type: "audio/webm" })
+    );
+
+    const res = await fetch("http://localhost:8080/records", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    // 프로토타입용: localStorage 저장
+    localStorage.setItem("audioResult", JSON.stringify(data));
+
+    // 체크리스트 화면으로 이동
+    router.push("/checkList");
+  };
+
   return (
     <div>
       {!isRecording ? (
@@ -58,6 +88,7 @@ export default function AudioRecorder() {
       {audioUrl && (
         <div>
           <audio controls src={audioUrl} />
+          <button onClick={submitAnswer}>제출</button>
         </div>
       )}
     </div>
