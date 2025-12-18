@@ -60,7 +60,7 @@ export default function AudioRecorder() {
     const formData = new FormData();
     formData.append(
       "record",
-      new File([audioBlob], "answer.webm", { type: "audio/webm" })
+      new File([audioBlob], "record.webm", { type: "audio/webm" })
     );
 
     const res = await fetch("http://localhost:8080/records", {
