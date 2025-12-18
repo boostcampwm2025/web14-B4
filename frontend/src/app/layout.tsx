@@ -12,7 +12,7 @@ export default function RootLayout({
         <header style={{ padding: '20px',borderBottom: '1px solid #eee',textAlign:'center' }}>
           <h1>Next.js cs뽁뽁 App</h1>
         </header>
-        <main style={{ maxWidth: '600px', margin: '20px auto', padding: '0 20px' }}>
+        <main>
           {children}
         </main>
       </body>
