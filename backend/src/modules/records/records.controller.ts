@@ -19,7 +19,7 @@ export class RecordsController {
     @UploadedFile() recordFile: Multer.File,
   ): Promise<SttResponseDto> {
     this.recordsService.checkValidation(recordFile);
-    const text = await this.recordsService.convertStt(recordFile);
+    const text = await this.recordsService.speechToText(recordFile);
 
     return { text };
   }

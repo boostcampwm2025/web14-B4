@@ -6,3 +6,9 @@ export const allowedMimeTypes = [
   'audio/mp3',
   'audio/ogg',
 ];
+
+// 외부 url
+export const CLOVA_STT = {
+  BASE_URL: 'https://naveropenapi.apigw.ntruss.com/recog/v1/stt',
+  DEFAULT_LANG: 'Kor',
+};

@@ -1,24 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import type { Multer } from 'multer';
 import { ConfigService } from '@nestjs/config';
-import { allowedMimeTypes } from './records.constants';
+import { allowedMimeTypes, CLOVA_STT } from './records.constants';
+import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 
 @Injectable()
 export class RecordsService {
   constructor(private configService: ConfigService) {}
 
-  async convertStt(file: Multer.File): Promise<string> {
+  async speechToText(audioFile: Multer.File): Promise<string> {
+    if (!audioFile || !audioFile.buffer) {
+      throw new Error('Invalid audio file');
+    }
+
+    const audio = audioFile.buffer;
+    const result = await this.sttWithClova(audio);
+
+    return result;
+  }
+
+  private async sttWithClova(audio) {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'NAVER_CLOVA_CLIENT_SECRET',
     );
-
-    if (!file || !file.buffer) {
-      throw new Error('Invalid audio file');
-    }
-
-    const BASE_URL = 'https://naveropenapi.apigw.ntruss.com/recog/v1/stt';
-    const url = `${BASE_URL}?lang=Kor`;
+    const url = `${CLOVA_STT.BASE_URL}?lang=${CLOVA_STT.DEFAULT_LANG}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -27,7 +33,7 @@ export class RecordsService {
         'x-ncp-apigw-api-key-id': clientId || '',
         'x-ncp-apigw-api-key': clientSecret || '',
       },
-      body: file.buffer,
+      body: audio,
     });
 
     if (!response.ok) {
@@ -35,13 +41,14 @@ export class RecordsService {
       throw new Error(`클로바 STT 변환 실패: ${errorText}`);
     }
 
-    const result = await response.json();
+    const sttResponse = (await response.json()) as ClovaSttResponse;
 
-    return result.text;
+    return sttResponse.text;
   }
 
   checkValidation(recordFile: Multer.File): void {
-    if (!recordFile) throw new Error('파일이 전송되지 않았습니다');
+    if (!recordFile || !recordFile.buffer)
+      throw new Error('유효하지 않는 녹음 파일입니다.');
     if (!allowedMimeTypes.includes(recordFile.mimetype))
       throw new Error(`지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`);
   }
