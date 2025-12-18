@@ -16,7 +16,7 @@ export class RecordsController {
   @Post()
   @UseInterceptors(FileInterceptor('audio'))
   async speechToText(
-    @UploadedFile() recordFile: Multer.File,
+    @UploadedFile() recordFile: Express.Multer.File,
   ): Promise<SttResponseDto> {
     this.recordsService.checkValidation(recordFile);
     const text = await this.recordsService.speechToText(recordFile);
