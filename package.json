@@ -16,6 +16,8 @@
     "test": "npm run test --workspaces"
   },
   "devDependencies": {
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
     "concurrently": "^9.2.1",
     "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
