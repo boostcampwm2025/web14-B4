@@ -11,7 +11,7 @@
     "lint:fix": "npm run lint:fix --prefix backend && npm run lint:fix --prefix frontend",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
-    "prepare": "husky",
+    "prepare": "husky || exit 0",
     "lint": "npm run lint --workspaces",
     "test": "npm run test --workspaces"
   },
