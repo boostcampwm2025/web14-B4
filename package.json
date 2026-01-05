@@ -3,9 +3,15 @@
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build && npm --prefix backend run build",
-    "start": "npm --prefix backend run start"
+    "start": "npm --prefix backend run start",
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
+    "lint:fix": "npm run lint:fix --prefix backend && npm run lint:fix --prefix frontend",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\""
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.7.4"
   }
 }
