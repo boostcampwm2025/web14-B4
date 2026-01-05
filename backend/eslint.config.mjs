@@ -34,6 +34,19 @@ export default tseslint.config(
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_',
       }],
+
+      // 일반 규칙
+      'no-console': ['warn', { allow: ['warn', 'error'] }], 
+      'prefer-const': 'error', 
+      'no-var': 'error',
+
+      // Prettier 연동
+      'prettier/prettier': [
+        'error',
+        {
+          endOfLine: 'auto',
+        },
+      ],
     },
   },
 );
