@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/.next/**\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/.next/**\""
   },
   "dependencies": {
     "next": "16.0.10",
