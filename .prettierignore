@@ -1,0 +1,16 @@
+node_modules
+dist
+build
+coverage
+.vscode
+.idea
+*.log
+*.lock
+
+# 자동 생성 파일
+**/next-env.d.ts
+package-lock.json
+**/package-lock.json
+
+# GitHub 템플릿
+.github/**/*.md
