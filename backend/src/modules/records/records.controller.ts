@@ -7,7 +7,6 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { RecordsService } from './records.service';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
-import type { Multer } from 'multer';
 
 @Controller('records')
 export class RecordsController {
