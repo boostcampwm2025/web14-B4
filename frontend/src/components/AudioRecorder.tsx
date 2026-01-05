@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function AudioRecorder() {
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -30,7 +30,7 @@ export default function AudioRecorder() {
     };
 
     recorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
       setAudioBlob(blob);
 
       // 브라우저에서 재생 가능한 URL 생성
@@ -58,23 +58,20 @@ export default function AudioRecorder() {
     }
 
     const formData = new FormData();
-    formData.append(
-      "audio",
-      new File([audioBlob], "record.webm", { type: "audio/webm" })
-    );
+    formData.append('audio', new File([audioBlob], 'record.webm', { type: 'audio/webm' }));
 
-    const res = await fetch("http://localhost:8080/records", {
-      method: "POST",
+    const res = await fetch('http://localhost:8080/records', {
+      method: 'POST',
       body: formData,
     });
 
     const data = await res.json();
 
     // 프로토타입용: localStorage 저장
-    localStorage.setItem("audioResult", JSON.stringify(data));
+    localStorage.setItem('audioResult', JSON.stringify(data));
 
     // 체크리스트 화면으로 이동
-    router.push("/checkList");
+    router.push('/checkList');
   };
 
   return (
