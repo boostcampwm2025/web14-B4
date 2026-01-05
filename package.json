@@ -1,17 +1,29 @@
 {
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build && npm --prefix backend run build",
     "start": "npm --prefix backend run start",
-    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
     "lint:fix": "npm run lint:fix --prefix backend && npm run lint:fix --prefix frontend",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
+    "prepare": "husky",
+    "lint": "npm run lint --workspaces",
+    "test": "npm run test --workspaces"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",
     "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.7.4"
+  },
+  "lint-staged": {
+    "frontend/**/*.{ts,tsx}": "npm run lint -w frontend",
+    "backend/**/*.ts": "npm run lint -w backend"
   }
 }
