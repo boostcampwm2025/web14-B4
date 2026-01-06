@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Get,
   UseInterceptors,
   UploadedFile,
   Body,
@@ -13,6 +14,8 @@ import { SpeechesService } from './speeches.service';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { UpdateSpeechTextRequestDto } from './dto/UpdateSpeechTextRequestDto.dto';
 import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.dto';
+import { GetSpeechesResponseDto } from './dto/GetSpeechesResponseDto.dto';
+import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 
 @Controller('speeches')
 export class SpeechesController {
@@ -71,5 +74,33 @@ export class SpeechesController {
       result.solvedQuizId,
       result.speechText,
     );
+  }
+
+  @Get(':mainQuizId')
+  async getSpeechesByMainQuizId(
+    @Param('mainQuizId') mainQuizId: string,
+  ): Promise<GetSpeechesResponseDto> {
+    if (!mainQuizId) {
+      throw new BadRequestException('mainQuizId가 필요합니다.');
+    }
+
+    const mainQuizIdNumber = parseInt(mainQuizId, 10);
+    if (isNaN(mainQuizIdNumber)) {
+      throw new BadRequestException('mainQuizId는 숫자여야 합니다.');
+    }
+
+    const solvedQuizzes =
+      await this.recordsService.getByQuizAndUser(mainQuizIdNumber);
+
+    const speechItems = solvedQuizzes.map(
+      (solvedQuiz) =>
+        new SpeechItemDto(
+          solvedQuiz.solvedQuizId,
+          solvedQuiz.speechText,
+          solvedQuiz.createdAt,
+        ),
+    );
+
+    return new GetSpeechesResponseDto(mainQuizIdNumber, speechItems);
   }
 }

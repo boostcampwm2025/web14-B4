@@ -47,6 +47,50 @@ export class SpeechesService {
     };
   }
 
+  /**
+   * 음성 텍스트를 수정한다.
+   * @param solvedQuizId : 풀었던 퀴즈 id
+   * @param speechText : 사용자가 수정한 녹음 텍스트
+   * @returns : 저장된 녹음 텍스트 정보
+   */
+  async updateSpeechText(
+    solvedQuizId: number,
+    speechText: string,
+  ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
+    const updatedSolvedQuiz = await this.solvedQuizRepository.updateSpeechText(
+      solvedQuizId,
+      speechText,
+    );
+
+    return {
+      mainQuizId: updatedSolvedQuiz.mainQuizId,
+      solvedQuizId: updatedSolvedQuiz.solvedQuizId,
+      speechText: updatedSolvedQuiz.speechText,
+    };
+  }
+
+  /**
+   * 특정 퀴즈 id에 대해 사용자가 답변한 음성 텍스트들을 조회한다.
+   * @param mainQuizId : 메인 퀴즈 id
+   * @returns : 음성 텍스트 목록
+   */
+  async getByQuizAndUser(
+    mainQuizId: number,
+  ): Promise<
+    Array<{ solvedQuizId: number; speechText: string; createdAt: Date }>
+  > {
+    const solvedQuizzes = await this.solvedQuizRepository.findByQuizAndUser(
+      mainQuizId,
+      TEST_USER_ID,
+    );
+
+    return solvedQuizzes.map((solvedQuiz) => ({
+      solvedQuizId: solvedQuiz.solvedQuizId,
+      speechText: solvedQuiz.speechText,
+      createdAt: solvedQuiz.createdAt,
+    }));
+  }
+
   /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */
   private async sttWithClova(audio: Buffer) {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
@@ -73,28 +117,6 @@ export class SpeechesService {
     const sttResponse = (await response.json()) as ClovaSttResponse;
 
     return sttResponse.text;
-  }
-
-  /**
-   * 사용자가 수정한 음성 텍스트를 저장한다.
-   * @param solvedQuizId : 풀었던 퀴즈 id
-   * @param speechText : 사용자가 수정한 녹음 텍스트
-   * @returns : 저장된 녹음 텍스트 정보
-   */
-  async updateSpeechText(
-    solvedQuizId: number,
-    speechText: string,
-  ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
-    const updatedSolvedQuiz = await this.solvedQuizRepository.updateSpeechText(
-      solvedQuizId,
-      speechText,
-    );
-
-    return {
-      mainQuizId: updatedSolvedQuiz.mainQuizId,
-      solvedQuizId: updatedSolvedQuiz.solvedQuizId,
-      speechText: updatedSolvedQuiz.speechText,
-    };
   }
 
   /* 녹음 파일의 유효성 검사 */
