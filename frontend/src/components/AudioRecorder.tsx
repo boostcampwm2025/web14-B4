@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function AudioRecorder() {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   const audioStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
@@ -60,7 +61,7 @@ export default function AudioRecorder() {
     const formData = new FormData();
     formData.append('audio', new File([audioBlob], 'record.webm', { type: 'audio/webm' }));
 
-    const res = await fetch('http://localhost:8080/records', {
+    const res = await fetch(`${API_BASE_URL}/records`, {
       method: 'POST',
       body: formData,
     });
