@@ -22,10 +22,6 @@ jobs:
               - 'frontend/**'
             backend: 
               - 'backend/**'
-      - name: 변경 감지 결과 출력 (Debug)
-        run: |
-          echo "Frontend changed: ${{ steps.filter.outputs.frontend }}"
-          echo "Backend changed: ${{ steps.filter.outputs.backend }}"
 
   frontend-ci:
     needs: changes
