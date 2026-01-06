@@ -8,6 +8,7 @@ import {
   BadRequestException,
   Param,
   Patch,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SpeechesService } from './speeches.service';
@@ -25,22 +26,15 @@ export class SpeechesController {
   @UseInterceptors(FileInterceptor('audio'))
   async speechToText(
     @UploadedFile() recordFile: Express.Multer.File,
-    @Body('mainQuizId') mainQuizId: string,
+    @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<SttResponseDto> {
     if (!recordFile) {
       throw new BadRequestException('요청에 음성 파일이 포함되지 않았습니다.');
     }
-    if (!mainQuizId) {
-      throw new BadRequestException('mainQuizId가 필요합니다.');
-    }
-    const mainQuizIdNumber = parseInt(mainQuizId, 10);
-    if (isNaN(mainQuizIdNumber)) {
-      throw new BadRequestException('mainQuizId는 숫자여야 합니다.');
-    }
 
     const result = await this.recordsService.speechToText(
       recordFile,
-      mainQuizIdNumber,
+      mainQuizId,
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
@@ -48,21 +42,10 @@ export class SpeechesController {
 
   @Patch(':mainQuizId')
   async updateSpeechText(
-    @Param('mainQuizId') mainQuizId: string,
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
     @Body() updateSpeechTextRequestDto: UpdateSpeechTextRequestDto,
   ): Promise<UpdateSpeechTextResponseDto> {
-    if (!mainQuizId) {
-      throw new BadRequestException('mainQuizId가 필요합니다.');
-    }
     // TODO : mainQuizId 로 mainQuiz record조회 후 유효한지 확인
-
-    if (!updateSpeechTextRequestDto.solvedQuizId) {
-      throw new BadRequestException('solvedQuizId가 필요합니다.');
-    }
-
-    if (!updateSpeechTextRequestDto.speechText) {
-      throw new BadRequestException('speechText가 필요합니다.');
-    }
 
     const result = await this.recordsService.updateSpeechText(
       updateSpeechTextRequestDto.solvedQuizId,
@@ -78,19 +61,10 @@ export class SpeechesController {
 
   @Get(':mainQuizId')
   async getSpeechesByMainQuizId(
-    @Param('mainQuizId') mainQuizId: string,
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<GetSpeechesResponseDto> {
-    if (!mainQuizId) {
-      throw new BadRequestException('mainQuizId가 필요합니다.');
-    }
-
-    const mainQuizIdNumber = parseInt(mainQuizId, 10);
-    if (isNaN(mainQuizIdNumber)) {
-      throw new BadRequestException('mainQuizId는 숫자여야 합니다.');
-    }
-
     const solvedQuizzes =
-      await this.recordsService.getByQuizAndUser(mainQuizIdNumber);
+      await this.recordsService.getByQuizAndUser(mainQuizId);
 
     const speechItems = solvedQuizzes.map(
       (solvedQuiz) =>
@@ -101,6 +75,6 @@ export class SpeechesController {
         ),
     );
 
-    return new GetSpeechesResponseDto(mainQuizIdNumber, speechItems);
+    return new GetSpeechesResponseDto(mainQuizId, speechItems);
   }
 }
