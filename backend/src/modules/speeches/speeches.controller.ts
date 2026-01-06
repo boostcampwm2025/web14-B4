@@ -5,10 +5,14 @@ import {
   UploadedFile,
   Body,
   BadRequestException,
+  Param,
+  Patch,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SpeechesService } from './speeches.service';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
+import { UpdateSpeechTextRequestDto } from './dto/UpdateSpeechTextRequestDto.dto';
+import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.dto';
 
 @Controller('speeches')
 export class SpeechesController {
@@ -37,5 +41,35 @@ export class SpeechesController {
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
+  }
+
+  @Patch(':mainQuizId')
+  async updateSpeechText(
+    @Param('mainQuizId') mainQuizId: string,
+    @Body() updateSpeechTextRequestDto: UpdateSpeechTextRequestDto,
+  ): Promise<UpdateSpeechTextResponseDto> {
+    if (!mainQuizId) {
+      throw new BadRequestException('mainQuizId가 필요합니다.');
+    }
+    // TODO : mainQuizId 로 mainQuiz record조회 후 유효한지 확인
+
+    if (!updateSpeechTextRequestDto.solvedQuizId) {
+      throw new BadRequestException('solvedQuizId가 필요합니다.');
+    }
+
+    if (!updateSpeechTextRequestDto.speechText) {
+      throw new BadRequestException('speechText가 필요합니다.');
+    }
+
+    const result = await this.recordsService.updateSpeechText(
+      updateSpeechTextRequestDto.solvedQuizId,
+      updateSpeechTextRequestDto.speechText,
+    );
+
+    return new UpdateSpeechTextResponseDto(
+      result.mainQuizId,
+      result.solvedQuizId,
+      result.speechText,
+    );
   }
 }
