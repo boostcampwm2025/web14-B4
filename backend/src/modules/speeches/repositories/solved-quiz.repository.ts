@@ -23,9 +23,12 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   }
 
   // 최신 순으로 조회
-  async findByMainQuizId(mainQuizId: number): Promise<SolvedQuiz[]> {
+  async findByQuizAndUser(
+    mainQuizId: number,
+    userId: number,
+  ): Promise<SolvedQuiz[]> {
     return await this.find({
-      where: { mainQuizId },
+      where: { mainQuizId, userId },
       order: { createdAt: 'DESC' },
     });
   }
