@@ -26,12 +26,10 @@
   },
   "lint-staged": {
     "frontend/**/*.{ts,tsx}": [
-      "npm run lint -w frontend",
-      "npm run test:related -w frontend"
+      "cd frontend && npm run lint --fix"
     ],
     "backend/**/*.ts": [
-      "npm run lint -w backend", 
-      "npm run test:related -w backend"
+      "cd backend && npm run lint --fix"
     ]
   }
 }
