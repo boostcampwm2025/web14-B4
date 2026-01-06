@@ -6,7 +6,8 @@
     "dev": "next dev -H 0.0.0.0",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/.next/**\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/.next/**\"",
     "test:related": "jest --bail --findRelatedTests"
