@@ -2,22 +2,52 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
+import { SolvedQuizRepository } from './repositories/solved-quiz.repository';
+
+// TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
+const TEST_USER_ID = 1;
 
 @Injectable()
 export class SpeechesService {
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private solvedQuizRepository: SolvedQuizRepository,
+  ) {}
 
-  async speechToText(audioFile: Express.Multer.File): Promise<string> {
-    if (!audioFile || !audioFile.buffer) {
-      throw new Error('Invalid audio file');
-    }
+  /**
+   * 음성 녹음을 텍스트로 변환하여 반환한다.
+   * @param audioFile : 음성 파일
+   * @param mainQuizId : 메인 퀴즈 id
+   * @returns : 음성 파일을 텍스트로 변환한 문자열
+   */
+  async speechToText(
+    audioFile: Express.Multer.File,
+    mainQuizId: number,
+  ): Promise<{ solvedQuizId: number; text: string }> {
+    this.checkValidation(audioFile);
 
     const audio: Buffer = audioFile.buffer;
-    const result = await this.sttWithClova(audio);
+    let sttText: string;
 
-    return result;
+    try {
+      sttText = await this.sttWithClova(audio);
+    } catch {
+      throw new Error('음성 인식(STT) 처리 중 오류가 발생했습니다.');
+    }
+
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz(
+      TEST_USER_ID,
+      mainQuizId,
+      sttText,
+    );
+
+    return {
+      solvedQuizId: solvedQuiz.solvedQuizId,
+      text: sttText,
+    };
   }
 
+  /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */
   private async sttWithClova(audio: Buffer) {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
@@ -45,15 +75,18 @@ export class SpeechesService {
     return sttResponse.text;
   }
 
-  checkValidation(recordFile: Express.Multer.File): void {
-    // 임시로 녹음 파일의 크기를 바탕으로 녹음 길이 제한 설정
-    // TODO : 정확한 녹음 시간 길이를 바탕으로 제한 처리 필요
-    const MAX_SIZE_BYTES = 15 * 1024 * 1024; // 15MB
-    if (recordFile.buffer.length > MAX_SIZE_BYTES)
-      throw new Error('녹음 시간이 N초가 넘는 파일입니다.');
+  /* 녹음 파일의 유효성 검사 */
+  private checkValidation(recordFile: Express.Multer.File): void {
+    const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
+
     if (!recordFile || !recordFile.buffer)
       throw new Error('유효하지 않는 녹음 파일입니다.');
+
     if (!allowedMimeTypes.includes(recordFile.mimetype))
       throw new Error(`지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`);
+
+    if (recordFile.buffer.length > MAX_SIZE_BYTES) {
+      throw new Error('녹음 용량 파일이 너무 큽니다.');
+    }
   }
 }
