@@ -3,6 +3,8 @@ import {
   Post,
   UseInterceptors,
   UploadedFile,
+  Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SpeechesService } from './speeches.service';
@@ -12,14 +14,28 @@ import { SttResponseDto } from './dto/SttResponseDto.dto';
 export class SpeechesController {
   constructor(private readonly recordsService: SpeechesService) {}
 
-  @Post()
+  @Post('stt')
   @UseInterceptors(FileInterceptor('audio'))
   async speechToText(
     @UploadedFile() recordFile: Express.Multer.File,
+    @Body('mainQuizId') mainQuizId: string,
   ): Promise<SttResponseDto> {
-    this.recordsService.checkValidation(recordFile);
-    const text = await this.recordsService.speechToText(recordFile);
+    if (!recordFile) {
+      throw new BadRequestException('요청에 음성 파일이 포함되지 않았습니다.');
+    }
+    if (!mainQuizId) {
+      throw new BadRequestException('mainQuizId가 필요합니다.');
+    }
+    const mainQuizIdNumber = parseInt(mainQuizId, 10);
+    if (isNaN(mainQuizIdNumber)) {
+      throw new BadRequestException('mainQuizId는 숫자여야 합니다.');
+    }
 
-    return { text };
+    const result = await this.recordsService.speechToText(
+      recordFile,
+      mainQuizIdNumber,
+    );
+
+    return new SttResponseDto(result.solvedQuizId, result.text);
   }
 }
