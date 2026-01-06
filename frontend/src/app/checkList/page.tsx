@@ -29,7 +29,7 @@ export default function ResultPage() {
     };
 
     const handleNewConversion = () => {
-        alert('생각 톡톡으로 이동 !');
+        alert('생각 톡톡으로 이동하기!');
     };
 
     if (!result) {
