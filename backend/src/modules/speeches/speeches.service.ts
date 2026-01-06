@@ -75,6 +75,28 @@ export class SpeechesService {
     return sttResponse.text;
   }
 
+  /**
+   * 사용자가 수정한 음성 텍스트를 저장한다.
+   * @param solvedQuizId : 풀었던 퀴즈 id
+   * @param speechText : 사용자가 수정한 녹음 텍스트
+   * @returns : 저장된 녹음 텍스트 정보
+   */
+  async updateSpeechText(
+    solvedQuizId: number,
+    speechText: string,
+  ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
+    const updatedSolvedQuiz = await this.solvedQuizRepository.updateSpeechText(
+      solvedQuizId,
+      speechText,
+    );
+
+    return {
+      mainQuizId: updatedSolvedQuiz.mainQuizId,
+      solvedQuizId: updatedSolvedQuiz.solvedQuizId,
+      speechText: updatedSolvedQuiz.speechText,
+    };
+  }
+
   /* 녹음 파일의 유효성 검사 */
   private checkValidation(recordFile: Express.Multer.File): void {
     const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
