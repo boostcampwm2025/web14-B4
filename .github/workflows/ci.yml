@@ -10,16 +10,22 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend: ${{ steps.filter.outputs.frontend}}
-      backend: ${{ steps.filter.outputs.backend}}
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
         id: filter
         with:
           filters: |
-            frontend: frontend/**
-            backend: backend/**
+            frontend: 
+              - 'frontend/**'
+            backend: 
+              - 'backend/**'
+      - name: 변경 감지 결과 출력 (Debug)
+        run: |
+          echo "Frontend changed: ${{ steps.filter.outputs.frontend }}"
+          echo "Backend changed: ${{ steps.filter.outputs.backend }}"
 
   frontend-ci:
     needs: changes
