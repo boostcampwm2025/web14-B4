@@ -1,9 +1,5 @@
 {
   "private": true,
-  "workspaces": [
-    "frontend",
-    "backend"
-  ],
   "scripts": {
     "dev": "concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build && npm --prefix backend run build",
@@ -12,8 +8,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
     "prepare": "husky || exit 0",
-    "lint": "npm run lint --workspaces",
-    "test": "npm run test --workspaces"
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.3.0",
@@ -27,10 +22,13 @@
   },
   "lint-staged": {
     "frontend/**/*.{ts,tsx}": [
-      "cd frontend && npm run lint --fix"
+      "npm run lint:fix --prefix frontend"
     ],
     "backend/**/*.ts": [
-      "cd backend && npm run lint --fix"
+      "npm run lint:fix --prefix backend"
+    ],
+    "**/*.{ts,tsx,js,jsx,json,md}": [
+      "prettier --write"
     ]
   }
 }
