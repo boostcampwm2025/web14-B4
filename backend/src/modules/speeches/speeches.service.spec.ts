@@ -148,6 +148,44 @@ describe('SpeechesService', () => {
         service.speechToText(mockAudioFile, mainQuizId, userId),
       ).rejects.toThrow('음성 인식(STT) 처리 중 오류가 발생했습니다.');
     });
+
+    it('STT 변환 결과가 없으면 에러를 던진다', async () => {
+      const clovaResponse: ClovaSttResponse = {
+        text: '',
+      } as ClovaSttResponse;
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue(clovaResponse),
+      });
+
+      mockConfigService.get.mockReturnValue('test-key');
+
+      await expect(
+        service.speechToText(mockAudioFile, mainQuizId, userId),
+      ).rejects.toThrow(
+        'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
+      );
+    });
+
+    it('STT 변환 결과가 공백만 있으면 에러를 던진다', async () => {
+      const clovaResponse: ClovaSttResponse = {
+        text: '   ',
+      } as ClovaSttResponse;
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue(clovaResponse),
+      });
+
+      mockConfigService.get.mockReturnValue('test-key');
+
+      await expect(
+        service.speechToText(mockAudioFile, mainQuizId, userId),
+      ).rejects.toThrow(
+        'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
+      );
+    });
   });
 
   describe('updateSpeechText', () => {
@@ -172,6 +210,18 @@ describe('SpeechesService', () => {
 
       expect(result.mainQuizId).toBe(1);
       expect(result.speechText).toBe('수정된 음성 텍스트');
+    });
+
+    it('수정된 답변이 빈 문자열이면 에러를 던진다', async () => {
+      await expect(service.updateSpeechText(solvedQuizId, '')).rejects.toThrow(
+        '수정된 답변 내용이 없습니다. 내용을 입력해주세요.',
+      );
+    });
+
+    it('수정된 답변이 공백만 있으면 에러를 던진다', async () => {
+      await expect(
+        service.updateSpeechText(solvedQuizId, '   '),
+      ).rejects.toThrow('수정된 답변 내용이 없습니다. 내용을 입력해주세요.');
     });
   });
 
