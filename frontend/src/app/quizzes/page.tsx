@@ -23,9 +23,9 @@ export default async function QuizPage(props: PageProps) {
   }
 
   const difficultyStyleMap: Record<string, string> = {
-    상: "bg-[#E9C1BF] text-[#A92B25]",
-    중: "bg-[#F4F1B9] text-[#ADA400]",
-    하: "bg-[#A7F1B0] text-[#1E912C]",
+    상: "bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]",
+    중: "bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]",
+    하: "bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]",
   };
 
 
@@ -44,10 +44,10 @@ export default async function QuizPage(props: PageProps) {
   }
 
   return (
-    <main className="mx-auto p-15 bg-[#F6F7F9]">
+    <main className="mx-auto p-15 bg-[var(--color-bg-default)]">
       <header className="mb-8">
         <h1 className="text-2xl font-bold mb-2">뽁퀴즈 목록</h1>
-        <p className="text-[#656464]">
+        <p className="text-[var(--color-gray-dark)]">
           철수님은 어떤 CS 분야에서 성장하고 싶으신가요?
         </p>
       </header>
