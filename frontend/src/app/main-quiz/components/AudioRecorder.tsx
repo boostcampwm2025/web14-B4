@@ -38,10 +38,6 @@ export default function AudioRecorder() {
     denyPermission,
   } = useMicrophoneManager();
 
-  // 마이크 상태
-  const canRecord =
-    recordStatus === 'ready' || (recordStatus === 'idle' && micStatus === 'granted');
-
   const handleConsentAgree = async () => {
     setIsConsentOpen(false);
     await requestPermission();
@@ -52,10 +48,14 @@ export default function AudioRecorder() {
     denyPermission();
   };
 
+  // 녹음 가능한 상태 체크
+  const canRecord =
+    recordStatus === 'ready' || (recordStatus === 'idle' && micStatus === 'granted');
+
   const handleStart = async () => {
     setMessage(null);
 
-    if (!canRecord) {
+    if (micStatus !== 'granted') {
       await requestPermission();
       return;
     }
@@ -163,16 +163,19 @@ export default function AudioRecorder() {
 
         {/* 버튼 영역 */}
         <div className="flex flex-wrap justify-end gap-3 pt-2">
-          {canRecord && (
-            <>
-              <Button variant="primary" size="fixed" onClick={handleStart} disabled={disableStart}>
-                말하기
-              </Button>
-              <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
-                나가기
-              </Button>
-            </>
-          )}
+          <>
+            <Button
+              variant="primary"
+              size="fixed"
+              onClick={handleStart}
+              disabled={disableStart || !canRecord}
+            >
+              말하기
+            </Button>
+            <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
+              나가기
+            </Button>
+          </>
 
           {/* 녹음중 */}
           {recordStatus === 'recording' && (
