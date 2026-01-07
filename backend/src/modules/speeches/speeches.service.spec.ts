@@ -31,6 +31,7 @@ describe('SpeechesService', () => {
     createSolvedQuiz: jest.fn(),
     updateSpeechText: jest.fn(),
     findByQuizAndUser: jest.fn(),
+    findById: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -118,7 +119,9 @@ describe('SpeechesService', () => {
 
       await expect(
         service.speechToText(largeFile, mainQuizId, userId),
-      ).rejects.toThrow('녹음 용량 파일이 너무 큽니다.');
+      ).rejects.toThrow(
+        '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
+      );
     });
 
     it('음성 파일이 없으면 에러를 던진다', async () => {
@@ -199,7 +202,10 @@ describe('SpeechesService', () => {
         speechText: '수정된 음성 텍스트',
       };
 
-      mockSolvedQuizRepository.updateSpeechText.mockResolvedValue(
+      mockSolvedQuizRepository.updateSpeechText.mockResolvedValue({
+        affected: 1,
+      });
+      mockSolvedQuizRepository.findById.mockResolvedValue(
         mockUpdatedSolvedQuiz,
       );
 
@@ -214,14 +220,16 @@ describe('SpeechesService', () => {
 
     it('수정된 답변이 빈 문자열이면 에러를 던진다', async () => {
       await expect(service.updateSpeechText(solvedQuizId, '')).rejects.toThrow(
-        '수정된 답변 내용이 없습니다. 내용을 입력해주세요.',
+        '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',
       );
     });
 
     it('수정된 답변이 공백만 있으면 에러를 던진다', async () => {
       await expect(
         service.updateSpeechText(solvedQuizId, '   '),
-      ).rejects.toThrow('수정된 답변 내용이 없습니다. 내용을 입력해주세요.');
+      ).rejects.toThrow(
+        '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',
+      );
     });
   });
 

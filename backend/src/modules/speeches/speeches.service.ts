@@ -1,4 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  PayloadTooLargeException,
+  UnsupportedMediaTypeException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
@@ -35,11 +41,13 @@ export class SpeechesService {
     try {
       sttText = await this.sttWithClova(audio);
     } catch {
-      throw new Error('음성 인식(STT) 처리 중 오류가 발생했습니다.');
+      throw new InternalServerErrorException(
+        '음성 인식(STT) 처리 중 오류가 발생했습니다.',
+      );
     }
 
     if (!sttText || sttText.trim().length === 0) {
-      throw new Error(
+      throw new InternalServerErrorException(
         'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
       );
     }
@@ -67,7 +75,9 @@ export class SpeechesService {
     speechText: string,
   ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
     if (!speechText || speechText.trim().length === 0) {
-      throw new Error('수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.');
+      throw new BadRequestException(
+        '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',
+      );
     }
 
     const updateResult = await this.solvedQuizRepository.updateSpeechText(
@@ -76,14 +86,18 @@ export class SpeechesService {
     );
 
     if (updateResult.affected === 0) {
-      throw new Error('SolvedQuizId가 존재하지 않습니다.');
+      throw new InternalServerErrorException(
+        'SolvedQuizId가 존재하지 않습니다.',
+      );
     }
 
     const updatedSolvedQuiz =
       await this.solvedQuizRepository.findById(solvedQuizId);
 
     if (!updatedSolvedQuiz) {
-      throw new Error('업데이트 후 데이터를 조회할 수 없습니다.');
+      throw new InternalServerErrorException(
+        '업데이트 후 데이터를 조회할 수 없습니다.',
+      );
     }
 
     return {
@@ -137,7 +151,9 @@ export class SpeechesService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`클로바 STT 변환 실패: ${errorText}`);
+      throw new InternalServerErrorException(
+        `클로바 STT 변환 실패: ${errorText}`,
+      );
     }
 
     const sttResponse = (await response.json()) as ClovaSttResponse;
@@ -150,13 +166,17 @@ export class SpeechesService {
     const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
 
     if (!recordFile || !recordFile.buffer)
-      throw new Error('유효하지 않는 녹음 파일입니다.');
+      throw new BadRequestException('유효하지 않는 녹음 파일입니다.');
 
     if (!allowedMimeTypes.includes(recordFile.mimetype))
-      throw new Error(`지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`);
+      throw new UnsupportedMediaTypeException(
+        `지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`,
+      );
 
     if (recordFile.buffer.length > MAX_SIZE_BYTES) {
-      throw new Error('녹음 용량 파일이 너무 큽니다.');
+      throw new PayloadTooLargeException(
+        '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
+      );
     }
   }
 }

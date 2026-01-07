@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { SpeechesController } from './speeches.controller';
 import { SpeechesService } from './speeches.service';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
@@ -84,7 +87,9 @@ describe('SpeechesController', () => {
     });
 
     it('STT 변환 실패 시 서비스에서 발생한 에러를 던진다', async () => {
-      const error: Error = new Error('STT conversion failed');
+      const error: Error = new InternalServerErrorException(
+        'STT conversion failed',
+      );
       mockSpeechesService.speechToText.mockRejectedValue(error);
 
       await expect(
@@ -154,7 +159,7 @@ describe('SpeechesController', () => {
         speechText: '텍스트',
       };
 
-      const error: Error = new Error('Update failed');
+      const error: Error = new InternalServerErrorException('Update failed');
       mockSpeechesService.updateSpeechText.mockRejectedValue(error);
 
       await expect(
@@ -214,7 +219,7 @@ describe('SpeechesController', () => {
     });
 
     it('해당 문제 조회 실패 시 에러를 던진다', async () => {
-      const error: Error = new Error('Database error');
+      const error: Error = new InternalServerErrorException('Database error');
       mockSpeechesService.getByQuizAndUser.mockRejectedValue(error);
 
       await expect(
