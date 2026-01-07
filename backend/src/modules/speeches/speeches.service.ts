@@ -4,9 +4,6 @@ import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/solved-quiz.repository';
 
-// TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
-const TEST_USER_ID = 1;
-
 @Injectable()
 export class SpeechesService {
   constructor(
@@ -18,11 +15,13 @@ export class SpeechesService {
    * 음성 녹음을 텍스트로 변환하여 반환한다.
    * @param audioFile : 음성 파일
    * @param mainQuizId : 메인 퀴즈 id
+   * @param userId : 사용자 id
    * @returns : 음성 파일을 텍스트로 변환한 문자열
    */
   async speechToText(
     audioFile: Express.Multer.File,
     mainQuizId: number,
+    userId: number,
   ): Promise<{ solvedQuizId: number; text: string }> {
     this.checkValidation(audioFile);
 
@@ -36,7 +35,7 @@ export class SpeechesService {
     }
 
     const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz(
-      TEST_USER_ID,
+      userId,
       mainQuizId,
       sttText,
     );
@@ -72,16 +71,18 @@ export class SpeechesService {
   /**
    * 특정 퀴즈 id에 대해 사용자가 답변한 음성 텍스트들을 조회한다.
    * @param mainQuizId : 메인 퀴즈 id
+   * @param userId : 사용자 id
    * @returns : 음성 텍스트 목록
    */
   async getByQuizAndUser(
     mainQuizId: number,
+    userId: number,
   ): Promise<
     Array<{ solvedQuizId: number; speechText: string; createdAt: Date }>
   > {
     const solvedQuizzes = await this.solvedQuizRepository.findByQuizAndUser(
       mainQuizId,
-      TEST_USER_ID,
+      userId,
     );
 
     return solvedQuizzes.map((solvedQuiz) => ({

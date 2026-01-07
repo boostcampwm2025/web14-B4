@@ -18,6 +18,9 @@ import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.d
 import { GetSpeechesResponseDto } from './dto/GetSpeechesResponseDto.dto';
 import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 
+// TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
+const TEST_USER_ID = 1;
+
 @Controller('speeches')
 export class SpeechesController {
   constructor(private readonly recordsService: SpeechesService) {}
@@ -35,6 +38,7 @@ export class SpeechesController {
     const result = await this.recordsService.speechToText(
       recordFile,
       mainQuizId,
+      TEST_USER_ID,
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
@@ -63,8 +67,10 @@ export class SpeechesController {
   async getSpeechesByMainQuizId(
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<GetSpeechesResponseDto> {
-    const solvedQuizzes =
-      await this.recordsService.getByQuizAndUser(mainQuizId);
+    const solvedQuizzes = await this.recordsService.getByQuizAndUser(
+      mainQuizId,
+      TEST_USER_ID,
+    );
 
     const speechItems = solvedQuizzes.map(
       (solvedQuiz) =>
