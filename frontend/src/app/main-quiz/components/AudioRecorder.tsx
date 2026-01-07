@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAudioRecorder } from '@/hooks/useAudioRecorder';
-import { useMicrophoneManager } from '@/hooks/useMicrophoneManager';
+import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
+import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speeches';
 import { Button } from '@/components/Button';
 
