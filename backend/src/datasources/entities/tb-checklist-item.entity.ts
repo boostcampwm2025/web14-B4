@@ -11,7 +11,10 @@ import { TbUserChecklistProgress } from './tb-user-checklist-progress.entity';
 
 @Entity('tb_checklist_item')
 export class TbChecklistItem {
-  @PrimaryGeneratedColumn({ name: 'checklist_item_id' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    name: 'checklist_item_id',
+  })
   checklistItemId: number;
 
   @Column({ name: 'main_quiz_id' })

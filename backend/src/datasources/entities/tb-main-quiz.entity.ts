@@ -3,7 +3,10 @@ import { TbChecklistItem } from './tb-checklist-item.entity';
 
 @Entity('tb_main_quiz')
 export class TbMainQuiz {
-  @PrimaryGeneratedColumn({ name: 'main_quiz_id' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    name: 'main_quiz_id',
+  })
   mainQuizId: number;
 
   @Column({ name: 'quiz_category_id' })
