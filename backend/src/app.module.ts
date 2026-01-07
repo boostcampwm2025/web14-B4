@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecordsModule } from './modules/records/records.module';
+import { QuizModule } from './quizzes/quizzes.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -25,6 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
     RecordsModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],
