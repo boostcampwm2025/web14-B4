@@ -30,8 +30,8 @@ describe('SpeechesService', () => {
   const mockSolvedQuizRepository = {
     createSolvedQuiz: jest.fn(),
     updateSpeechText: jest.fn(),
-    findByQuizAndUser: jest.fn(),
-    findById: jest.fn(),
+    getByQuizAndUser: jest.fn(),
+    getById: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -205,9 +205,7 @@ describe('SpeechesService', () => {
       mockSolvedQuizRepository.updateSpeechText.mockResolvedValue({
         affected: 1,
       });
-      mockSolvedQuizRepository.findById.mockResolvedValue(
-        mockUpdatedSolvedQuiz,
-      );
+      mockSolvedQuizRepository.getById.mockResolvedValue(mockUpdatedSolvedQuiz);
 
       const result: UpdateSpeechTextResult = await service.updateSpeechText(
         solvedQuizId,
@@ -251,7 +249,7 @@ describe('SpeechesService', () => {
         },
       ];
 
-      mockSolvedQuizRepository.findByQuizAndUser.mockResolvedValue(
+      mockSolvedQuizRepository.getByQuizAndUser.mockResolvedValue(
         mockSolvedQuizzes,
       );
 
@@ -266,7 +264,7 @@ describe('SpeechesService', () => {
     });
 
     it('음성 기록이 없으면 빈 배열을 반환한다', async () => {
-      mockSolvedQuizRepository.findByQuizAndUser.mockResolvedValue([]);
+      mockSolvedQuizRepository.getByQuizAndUser.mockResolvedValue([]);
 
       const result: Array<{
         solvedQuizId: number;

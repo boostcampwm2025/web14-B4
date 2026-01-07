@@ -92,7 +92,7 @@ export class SpeechesService {
     }
 
     const updatedSolvedQuiz =
-      await this.solvedQuizRepository.findById(solvedQuizId);
+      await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!updatedSolvedQuiz) {
       throw new InternalServerErrorException(
@@ -119,7 +119,7 @@ export class SpeechesService {
   ): Promise<
     Array<{ solvedQuizId: number; speechText: string; createdAt: Date }>
   > {
-    const solvedQuizzes = await this.solvedQuizRepository.findByQuizAndUser(
+    const solvedQuizzes = await this.solvedQuizRepository.getByQuizAndUser(
       mainQuizId,
       userId,
     );

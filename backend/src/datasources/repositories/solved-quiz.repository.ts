@@ -24,7 +24,7 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   }
 
   // 최신 순으로 조회
-  async findByQuizAndUser(
+  async getByQuizAndUser(
     mainQuizId: number,
     userId: number,
   ): Promise<SolvedQuiz[]> {
@@ -41,7 +41,7 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
     return await this.update(id, { speechText });
   }
 
-  async findById(solvedQuizId: number): Promise<SolvedQuiz | null> {
+  async getById(solvedQuizId: number): Promise<SolvedQuiz | null> {
     return await this.findOne({ where: { solvedQuizId } });
   }
 }
