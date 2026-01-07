@@ -1,5 +1,5 @@
 import { fetchQuizzes, fetchCategoryCounts } from "@/src/services/quizApi";
-import QuizCard from "@/src/app/quizzes/QuizCard";
+import QuizCard from "@/src/app/quizzes/components/QuizCard";
 import Link from "next/link";
 
 interface PageProps {
@@ -65,7 +65,7 @@ export default async function QuizPage(props: PageProps) {
   };
 
   return (
-    <main className="mx-auto p-15 bg-[var(--color-bg-default)]">
+    <main className="mx-auto p-10 bg-[var(--color-bg-default)]">
       <header className="mb-8">
         <h1 className="text-2xl font-bold mb-2">뽁퀴즈 목록</h1>
         <p className="text-[var(--color-gray-dark)]">

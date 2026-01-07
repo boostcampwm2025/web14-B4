@@ -1,6 +1,13 @@
-import { Quiz } from "@/src/types/quiz";
+import { Quiz } from "@/src/app/quizzes/types/quiz";
 
 const BASE_URL = 'http://localhost:8080';
+
+interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    errorCode: string | null;
+    data: T;
+}
 
 export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
     const params = new URLSearchParams();
@@ -8,24 +15,47 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
     if (category) params.append('category', category);
     if (difficulty) params.append('difficulty', difficulty);
 
-    const res = await fetch(`${BASE_URL}/quizzes?${params.toString()}`, {
-        cache: 'no-store',
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/quizzes?${params.toString()}`, {
+            cache: 'no-store',
+        });
 
-    if (!res.ok) {
-        throw new Error('퀴즈 목록을 가져오는데 실패했습니다.');
+        if (!res.ok) {
+            throw new Error('서버와의 통신이 원활하지 않습니다.');
+        }
+
+        const responseBody: ApiResponse<Quiz[]> = await res.json();
+
+        if (!responseBody.success) {
+            throw new Error(responseBody.message || '퀴즈 목록을 불러오는데 실패했습니다.');
+        }
+
+        return responseBody.data;
+    } catch (error) {
+        console.error('Fetch Quizzes Error:', error);
+        throw error; 
     }
-
-    return res.json();
 }
 
 export async function fetchCategoryCounts() {
-    const res = await fetch(`${BASE_URL}/quizzes/categories`, {
-        cache: 'no-store',
-    });
+    try {
+        const res = await fetch(`${BASE_URL}/quizzes/categories`, {
+            cache: 'no-store',
+        });
 
-    if (!res.ok) {
-        throw new Error('카테고리 정보를 가져오는데 실패했습니다.');
+        if (!res.ok) {
+            throw new Error('서버와의 통신이 원활하지 않습니다.');
+        }
+
+        const responseBody = await res.json();
+
+        if (!responseBody.success) {
+            throw new Error(responseBody.message || '카테고리 정보를 불러오는데 실패했습니다.');
+        }
+
+        return responseBody.data;
+    } catch (error) {
+        console.error('Fetch Categories Error:', error);
+        throw error;
     }
-    return res.json();
 }
