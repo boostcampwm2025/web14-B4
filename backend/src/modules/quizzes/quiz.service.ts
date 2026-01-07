@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MainQuizEntity, DifficultyLevel } from './entities/main-quiz.entity';
+import { MainQuizEntity, DifficultyLevel } from '../../datasources/entities/main-quiz.entity';
 
 @Injectable()
 export class QuizService {
