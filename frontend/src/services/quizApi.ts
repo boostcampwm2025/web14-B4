@@ -2,8 +2,13 @@ import { Quiz } from "@/src/types/quiz";
 
 const BASE_URL = 'http://localhost:8080';
 
-export async function fetchQuizzes(): Promise<Quiz[]> {
-    const res = await fetch(`${BASE_URL}/quizzes`, {
+export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
+    const params = new URLSearchParams();
+
+    if (category) params.append('category', category);
+    if (difficulty) params.append('difficulty', difficulty);
+
+    const res = await fetch(`${BASE_URL}/quizzes?${params.toString()}`, {
         cache: 'no-store',
     });
 

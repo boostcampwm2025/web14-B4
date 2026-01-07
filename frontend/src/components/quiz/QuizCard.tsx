@@ -13,7 +13,7 @@ return (
         <h3 className="text-2xl font-bold mb-5 text-gray-800">
             {quiz.title}
         </h3>
-        <span className={`px-3 py-2 rounded-full text-m font-bold ${
+        <span className={`px-3 py-2 rounded-full text-m ${
           quiz.difficultyLevel === '상' ? 'bg-[#E9C1BF] text-[#A92B25]' :
           quiz.difficultyLevel === '중' ? 'bg-[#F4F1B9] text-[#ADA400]' :
           'bg-[#A7F1B0] text-[#1E912C]'

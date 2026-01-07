@@ -102,7 +102,22 @@ export class QuizService {
         },
     ];
 
-    async findAll(): Promise<MainQuizEntity[]> {
-        return await this.mockData as MainQuizEntity[];
+    private readonly mockCategoties = [
+        { id: 1, name: '운영체제' },
+        { id: 2, name: '데이터베이스' },
+        { id: 3, name: '네트워크' },
+    ];
+
+    async findAll(category?: string, difficulty?:string): Promise<MainQuizEntity[]> {
+        let results = [...this.mockData];
+
+        if (category) {
+            results = results.filter(quiz => quiz.category.name === category);
+        }
+
+        if (difficulty) {
+            results = results.filter(quiz => quiz.difficultyLevel === difficulty);
+        }
+        return results as MainQuizEntity[];
     }
 }
