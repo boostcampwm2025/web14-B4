@@ -34,10 +34,8 @@ import { UsersModule } from './modules/users/users.module';
         if (!options) {
           throw new Error('Invalid options passed');
         }
-
-        // ✅ DataSource 생성 및 초기화
         const dataSource = new DataSource(options);
-        await dataSource.initialize(); // ✅ await 추가
+        await dataSource.initialize();
 
         // DataSource를 트랜잭션 지원 DataSource로 래핑
         return addTransactionalDataSource(dataSource);
