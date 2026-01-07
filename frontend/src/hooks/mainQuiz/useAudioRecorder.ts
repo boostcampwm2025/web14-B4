@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 
 type StartRecordingParams = {
   deviceId?: string;
@@ -19,7 +19,13 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
-  const resetRecording = () => {
+  // 오디오 스트림 종료
+  const cleanupStream = () => {
+    audioStreamRef.current?.getTracks().forEach((t) => t.stop());
+    audioStreamRef.current = null;
+  };
+
+  const cleanupRecorder = () => {
     // 녹음 중이면 멈춤
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       try {
@@ -28,19 +34,23 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
         // ignore
       }
     }
+    mediaRecorderRef.current = null;
+  };
 
-    // 스트림 종료
-    audioStreamRef.current?.getTracks().forEach((t) => t.stop());
-    audioStreamRef.current = null;
-
-    // URL 정리
+  // URL 정리
+  const cleanupUrl = () => {
     if (audioUrlRef.current) {
       URL.revokeObjectURL(audioUrlRef.current);
       audioUrlRef.current = null;
     }
+  };
+
+  const resetRecording = () => {
+    cleanupRecorder();
+    cleanupStream();
+    cleanupUrl();
 
     // 상태 초기화
-    mediaRecorderRef.current = null;
     audioChunksRef.current = [];
     setAudioUrl(null);
     setAudioBlob(null);
@@ -50,11 +60,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     // 기존 결과 정리
     audioChunksRef.current = [];
     setAudioBlob(null);
-
-    if (audioUrlRef.current) {
-      URL.revokeObjectURL(audioUrlRef.current);
-      audioUrlRef.current = null;
-    }
+    cleanupUrl();
     setAudioUrl(null);
 
     const constraints: MediaStreamConstraints = {
@@ -91,9 +97,18 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
-    audioStreamRef.current?.getTracks().forEach((t) => t.stop()); // 오디오 스트림 종료
-    audioStreamRef.current = null;
+    cleanupStream();
   };
+
+  useEffect(() => {
+    return () => {
+      // 페이지 이탈/언마운트 시 리소스 정리
+      cleanupRecorder();
+      cleanupStream();
+      cleanupUrl();
+      audioChunksRef.current = [];
+    };
+  }, []);
 
   return {
     audioUrl,
