@@ -19,7 +19,7 @@ export class RecordsService {
     return result;
   }
 
-  private async sttWithClova(audio) {
+  private async sttWithClova(audio: Buffer): Promise<string> {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'NAVER_CLOVA_CLIENT_SECRET',
@@ -33,7 +33,7 @@ export class RecordsService {
         'x-ncp-apigw-api-key-id': clientId || '',
         'x-ncp-apigw-api-key': clientSecret || '',
       },
-      body: audio,
+      body: new Uint8Array(audio),
     });
 
     if (!response.ok) {

@@ -1,4 +1,4 @@
-import AudioRecorder from "../../components/AudioRecorder";
+import AudioRecorder from '../../components/AudioRecorder';
 
 export default function RecordPage() {
   return (
