@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { postSpeechesStt } from '@/services/speeches';
+import { Button } from '@/components/Button';
 
 export default function AudioRecorder() {
   const router = useRouter();
@@ -22,15 +23,21 @@ export default function AudioRecorder() {
   return (
     <div>
       {!isRecording ? (
-        <button onClick={startRecording}>말하기</button>
+        <Button variant="primary" size="fixed" onClick={startRecording}>
+          말하기
+        </Button>
       ) : (
-        <button onClick={stopRecording}>말하기 종료</button>
+        <Button variant="primary" size="fixed" onClick={stopRecording}>
+          말하기 종료
+        </Button>
       )}
 
       {audioUrl && (
         <div>
           <audio controls src={audioUrl} />
-          <button onClick={submitAnswer}>제출</button>
+          <Button variant="primary" size="fixed" onClick={submitAnswer}>
+            제출
+          </Button>
         </div>
       )}
     </div>
