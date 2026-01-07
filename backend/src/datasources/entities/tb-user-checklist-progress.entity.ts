@@ -6,7 +6,7 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { TbChecklistItem } from '../../quizzes/entities/tb-checklist-item.entity';
+import { TbChecklistItem } from './tb-checklist-item.entity';
 
 @Entity('tb_user_checklist_item')
 @Unique(['userId', 'checklistItemId'])

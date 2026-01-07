@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TbMainQuizRepository } from './repositories/tb-main-quiz.respository';
+import { TbMainQuizRepository } from '../datasources/repositories/tb-main-quiz.respository';
 import { QuizChecklistResponseDto } from './dto/quiz-response.dto';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class QuizzesService {
     const quiz = await this.quizRepository.getQuizWithChecklist(mainQuizId);
 
     if (!quiz) {
-      throw new NotFoundException(`해당 퀴즈를 찾을 수 없습니다.`);
+      throw new Error(`해당 퀴즈를 찾을 수 없습니다.`);
     }
 
     if (quiz.checklistItems.length <= 0)

@@ -1,5 +1,5 @@
-import { TbMainQuiz } from './entities/tb-main-quiz.entity';
-import { TbChecklistItem } from './entities/tb-checklist-item.entity';
+import { TbMainQuiz } from '../datasources/entities/tb-main-quiz.entity';
+import { TbChecklistItem } from '../datasources/entities/tb-checklist-item.entity';
 
 export class QuizFixture {
   /**
