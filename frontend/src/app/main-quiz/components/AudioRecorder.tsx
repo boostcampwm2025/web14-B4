@@ -168,12 +168,7 @@ export default function AudioRecorder() {
         <div className="flex flex-wrap justify-end gap-3 pt-2">
           {recordStatus === 'idle' && (
             <>
-              <Button
-                variant="primary"
-                size="fixed"
-                onClick={handleStart}
-                disabled={!canRecord || isSubmitting}
-              >
+              <Button variant="primary" size="fixed" onClick={handleStart} disabled={!canRecord}>
                 말하기
               </Button>
               <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
@@ -185,40 +180,40 @@ export default function AudioRecorder() {
           {/* 녹음중 */}
           {recordStatus === 'recording' && (
             <>
-              <Button variant="primary" size="fixed" onClick={handleStop} disabled={isSubmitting}>
+              <Button variant="primary" size="fixed" onClick={handleStop}>
                 말하기 종료
               </Button>
-              <Button
-                variant="secondary"
-                size="fixed"
-                onClick={() => router.push('/')}
-                disabled={isSubmitting}
-              >
+              <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
                 나가기
               </Button>
             </>
           )}
 
           {/* 녹음 완료 */}
-          {(recordStatus === 'recorded' || recordStatus === 'submitting') && (
+          {recordStatus === 'recorded' && (
             <>
-              <Button
-                variant="secondary"
-                size="fixed"
-                onClick={handleRetry}
-                disabled={isSubmitting}
-              >
+              <Button variant="secondary" size="fixed" onClick={handleRetry}>
                 다시하기
               </Button>
-              <Button variant="primary" size="fixed" onClick={handleSubmit} disabled={isSubmitting}>
-                {isSubmitting ? '제출중...' : '제출'}
+              <Button variant="primary" size="fixed" onClick={handleSubmit}>
+                제출
               </Button>
-              <Button
-                variant="secondary"
-                size="fixed"
-                onClick={() => router.push('/')}
-                disabled={isSubmitting}
-              >
+              <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
+                나가기
+              </Button>
+            </>
+          )}
+
+          {/* 제출 중 */}
+          {recordStatus === 'submitting' && (
+            <>
+              <Button variant="secondary" size="fixed" disabled>
+                다시하기
+              </Button>
+              <Button variant="primary" size="fixed" disabled>
+                제출중...
+              </Button>
+              <Button variant="secondary" size="fixed" disabled>
                 나가기
               </Button>
             </>
