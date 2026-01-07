@@ -28,13 +28,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/typeorm": "^11.0.0",
-<<<<<<< HEAD
-=======
-    "multer": "^2.0.2",
->>>>>>> 3b709fc93bed58754979bafa68d5a2d20807bb2b
-    "pg": "^8.16.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
     "typeorm": "^0.3.28"
   },
   "devDependencies": {
