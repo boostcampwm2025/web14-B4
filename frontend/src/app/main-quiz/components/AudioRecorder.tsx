@@ -1,22 +1,35 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useMicrophoneManager } from '@/hooks/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speeches';
 import { Button } from '@/components/Button';
 
+export type RecordStatus =
+  | 'idle' // 초기 진입 (권한 확인 중 포함)
+  | 'ready' // 녹음 시작 가능
+  | 'recording' // 녹음 중
+  | 'recorded' // 녹음 완료
+  | 'submitting'; // 제출 중
+
 export default function AudioRecorder() {
   const router = useRouter();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
+  const [recordStatus, setStatus] = useState<RecordStatus>('idle');
+  const [message, setMessage] = useState<string | null>(null);
 
-  const { isRecording, audioUrl, audioBlob, startRecording, stopRecording, resetRecording } =
-    useAudioRecorder();
+  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
+    onRecorded: () => {
+      setStatus('recorded');
+    },
+  });
+
   const {
-    status,
-    message,
+    micStatus,
+    message: permissionMessage,
     micOptions,
     selectedMicId,
     setSelectedMicId,
@@ -25,7 +38,9 @@ export default function AudioRecorder() {
     denyPermission,
   } = useMicrophoneManager();
 
-  const canRecord = status === 'ready';
+  // 마이크 상태
+  const canRecord =
+    recordStatus === 'ready' || (recordStatus === 'idle' && micStatus === 'granted');
 
   const handleConsentAgree = async () => {
     setIsConsentOpen(false);
@@ -38,26 +53,58 @@ export default function AudioRecorder() {
   };
 
   const handleStart = async () => {
+    setMessage(null);
+
     if (!canRecord) {
       await requestPermission();
       return;
     }
 
-    await startRecording({ deviceId: getSelectedDeviceId() });
+    try {
+      await startRecording({
+        deviceId: getSelectedDeviceId(),
+      });
+      setStatus('recording');
+      setMessage('녹음중...');
+    } catch {
+      setMessage('녹음을 시작할 수 없습니다.');
+    }
   };
 
-  const submitAnswer = async () => {
+  const handleStop = () => {
+    setMessage(null);
+    stopRecording();
+  };
+
+  const handleRetry = () => {
+    resetRecording();
+    setStatus('ready');
+    setMessage(null);
+  };
+
+  const handleSubmit = async () => {
     if (!audioBlob) {
       return;
     }
 
-    const { solvedQuizId } = await postSpeechesStt(audioBlob);
+    setStatus('submitting');
+    setMessage('제출중...');
 
-    router.push(`/checklist/${solvedQuizId}`);
+    try {
+      const { solvedQuizId } = await postSpeechesStt(audioBlob);
+      router.push(`/checklist/${solvedQuizId}`);
+    } catch {
+      setMessage('제출에 실패했습니다.');
+      setStatus('recorded');
+    }
   };
+
+  const disableStart = micStatus !== 'granted' || recordStatus === 'submitting';
+  const disableAll = recordStatus === 'submitting';
 
   return (
     <div>
+      {/* 마이크 권한 안내 팝업창 */}
       {isConsentOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm space-y-4">
@@ -83,47 +130,88 @@ export default function AudioRecorder() {
         </div>
       )}
       <div>
-        <div className="text-sm">마이크</div>
-        <select
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm"
-          value={selectedMicId}
-          onChange={(e) => setSelectedMicId(e.target.value)}
-          disabled={!canRecord || isRecording}
-        >
-          {micOptions.map((opt, idx) => (
-            <option key={`${opt.value}-${idx}`} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-
-        {message && <div className="rounded-xl bg-white p-3 text-sm text-red-600">{message}</div>}
-      </div>
-
-      {/* 녹음 버튼 */}
-      {!isRecording ? (
-        <Button variant="primary" size="fixed" onClick={handleStart} disabled={!canRecord}>
-          말하기
-        </Button>
-      ) : (
-        <Button variant="primary" size="fixed" onClick={stopRecording}>
-          말하기 종료
-        </Button>
-      )}
-
-      <Button variant="primary" size="fixed" onClick={resetRecording}>
-        다시하기
-      </Button>
-
-      {/* 녹음 결과 + 제출 */}
-      {audioUrl && (
-        <div>
-          <audio controls src={audioUrl} className="w-full" />
-          <Button variant="primary" size="fixed" onClick={submitAnswer}>
-            제출
-          </Button>
+        {/* 마이크 선택 */}
+        <div className="space-y-2">
+          <div className="text-sm font-medium text-gray-800">마이크</div>
+          <select
+            className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm"
+            value={selectedMicId}
+            onChange={(e) => setSelectedMicId(e.target.value)}
+            disabled={recordStatus === 'recording' || disableAll}
+          >
+            {micOptions.map((opt, idx) => (
+              <option key={`${opt.value}-${idx}`} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+
+        {/* 메시지 */}
+        {(permissionMessage || message) && (
+          <div className="rounded-xl bg-white p-3 text-sm text-red-600">
+            {permissionMessage || message}
+          </div>
+        )}
+
+        {/* 오디오 미리보기 */}
+        {audioUrl && (
+          <div className="rounded-xl bg-white p-3">
+            <audio controls src={audioUrl} className="w-full" />
+          </div>
+        )}
+
+        {/* 버튼 영역 */}
+        <div className="flex flex-wrap justify-end gap-3 pt-2">
+          {canRecord && (
+            <>
+              <Button variant="primary" size="fixed" onClick={handleStart} disabled={disableStart}>
+                말하기
+              </Button>
+              <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
+                나가기
+              </Button>
+            </>
+          )}
+
+          {/* 녹음중 */}
+          {recordStatus === 'recording' && (
+            <>
+              <Button variant="primary" size="fixed" onClick={handleStop} disabled={disableAll}>
+                말하기 종료
+              </Button>
+              <Button
+                variant="secondary"
+                size="fixed"
+                onClick={() => router.push('/')}
+                disabled={disableAll}
+              >
+                나가기
+              </Button>
+            </>
+          )}
+
+          {/* 녹음 완료 */}
+          {recordStatus === 'recorded' && (
+            <>
+              <Button variant="secondary" size="fixed" onClick={handleRetry} disabled={disableAll}>
+                다시하기
+              </Button>
+              <Button variant="primary" size="fixed" onClick={handleSubmit} disabled={disableAll}>
+                제출
+              </Button>
+              <Button
+                variant="secondary"
+                size="fixed"
+                onClick={() => router.push('/')}
+                disabled={disableAll}
+              >
+                나가기
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
