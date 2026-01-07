@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { TbChecklistItem } from './tb-checklist-item.entity';
 
-@Entity('tb_user_checklist_item')
+@Entity('tb_user_checklist_progress')
 @Unique(['userId', 'checklistItemId'])
 export class TbUserChecklistProgress {
   @PrimaryGeneratedColumn('increment', {
@@ -27,10 +27,10 @@ export class TbUserChecklistProgress {
   isChecked: boolean;
 
   @Column({ name: 'checked_at', type: 'timestamp', nullable: true })
-  checkedAt: Date;
+  checkedAt: Date | null;
 
   @Column({
-    name: 'crated_at',
+    name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
