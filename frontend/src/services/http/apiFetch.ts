@@ -1,27 +1,5 @@
-"use client";
-
-export type CommonResponse<T> = {
-  success: boolean;
-  message: string;
-  errorCode: string | null;
-  data: T | null;
-};
-
-export class ApiError extends Error {
-  status: number;
-  errorCode: string | null;
-
-  constructor(
-    message: string,
-    status: number,
-    errorCode: string | null = null
-  ) {
-    super(message);
-    this.name = "ApiError";
-    this.status = status;
-    this.errorCode = errorCode;
-  }
-}
+import { CommonResponse } from "@/services/http/types";
+import { ApiError } from "@/services/http/errors";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080";

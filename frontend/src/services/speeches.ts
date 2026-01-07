@@ -1,6 +1,4 @@
-"use client";
-
-import { apiFetch } from "./apiFetch";
+import { apiFetch } from "@/services/http/apiFetch";
 
 export type SttResult = {
   solvedQuizId: number;
@@ -31,7 +29,7 @@ export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
     throw new Error("STT 응답 데이터가 없습니다.");
   }
 
-  // 런타임 방어(가끔 백엔드 수정으로 필드 깨질 수 있어서)
+  // 런타임 방어
   if (typeof data.solvedQuizId !== "number" || typeof data.text !== "string") {
     throw new Error("STT 응답 형식이 올바르지 않습니다.");
   }
