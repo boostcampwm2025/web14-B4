@@ -10,7 +10,6 @@ import { Button } from '@/components/Button';
 
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
-  | 'ready' // 녹음 시작 가능
   | 'recording' // 녹음 중
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
@@ -50,8 +49,7 @@ export default function AudioRecorder() {
   };
 
   // 녹음 가능한 상태 체크
-  const canRecord =
-    recordStatus === 'ready' || (recordStatus === 'idle' && micStatus === 'granted');
+  const canRecord = recordStatus === 'idle' && micStatus === 'granted';
 
   const handleStart = async () => {
     setMessage(null);
@@ -79,7 +77,7 @@ export default function AudioRecorder() {
 
   const handleRetry = () => {
     resetRecording();
-    setStatus('ready');
+    setStatus('idle');
     setMessage(null);
   };
 
@@ -89,7 +87,6 @@ export default function AudioRecorder() {
     }
 
     setStatus('submitting');
-    setMessage('제출중...');
 
     try {
       const { solvedQuizId } = await postSpeechesStt(audioBlob);
@@ -106,8 +103,7 @@ export default function AudioRecorder() {
     }
   };
 
-  const disableStart = micStatus !== 'granted' || recordStatus === 'submitting';
-  const disableAll = recordStatus === 'submitting';
+  const isSubmitting = recordStatus === 'submitting';
 
   return (
     <div>
@@ -144,7 +140,7 @@ export default function AudioRecorder() {
             className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm"
             value={selectedMicId}
             onChange={(e) => setSelectedMicId(e.target.value)}
-            disabled={recordStatus === 'recording' || disableAll}
+            disabled={recordStatus === 'recording' || isSubmitting}
           >
             {micOptions.map((opt, idx) => (
               <option key={`${opt.value}-${idx}`} value={opt.value}>
@@ -170,31 +166,33 @@ export default function AudioRecorder() {
 
         {/* 버튼 영역 */}
         <div className="flex flex-wrap justify-end gap-3 pt-2">
-          <>
-            <Button
-              variant="primary"
-              size="fixed"
-              onClick={handleStart}
-              disabled={disableStart || !canRecord}
-            >
-              말하기
-            </Button>
-            <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
-              나가기
-            </Button>
-          </>
+          {recordStatus === 'idle' && (
+            <>
+              <Button
+                variant="primary"
+                size="fixed"
+                onClick={handleStart}
+                disabled={!canRecord || isSubmitting}
+              >
+                말하기
+              </Button>
+              <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
+                나가기
+              </Button>
+            </>
+          )}
 
           {/* 녹음중 */}
           {recordStatus === 'recording' && (
             <>
-              <Button variant="primary" size="fixed" onClick={handleStop} disabled={disableAll}>
+              <Button variant="primary" size="fixed" onClick={handleStop} disabled={isSubmitting}>
                 말하기 종료
               </Button>
               <Button
                 variant="secondary"
                 size="fixed"
                 onClick={() => router.push('/')}
-                disabled={disableAll}
+                disabled={isSubmitting}
               >
                 나가기
               </Button>
@@ -202,19 +200,24 @@ export default function AudioRecorder() {
           )}
 
           {/* 녹음 완료 */}
-          {recordStatus === 'recorded' && (
+          {(recordStatus === 'recorded' || recordStatus === 'submitting') && (
             <>
-              <Button variant="secondary" size="fixed" onClick={handleRetry} disabled={disableAll}>
+              <Button
+                variant="secondary"
+                size="fixed"
+                onClick={handleRetry}
+                disabled={isSubmitting}
+              >
                 다시하기
               </Button>
-              <Button variant="primary" size="fixed" onClick={handleSubmit} disabled={disableAll}>
-                제출
+              <Button variant="primary" size="fixed" onClick={handleSubmit} disabled={isSubmitting}>
+                {isSubmitting ? '제출중...' : '제출'}
               </Button>
               <Button
                 variant="secondary"
                 size="fixed"
                 onClick={() => router.push('/')}
-                disabled={disableAll}
+                disabled={isSubmitting}
               >
                 나가기
               </Button>
