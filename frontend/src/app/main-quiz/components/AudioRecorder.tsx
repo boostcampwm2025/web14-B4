@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
 import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speeches';
+import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
 
 export type RecordStatus =
@@ -93,8 +94,14 @@ export default function AudioRecorder() {
     try {
       const { solvedQuizId } = await postSpeechesStt(audioBlob);
       router.push(`/checklist/${solvedQuizId}`);
-    } catch {
-      setMessage('제출에 실패했습니다.');
+    } catch (e) {
+      let errorMessage = '제출에 실패했습니다.';
+
+      if (e instanceof ApiError) {
+        errorMessage = e.message;
+      }
+
+      setMessage(errorMessage);
       setStatus('recorded');
     }
   };
