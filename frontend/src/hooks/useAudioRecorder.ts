@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
 export function useAudioRecorder() {
   const audioStreamRef = useRef<MediaStream | null>(null);
@@ -11,6 +11,34 @@ export function useAudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+
+  const resetRecording = () => {
+    // 녹음 중이면 멈춤
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+      try {
+        mediaRecorderRef.current.stop();
+      } catch {
+        // ignore
+      }
+    }
+
+    // 스트림 종료
+    audioStreamRef.current?.getTracks().forEach((t) => t.stop());
+    audioStreamRef.current = null;
+
+    // URL 정리
+    if (audioUrlRef.current) {
+      URL.revokeObjectURL(audioUrlRef.current);
+      audioUrlRef.current = null;
+    }
+
+    // 상태 초기화
+    mediaRecorderRef.current = null;
+    audioChunksRef.current = [];
+    setIsRecording(false);
+    setAudioUrl(null);
+    setAudioBlob(null);
+  };
 
   const startRecording = async () => {
     // 마이크 권한 요청
@@ -34,7 +62,7 @@ export function useAudioRecorder() {
     };
 
     recorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+      const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
       setAudioBlob(blob);
 
       // 브라우저에서 재생 가능한 URL 생성
