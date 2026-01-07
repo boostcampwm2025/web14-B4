@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
-import { SolvedQuizRepository } from './repositories/solved-quiz.repository';
+import { SolvedQuizRepository } from '../../datasources/repositories/solved-quiz.repository';
 
 // TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
 const TEST_USER_ID = 1;
