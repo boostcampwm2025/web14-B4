@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
+import { UpdateResult } from 'typeorm/browser';
 
 @Injectable()
 export class SolvedQuizRepository extends Repository<SolvedQuiz> {
@@ -34,17 +35,10 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   }
 
   async updateSpeechText(
-    solvedQuizId: number,
+    id: number,
     speechText: string,
-  ): Promise<SolvedQuiz> {
-    const solvedQuiz = await this.findById(solvedQuizId);
-
-    // TODO : 별도 ERROR class 생성하여 부여 필요
-    if (!solvedQuiz) throw new Error('SolvedQuizId가 존재하지 않습니다.');
-
-    solvedQuiz.speechText = speechText;
-
-    return await this.save(solvedQuiz);
+  ): Promise<UpdateResult> {
+    return await this.update(id, { speechText });
   }
 
   async findById(solvedQuizId: number): Promise<SolvedQuiz | null> {

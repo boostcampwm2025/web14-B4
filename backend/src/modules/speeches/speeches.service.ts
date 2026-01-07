@@ -70,10 +70,21 @@ export class SpeechesService {
       throw new Error('수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.');
     }
 
-    const updatedSolvedQuiz = await this.solvedQuizRepository.updateSpeechText(
+    const updateResult = await this.solvedQuizRepository.updateSpeechText(
       solvedQuizId,
       speechText,
     );
+
+    if (updateResult.affected === 0) {
+      throw new Error('SolvedQuizId가 존재하지 않습니다.');
+    }
+
+    const updatedSolvedQuiz =
+      await this.solvedQuizRepository.findById(solvedQuizId);
+
+    if (!updatedSolvedQuiz) {
+      throw new Error('업데이트 후 데이터를 조회할 수 없습니다.');
+    }
 
     return {
       mainQuizId: updatedSolvedQuiz.mainQuizId,
