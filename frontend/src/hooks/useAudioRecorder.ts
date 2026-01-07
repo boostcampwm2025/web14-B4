@@ -6,13 +6,16 @@ type StartRecordingParams = {
   deviceId?: string;
 };
 
-export function useAudioRecorder() {
+type UseAudioRecorderParams = {
+  onRecorded?: (blob: Blob, url: string) => void;
+};
+
+export function useAudioRecorder(params?: UseAudioRecorderParams) {
   const audioStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
   const audioUrlRef = useRef<string | null>(null);
 
-  const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
 
@@ -39,12 +42,11 @@ export function useAudioRecorder() {
     // 상태 초기화
     mediaRecorderRef.current = null;
     audioChunksRef.current = [];
-    setIsRecording(false);
     setAudioUrl(null);
     setAudioBlob(null);
   };
 
-  const startRecording = async (params?: StartRecordingParams) => {
+  const startRecording = async (startParams?: StartRecordingParams) => {
     // 기존 결과 정리
     audioChunksRef.current = [];
     setAudioBlob(null);
@@ -56,7 +58,7 @@ export function useAudioRecorder() {
     setAudioUrl(null);
 
     const constraints: MediaStreamConstraints = {
-      audio: params?.deviceId ? { deviceId: { exact: params.deviceId } } : true,
+      audio: startParams?.deviceId ? { deviceId: { exact: startParams.deviceId } } : true,
     };
 
     // 마이크 권한 요청
@@ -79,21 +81,21 @@ export function useAudioRecorder() {
       const url = URL.createObjectURL(blob);
       audioUrlRef.current = url;
       setAudioUrl(url);
+
+      // 녹음 완료 콜백
+      params?.onRecorded?.(blob, url);
     };
 
     recorder.start();
-    setIsRecording(true);
   };
 
   const stopRecording = () => {
     mediaRecorderRef.current?.stop();
     audioStreamRef.current?.getTracks().forEach((t) => t.stop()); // 오디오 스트림 종료
     audioStreamRef.current = null;
-    setIsRecording(false);
   };
 
   return {
-    isRecording,
     audioUrl,
     audioBlob,
     startRecording,
