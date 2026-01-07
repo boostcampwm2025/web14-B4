@@ -13,4 +13,9 @@ export class QuizController {
     ): Promise<MainQuizEntity[]> {
         return await this.quizService.findAll(category, difficulty);
     }
+
+    @Get('categories')
+    async getCategories() {
+        return await this.quizService.getCategoriesWithCount();
+    }
 }

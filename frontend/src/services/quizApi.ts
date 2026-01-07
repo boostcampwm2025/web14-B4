@@ -18,3 +18,14 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
 
     return res.json();
 }
+
+export async function fetchCategoryCounts() {
+    const res = await fetch(`${BASE_URL}/quizzes/categories`, {
+        cache: 'no-store',
+    });
+
+    if (!res.ok) {
+        throw new Error('카테고리 정보를 가져오는데 실패했습니다.');
+    }
+    return res.json();
+}
