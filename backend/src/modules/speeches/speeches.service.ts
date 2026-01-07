@@ -4,6 +4,10 @@ import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/solved-quiz.repository';
 
+// TODO : 추가로 처리해야할 예외
+/* 답변 텍스트가 너무 짧은 경우, 예외 처리.
+   해당 예외를 추가하지 않은 이유: 테스트 및 데모 시에 짧은 텍스트가 들어올 수 있기 때문에 해당 예외는 추후에 추가 예정.
+*/
 @Injectable()
 export class SpeechesService {
   constructor(
@@ -34,6 +38,12 @@ export class SpeechesService {
       throw new Error('음성 인식(STT) 처리 중 오류가 발생했습니다.');
     }
 
+    if (!sttText || sttText.trim().length === 0) {
+      throw new Error(
+        'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
+      );
+    }
+
     const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz(
       userId,
       mainQuizId,
@@ -56,6 +66,10 @@ export class SpeechesService {
     solvedQuizId: number,
     speechText: string,
   ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
+    if (!speechText || speechText.trim().length === 0) {
+      throw new Error('수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.');
+    }
+
     const updatedSolvedQuiz = await this.solvedQuizRepository.updateSpeechText(
       solvedQuizId,
       speechText,
