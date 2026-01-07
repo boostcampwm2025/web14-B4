@@ -4,15 +4,24 @@ import {
   DifficultyLevel,
 } from '../../datasources/entities/main-quiz.entity';
 
+interface MockQuiz {
+  id: number;
+  title: string;
+  content: string;
+  hint: string;
+  difficulty: DifficultyLevel; 
+  category: { id: number; name: string };
+}
+
 @Injectable()
 export class QuizService {
-  private readonly mockData: any[] = [
+  private readonly mockData: MockQuiz[] = [
     {
       id: 1,
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.MID,
+      difficulty: DifficultyLevel.MID,
       category: { id: 1, name: '운영체제' },
     },
     {
@@ -20,7 +29,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.HIGH,
+      difficulty: DifficultyLevel.HIGH,
       category: { id: 2, name: '데이터베이스' },
     },
     {
@@ -28,7 +37,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.LOW,
+      difficulty: DifficultyLevel.LOW,
       category: { id: 3, name: '네트워크' },
     },
     {
@@ -36,7 +45,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.HIGH,
+      difficulty: DifficultyLevel.HIGH,
       category: { id: 1, name: '운영체제' },
     },
     {
@@ -44,7 +53,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.LOW,
+      difficulty: DifficultyLevel.LOW,
       category: { id: 2, name: '데이터베이스' },
     },
     {
@@ -52,7 +61,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.MID,
+      difficulty: DifficultyLevel.MID,
       category: { id: 3, name: '네트워크' },
     },
     {
@@ -60,7 +69,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.HIGH,
+      difficulty: DifficultyLevel.HIGH,
       category: { id: 1, name: '운영체제' },
     },
     {
@@ -68,7 +77,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.HIGH,
+      difficulty: DifficultyLevel.HIGH,
       category: { id: 2, name: '데이터베이스' },
     },
     {
@@ -76,7 +85,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.LOW,
+      difficulty: DifficultyLevel.LOW,
       category: { id: 3, name: '네트워크' },
     },
     {
@@ -84,7 +93,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.LOW,
+      difficulty: DifficultyLevel.LOW,
       category: { id: 1, name: '운영체제' },
     },
     {
@@ -92,7 +101,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.MID,
+      difficulty: DifficultyLevel.MID,
       category: { id: 2, name: '데이터베이스' },
     },
     {
@@ -100,7 +109,7 @@ export class QuizService {
       title: '프로세스와 스레드의 차이',
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
-      difficultyLevel: DifficultyLevel.HIGH,
+      difficulty: DifficultyLevel.HIGH,
       category: { id: 3, name: '네트워크' },
     },
   ];
@@ -111,10 +120,7 @@ export class QuizService {
     { id: 3, name: '네트워크' },
   ];
 
-  async findAll(
-    category?: string,
-    difficulty?: string,
-  ): Promise<MainQuizEntity[]> {
+  findAll(category?: string, difficulty?: string): Promise<MainQuizEntity[]> {
     let results = [...this.mockData];
 
     if (category) {
@@ -122,16 +128,16 @@ export class QuizService {
     }
 
     if (difficulty) {
-      results = results.filter((quiz) => quiz.difficultyLevel === difficulty);
+      results = results.filter((quiz) => quiz.difficulty === difficulty);
     }
-    return results as MainQuizEntity[];
+    return Promise.resolve(results as unknown as MainQuizEntity[]);
   }
 
-  async getCategoriesWithCount() {
+  getCategoriesWithCount() {
     const totalCount = this.mockData.length;
     const categories = this.mockCategories.map((category) => {
       const count = this.mockData.filter(
-        (quiz) => quiz.categories?.name === category.name,
+        (quiz) => quiz.category?.name === category.name,
       ).length;
       return {
         ...category,
