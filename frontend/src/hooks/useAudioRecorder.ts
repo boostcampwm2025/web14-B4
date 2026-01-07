@@ -2,6 +2,10 @@
 
 import { useRef, useState } from 'react';
 
+type StartRecordingParams = {
+  deviceId?: string;
+};
+
 export function useAudioRecorder() {
   const audioStreamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
@@ -40,13 +44,8 @@ export function useAudioRecorder() {
     setAudioBlob(null);
   };
 
-  const startRecording = async () => {
-    // 마이크 권한 요청
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    audioStreamRef.current = stream;
-
-    const recorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = recorder;
+  const startRecording = async (params?: StartRecordingParams) => {
+    // 기존 결과 정리
     audioChunksRef.current = [];
     setAudioBlob(null);
 
@@ -55,6 +54,17 @@ export function useAudioRecorder() {
       audioUrlRef.current = null;
     }
     setAudioUrl(null);
+
+    const constraints: MediaStreamConstraints = {
+      audio: params?.deviceId ? { deviceId: { exact: params.deviceId } } : true,
+    };
+
+    // 마이크 권한 요청
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    audioStreamRef.current = stream;
+
+    const recorder = new MediaRecorder(stream);
+    mediaRecorderRef.current = recorder;
 
     // 녹음 데이터 수집
     recorder.ondataavailable = (e) => {
@@ -88,5 +98,6 @@ export function useAudioRecorder() {
     audioBlob,
     startRecording,
     stopRecording,
+    resetRecording,
   };
 }
