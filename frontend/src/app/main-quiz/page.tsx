@@ -1,4 +1,4 @@
-import AudioRecorder from '@/components/mainQuiz/AudioRecorder';
+import AudioRecorder from '@/app/main-quiz/components/AudioRecorder';
 
 export default function MainQuizPage() {
   return (
