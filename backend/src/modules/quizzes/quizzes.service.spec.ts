@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import { TbMainQuizRepository } from '../datasources/repositories/tb-main-quiz.respository';
+import { TbMainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
 import { QuizFixture } from './quizzes.fixture';
 
 describe('QuizzesService', () => {
