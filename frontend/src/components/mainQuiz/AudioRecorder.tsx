@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
-import { postSpeechesStt } from '@/lib/api/speeches';
+import { postSpeechesStt } from '@/services/speeches';
 
 export default function AudioRecorder() {
   const router = useRouter();
