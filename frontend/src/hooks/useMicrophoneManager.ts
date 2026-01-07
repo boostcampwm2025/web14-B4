@@ -1,8 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-export type RecordStatus = 'idle' | 'permissionDenied' | 'ready' | 'error';
+export type MicStatus =
+  | 'checking' // 권한 확인 중
+  | 'granted' // 사용 가능
+  | 'denied' // 권한 거부
+  | 'error';
 
 export type MicOption = {
   label: string;
@@ -10,7 +14,7 @@ export type MicOption = {
 };
 
 export function useMicrophoneManager() {
-  const [status, setStatus] = useState<RecordStatus>('idle');
+  const [micStatus, setStatus] = useState<MicStatus>('checking');
   const [message, setMessage] = useState<string | null>(null);
 
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
@@ -40,13 +44,13 @@ export function useMicrophoneManager() {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       stream.getTracks().forEach((t) => t.stop());
 
-      setStatus('ready');
+      setStatus('granted');
       await loadDevices();
     } catch (err) {
       const e = err as DOMException;
 
       if (e?.name === 'NotAllowedError' || e?.name === 'SecurityError') {
-        setStatus('permissionDenied');
+        setStatus('denied');
         setMessage('마이크 권한이 필요합니다. 브라우저 설정에서 마이크를 허용해주세요.');
         return;
       }
@@ -57,7 +61,7 @@ export function useMicrophoneManager() {
   }, [loadDevices]);
 
   const denyPermission = useCallback(() => {
-    setStatus('permissionDenied');
+    setStatus('denied');
     setMessage('마이크 권한이 필요합니다. 동의 후 마이크를 허용해주세요.');
   }, []);
 
@@ -74,7 +78,7 @@ export function useMicrophoneManager() {
   };
 
   return {
-    status,
+    micStatus,
     message,
     devices,
     micOptions,
