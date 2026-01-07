@@ -1,22 +1,29 @@
-export class SaveChecklistProgressDto {
-  mainQuizId: number;
-  checklistItems: ChecklistPregressItemDto[];
+import {
+  IsNumber,
+  IsArray,
+  ValidateNested,
+  ArrayMinSize,
+  IsBoolean,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
-  constructor(data: {
-    mainQuizId: number;
-    checklistItems: ChecklistPregressItemDto[];
-  }) {
-    this.mainQuizId = data.mainQuizId;
-    this.checklistItems = data.checklistItems;
-  }
+export class SaveChecklistProgressDto {
+  @IsNumber()
+  @Type(() => Number)
+  mainQuizId: number;
+
+  @IsArray()
+  @ArrayMinSize(1, { message: 'checklistItems는 최소 1개 이상이어야 합니다.' })
+  @ValidateNested({ each: true })
+  @Type(() => ChecklistPregressItemDto)
+  checklistItems: ChecklistPregressItemDto[];
 }
 
 export class ChecklistPregressItemDto {
+  @IsNumber()
+  @Type(() => Number)
   checklistItemId: number;
-  isChecked: boolean;
 
-  constructor(data: { checklistItemId: number; isChecked: boolean }) {
-    this.checklistItemId = data.checklistItemId;
-    this.isChecked = data.isChecked;
-  }
+  @IsBoolean()
+  isChecked: boolean;
 }
