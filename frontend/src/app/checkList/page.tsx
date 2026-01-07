@@ -8,7 +8,6 @@ interface STTResponse {
 }
 
 export default function ResultPage() {
-<<<<<<< HEAD
   const [result, setResult] = useState<STTResponse | null>(() => {
     // 클라이언트 사이드에서만 실행
     if (typeof window !== 'undefined') {
@@ -16,43 +15,6 @@ export default function ResultPage() {
       if (savedResult) {
         return JSON.parse(savedResult);
       }
-=======
-    const [result, setResult] = useState<STTResponse | null>(null);
-    const router = useRouter();
-    useEffect(() => {
-        // localStorage에서 결과 가져오기
-        const savedResult = localStorage.getItem('audioResult');
-        if (savedResult) {
-            setResult(JSON.parse(savedResult));
-        } else {
-            setResult({text: '답변이 전송되지 않았습니다.'});
-        }
-    }, [router]);
-
-    const handleCopy = () => {
-        if (result?.text) {
-            navigator.clipboard.writeText(result.text);
-            alert('텍스트가 복사되었습니다!');
-        }
-    };
-
-    const handleNewConversion = () => {
-        alert('생각 톡톡으로 이동하기!');
-    };
-
-    if (!result) {
-        return (
-        <div className="min-h-screen bg-white flex items-center justify-center">
-            <div className="text-center">
-            <svg className="animate-spin h-12 w-12 mx-auto mb-4" style={{ color: '#4278FF' }} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            <p className="text-gray-600">로딩 중...</p>
-            </div>
-        </div>
-        );
->>>>>>> 6587e24 (test: ci 테스트 프론트엔드 부분 변경 시에 제대로 동작하는지 확인)
     }
     return { text: '답변이 전송되지 않았습니다.' };
   });
