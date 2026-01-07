@@ -7,10 +7,10 @@ export class QuizzesService {
   constructor(private readonly quizRepository: TbMainQuizRepository) {}
 
   async getQuizChecklist(mainQuizId: number) {
-    const quiz = await this.quizRepository.getQuizWithChecklist(mainQuizId);
+    const quiz = await this.quizRepository.findOneWithChecklist(mainQuizId);
 
     if (!quiz) {
-      throw new Error(`해당 퀴즈를 찾을 수 없습니다.`);
+      throw new NotFoundException(`해당 퀴즈를 찾을 수 없습니다.`);
     }
 
     if (quiz.checklistItems.length <= 0)

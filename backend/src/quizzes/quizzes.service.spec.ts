@@ -30,7 +30,7 @@ describe('QuizzesService', () => {
   describe('getQuizChecklist', () => {
     it('퀴즈가 존재하지 않으면 NotFoundException을 던진다', async () => {
       // Given
-      repository.getQuizWithChecklist.mockResolvedValue(null);
+      repository.findOneWithChecklist.mockResolvedValue(null);
 
       // When & Then
       await expect(service.getQuizChecklist(999)).rejects.toThrow(
@@ -41,7 +41,7 @@ describe('QuizzesService', () => {
     it('퀴즈와 체크리스트를 정상적으로 반환한다', async () => {
       // Given
       const mockQuiz = QuizFixture.createQuiz();
-      repository.getQuizWithChecklist.mockResolvedValue(mockQuiz);
+      repository.findOneWithChecklist.mockResolvedValue(mockQuiz);
 
       // When
       const result = await service.getQuizChecklist(1);

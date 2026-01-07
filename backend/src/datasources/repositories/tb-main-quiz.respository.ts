@@ -9,7 +9,7 @@ export class TbMainQuizRepository extends Repository<TbMainQuiz> {
     super(TbMainQuiz, dataSource.createEntityManager());
   }
 
-  async getQuizWithChecklist(mainQuizId: number) {
+  async findOneWithChecklist(mainQuizId: number) {
     return this.createQueryBuilder('mq')
       .leftJoinAndSelect('mq.checklistItems', 'ci')
       .where('mq.mainQuizId = :mainQuizId', { mainQuizId })
