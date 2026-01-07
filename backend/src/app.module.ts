@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecordsModule } from './modules/records/records.module';
 import { ConfigModule } from '@nestjs/config';
-import { QuizModule } from './quiz/quiz.module';
+import { QuizModule } from './quizzzes/quiz.module';
 
 @Module({
   imports: [
