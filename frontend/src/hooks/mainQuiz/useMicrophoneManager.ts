@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 export type MicStatus =
   | 'checking' // 권한 확인 중
@@ -20,7 +20,7 @@ export function useMicrophoneManager() {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedMicId, setSelectedMicId] = useState<string>('default');
 
-  const loadDevices = useCallback(async () => {
+  const loadDevices = async () => {
     if (!navigator.mediaDevices?.enumerateDevices) {
       return;
     }
@@ -30,14 +30,14 @@ export function useMicrophoneManager() {
 
     setDevices(mics);
 
-    // 기존에 선택한 deviceId가 사라졌으면 default로 되돌림
+    // 장치 목록 갱신시 선택된 deviceId가 목록에 없으면 default로 되돌림
     const exists = mics.some((d) => d.deviceId === selectedMicId);
     if (!exists) {
       setSelectedMicId('default');
     }
-  }, [selectedMicId]);
+  };
 
-  const requestPermission = useCallback(async () => {
+  const requestPermission = async () => {
     setMessage(null);
 
     try {
@@ -58,12 +58,12 @@ export function useMicrophoneManager() {
       setStatus('error');
       setMessage('마이크 초기화에 실패했습니다.');
     }
-  }, [loadDevices]);
+  };
 
-  const denyPermission = useCallback(() => {
+  const denyPermission = () => {
     setStatus('denied');
     setMessage('마이크 권한이 필요합니다. 동의 후 마이크를 허용해주세요.');
-  }, []);
+  };
 
   const micOptions: MicOption[] = [
     { label: 'Select your Microphone', value: 'default' },
