@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
+import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 
@@ -16,6 +17,7 @@ const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
 export default function ResultPage() {
   const params = useParams();
   const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
+  const { solvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto | null>(DEFAULT_SPEECH_ITEM);
   // 음성 녹음 텍스트 불러오기
   useEffect(() => {

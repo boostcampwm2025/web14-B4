@@ -7,6 +7,7 @@ import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speeches';
 import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
+import { useQuizStore } from '@/store/quizStore';
 
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
@@ -16,6 +17,7 @@ export type RecordStatus =
 
 export default function AudioRecorder() {
   const router = useRouter();
+  const { setSolvedQuizId } = useQuizStore();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
@@ -91,6 +93,8 @@ export default function AudioRecorder() {
     try {
       const MAIN_QUIZ_ID = 1;
       const { solvedQuizId } = await postSpeechesStt(MAIN_QUIZ_ID, audioBlob);
+      setSolvedQuizId(solvedQuizId);
+      // solvedQuizId를 전역 상태에 저장해야함.
       router.push(`/checklist/main-quiz/${MAIN_QUIZ_ID}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
