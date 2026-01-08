@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { initializeTransactionalContext } from 'typeorm-transactional';
-import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   initializeTransactionalContext();
