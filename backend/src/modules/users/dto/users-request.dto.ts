@@ -12,6 +12,10 @@ export class SaveChecklistProgressDto {
   @Type(() => Number)
   mainQuizId: number;
 
+  @IsNumber()
+  @Type(() => Number)
+  solvedQuizId: number;
+
   @IsArray()
   @ArrayMinSize(1, { message: 'checklistItems는 최소 1개 이상이어야 합니다.' })
   @ValidateNested({ each: true })

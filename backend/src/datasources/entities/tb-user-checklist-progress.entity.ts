@@ -9,8 +9,7 @@ import {
 import { TbChecklistItem } from './tb-checklist-item.entity';
 
 @Entity('tb_user_checklist_progress')
-@Entity('tb_user_checklist_progress')
-@Unique(['userId', 'checklistItemId'])
+@Unique('uk_user_checklist_quiz', ['userId', 'checklistItemId', 'solvedQuizId'])
 export class TbUserChecklistProgress {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
@@ -23,6 +22,9 @@ export class TbUserChecklistProgress {
 
   @Column({ name: 'checklist_item_id' })
   checklistItemId: number;
+
+  @Column({ name: 'solved_quiz_id' })
+  solvedQuizId: number;
 
   @Column({ name: 'is_checked', default: false })
   isChecked: boolean;
