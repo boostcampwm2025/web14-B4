@@ -40,7 +40,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "docker-compose.yml, nginx/nginx.conf" 
+          source: "docker-compose.yml,nginx/nginx.conf" 
           target: "/home/${{ secrets.USERNAME }}/project-deploy/"
 
       - name: 배포 명령 실행 
