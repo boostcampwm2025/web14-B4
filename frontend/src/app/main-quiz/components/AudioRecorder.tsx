@@ -8,13 +8,17 @@ import { postSpeechesStt } from '@/services/speeches';
 import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
 
+type AudioRecorderProps = {
+  mainQuizId: string;
+};
+
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
   | 'recording' // 녹음 중
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
 
-export default function AudioRecorder() {
+export default function AudioRecorder({ mainQuizId }: AudioRecorderProps) {
   const router = useRouter();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
@@ -89,7 +93,7 @@ export default function AudioRecorder() {
     setStatus('submitting');
 
     try {
-      const { solvedQuizId } = await postSpeechesStt(audioBlob);
+      const { solvedQuizId } = await postSpeechesStt(audioBlob, mainQuizId);
       router.push(`/checklist/${solvedQuizId}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';

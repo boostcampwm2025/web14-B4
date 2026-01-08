@@ -1,4 +1,4 @@
-import { apiFetch } from "@/services/http/apiFetch";
+import { apiFetch } from '@/services/http/apiFetch';
 
 export type SttResult = {
   solvedQuizId: number;
@@ -11,27 +11,29 @@ export type SttResult = {
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
+export async function postSpeechesStt(audioBlob: Blob, mainQuizId: string): Promise<SttResult> {
   const formData = new FormData();
   formData.append(
-    "audio",
-    new File([audioBlob], "audio.webm", {
-      type: audioBlob.type || "audio/webm",
-    })
+    'audio',
+    new File([audioBlob], 'audio.webm', {
+      type: audioBlob.type || 'audio/webm',
+    }),
   );
 
-  const data = await apiFetch<SttResult>("/speeches/stt", {
-    method: "POST",
+  formData.append('mainQuizId', String(mainQuizId));
+
+  const data = await apiFetch<SttResult>('/speeches/stt', {
+    method: 'POST',
     body: formData,
   });
 
   if (!data) {
-    throw new Error("STT 응답 데이터가 없습니다.");
+    throw new Error('STT 응답 데이터가 없습니다.');
   }
 
   // 런타임 방어
-  if (typeof data.solvedQuizId !== "number" || typeof data.text !== "string") {
-    throw new Error("STT 응답 형식이 올바르지 않습니다.");
+  if (typeof data.solvedQuizId !== 'number' || typeof data.text !== 'string') {
+    throw new Error('STT 응답 형식이 올바르지 않습니다.');
   }
 
   return data;
