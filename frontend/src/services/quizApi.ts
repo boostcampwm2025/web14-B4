@@ -1,7 +1,7 @@
 import { QuizChecklistResponseDto } from '@/app/checkList/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = 'http://localhost:8080/api';
 
 interface ApiResponse<T> {
   success: boolean;
@@ -34,6 +34,29 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
     return responseBody.data;
   } catch (error) {
     console.error('Fetch Quizzes Error:', error);
+    throw error;
+  }
+}
+
+export async function fetchCategoryCounts() {
+  try {
+    const res = await fetch(`${BASE_URL}/quizzes/categories`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error('서버와의 통신이 원활하지 않습니다.');
+    }
+
+    const responseBody = await res.json();
+
+    if (!responseBody.success) {
+      throw new Error(responseBody.message || '카테고리 정보를 불러오는데 실패했습니다.');
+    }
+
+    return responseBody.data;
+  } catch (error) {
+    console.error('Fetch Categories Error:', error);
     throw error;
   }
 }

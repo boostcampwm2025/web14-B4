@@ -19,7 +19,7 @@ export class QuizFixture {
       updatedAt: now,
       checklistItems: [],
       ...overrides,
-    };
+    } as TbMainQuiz;
 
     // checklistItems가 overrides에 없으면 기본값 설정
     if (!overrides.checklistItems) {

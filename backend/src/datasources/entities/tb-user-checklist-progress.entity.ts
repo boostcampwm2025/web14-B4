@@ -9,9 +9,12 @@ import {
 import { TbChecklistItem } from './tb-checklist-item.entity';
 
 @Entity('tb_user_checklist_progress')
-@Unique(['userId', 'checklistItemId'])
+@Unique('uk_user_checklist_quiz', ['userId', 'checklistItemId', 'solvedQuizId'])
 export class TbUserChecklistProgress {
-  @PrimaryGeneratedColumn({ name: 'user_checklist_progress_id' })
+  @PrimaryGeneratedColumn('increment', {
+    type: 'bigint',
+    name: 'user_checklist_progress_id',
+  })
   userChecklistProgressId: number;
 
   @Column({ name: 'user_id' })
@@ -20,14 +23,17 @@ export class TbUserChecklistProgress {
   @Column({ name: 'checklist_item_id' })
   checklistItemId: number;
 
+  @Column({ name: 'solved_quiz_id' })
+  solvedQuizId: number;
+
   @Column({ name: 'is_checked', default: false })
   isChecked: boolean;
 
   @Column({ name: 'checked_at', type: 'timestamp', nullable: true })
-  checkedAt: Date;
+  checkedAt: Date | null;
 
   @Column({
-    name: 'crated_at',
+    name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
