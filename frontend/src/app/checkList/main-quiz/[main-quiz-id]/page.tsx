@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
-  speechText: '답변이 전송되지 않았습니다.',
+  speechText: '답변을 불러오고 있습니다',
   createdAt: null,
 };
 
@@ -50,12 +50,10 @@ export default function ResultPage() {
     }
   };
 
-  const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleResetAndNavigate = () => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
       router.push(`/main-quiz/${mainQuizId}`);
-    } else {
-      e.preventDefault(); // 네비게이션 취소
     }
   };
 
@@ -244,13 +242,12 @@ export default function ResultPage() {
 
           {/* 네비게이션 버튼 */}
           <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-4xl mx-auto">
-            <Link
-              href="/practice"
+            <button
               onClick={handleResetAndNavigate}
               className="flex-1 py-3 md:py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition text-center flex items-center justify-center gap-2 text-sm md:text-base"
             >
               다시풀기
-            </Link>
+            </button>
             <button
               onClick={handleNewConversion}
               className="flex-1 py-3 md:py-4 text-white rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 text-sm md:text-base"
