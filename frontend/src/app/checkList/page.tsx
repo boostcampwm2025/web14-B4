@@ -1,15 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import MySpeechText from './components/MySpeechText';
-
-interface STTResponse {
-  text: string;
-}
+import { getSpeechesByQuizId } from '@/services/speeches';
+import { SpeechItemDto } from './types/speeches.types';
 
 export default function ResultPage() {
-  const [result, setResult] = useState<STTResponse | null>(() => {
+  const [speechText, setSpeechText] = useState<SpeechItemDto | null>(() => {
     // 클라이언트 사이드에서만 실행
     if (typeof window !== 'undefined') {
       const savedResult = localStorage.getItem('audioResult');
@@ -20,11 +18,31 @@ export default function ResultPage() {
     return { text: '답변이 전송되지 않았습니다.' };
   });
 
+  // 음성 녹음 텍스트 불러오기
+  useEffect(() => {
+    const fetchSpeechData = async () => {
+      try {
+        const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
+        const LATEST = 0;
+        const response = await getSpeechesByQuizId(mainQuizId);
+
+        if (response.speeches && response.speeches.length > 0) {
+          const latestSpeech = response.speeches[LATEST];
+          setSpeechText(latestSpeech);
+        }
+      } catch (error) {
+        console.error('Failed to fetch speeches:', error);
+      }
+    };
+
+    fetchSpeechData();
+  }, []);
+
   const handleReset = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('audioResult');
     }
-    setResult({ text: '답변이 전송되지 않았습니다.' });
+    setSpeechText({ text: '답변이 전송되지 않았습니다.' });
   };
 
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -40,7 +58,7 @@ export default function ResultPage() {
     alert('생각 톡톡으로 이동 !');
   };
 
-  if (!result) {
+  if (!speechText) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -85,7 +103,7 @@ export default function ResultPage() {
           {/* 메인 콘텐츠 - 좌우 배치 */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             {/* 왼쪽: 나의 답변 */}
-            <MySpeechText result={result} />
+            <MySpeechText result={speechText} />
 
             {/* 오른쪽: 다음 단계 체크리스트 */}
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-fadeIn flex flex-col">
