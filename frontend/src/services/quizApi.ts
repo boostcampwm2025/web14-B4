@@ -61,6 +61,7 @@ export async function fetchCategoryCounts() {
   }
 }
 
+<<<<<<< HEAD
 export async function fetchQuiz(id: number): Promise<Quiz> {
   try {
     const res = await fetch(`${BASE_URL}/quizzes/${id}`, {
@@ -84,6 +85,8 @@ export async function fetchQuiz(id: number): Promise<Quiz> {
   }
 }
 
+=======
+>>>>>>> dbca6bb (chore: 충돌 해결)
 export async function fetchQuizChecklistItems(mainQuizId: number) {
   try {
     const res = await fetch(`${BASE_URL}/api/quizzes/${mainQuizId}/checklist`, {
