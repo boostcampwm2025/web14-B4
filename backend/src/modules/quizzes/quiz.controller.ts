@@ -1,4 +1,11 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  Param,
+  ParseIntPipe,
+  NotFoundException,
+} from '@nestjs/common';
 import { QuizService } from './quiz.service';
 import {
   MainQuizEntity,
@@ -32,6 +39,22 @@ export class QuizController {
     return {
       success: true,
       message: '카테고리 조회를 성공했습니다.',
+      errorCode: null,
+      data: result,
+    };
+  }
+
+  @Get(':id')
+  async getQuiz(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.quizService.findOne(id);
+
+    if (!result) {
+      throw new NotFoundException('퀴즈를 찾을 수 없습니다.');
+    }
+
+    return {
+      success: true,
+      message: '퀴즈 조회를 성공했습니다.',
       errorCode: null,
       data: result,
     };

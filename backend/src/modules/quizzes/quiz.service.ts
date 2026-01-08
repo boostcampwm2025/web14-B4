@@ -149,4 +149,9 @@ export class QuizService {
     });
     return { totalCount, categories };
   }
+
+  findOne(id: number): Promise<MainQuizEntity | undefined> {
+    const quiz = this.mockData.find((q) => q.id === id);
+    return Promise.resolve(quiz as unknown as MainQuizEntity | undefined);
+  }
 }

@@ -59,3 +59,26 @@ export async function fetchCategoryCounts() {
     throw error;
   }
 }
+
+export async function fetchQuiz(id: number): Promise<Quiz> {
+  try {
+    const res = await fetch(`${BASE_URL}/quizzes/${id}`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error('서버와의 통신이 원활하지 않습니다.');
+    }
+
+    const responseBody: ApiResponse<Quiz> = await res.json();
+
+    if (!responseBody.success) {
+      throw new Error(responseBody.message || '퀴즈 정보를 불러오는데 실패했습니다.');
+    }
+
+    return responseBody.data;
+  } catch (error) {
+    console.error('Fetch Quiz Error:', error);
+    throw error;
+  }
+}
