@@ -6,7 +6,7 @@ export type SttResult = {
   text: string;
 };
 
-export type GetSpeechesResponse = {
+export type SpeechesTextResponse = {
   quizId: number;
   speeches: SpeechItemDto[];
 };
@@ -48,11 +48,21 @@ export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Prom
 /**
  * 사용자가 mainQuizId에서 답변했던 녹음 텍스트를 조회
  */
-export async function getSpeechesByQuizId(mainQuizId: number): Promise<GetSpeechesResponse> {
+export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesTextResponse> {
   try {
-    const data = await apiFetch<GetSpeechesResponse>(`/speeches/${mainQuizId}`, {
+    // 해당 Fetch 오류뜸
+    // const data = await apiFetch<GetSpeechesResponse>(`/speeches/${mainQuizId}`, {
+    //   method: 'GET',
+    // });
+
+    const response = await fetch(`http://localhost:8080/api/speeches/${mainQuizId}`, {
       method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
+
+    const data = response.json();
 
     if (!data) {
       throw new Error('음성 데이터 조회에 실패했습니다.');
