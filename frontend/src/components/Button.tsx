@@ -27,18 +27,16 @@ const sizes: Record<ButtonSize, string> = {
   cta: 'h-10 px-8 rounded-xl text-base',
 };
 
-export function Button({
-  className,
-  variant = 'primary',
-  size = 'fixed',
-  type = 'button',
-  ...props
-}: ButtonProps) {
+export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { className, variant = 'primary', size = 'fixed', type = 'button', ...props },
+  ref,
+) {
   return (
     <button
+      ref={ref}
       type={type}
       className={cn(base, variants[variant], sizes[size], className)}
       {...props}
     />
   );
-}
+});
