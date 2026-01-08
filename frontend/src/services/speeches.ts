@@ -51,7 +51,7 @@ export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Prom
 export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesTextResponse> {
   try {
     // 해당 Fetch 오류뜸
-    // const data = await apiFetch<GetSpeechesResponse>(`/speeches/${mainQuizId}`, {
+    // const data = await apiFetch<SpeechesTextResponse>(`/speeches/${mainQuizId}`, {
     //   method: 'GET',
     // });
 
@@ -72,5 +72,50 @@ export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesT
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
     throw new Error(`음성 조회 실패: ${errorMessage}`);
+  }
+}
+
+export async function updateFixedSpeech(
+  mainQuizId: number,
+  solvedQuizId: number,
+  speechText: string,
+) {
+  try {
+    // const data = await apiFetch(`/speeches/${mainQuizId}`, {
+    //   method: 'PATCH',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     solvedQuizId,
+    //     speechText,
+    //   }),
+    // });
+
+    const response = await fetch(`http://localhost:8080/api/speeches/${mainQuizId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        solvedQuizId,
+        speechText,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (!data) {
+      throw new Error('음성 텍스트 수정에 실패했습니다.');
+    }
+
+    return data;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+    throw new Error(`음성 텍스트 수정 실패: ${errorMessage}`);
   }
 }
