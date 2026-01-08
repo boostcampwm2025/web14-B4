@@ -1,3 +1,4 @@
+import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
 
 const BASE_URL = 'http://localhost:8080/api';
@@ -79,6 +80,29 @@ export async function fetchQuiz(id: number): Promise<Quiz> {
     return responseBody.data;
   } catch (error) {
     console.error('Fetch Quiz Error:', error);
+    throw error;
+  }
+}
+
+export async function fetchQuizChecklistItems(mainQuizId: number) {
+  try {
+    const res = await fetch(`${BASE_URL}/quizzes/${mainQuizId}/checklist`, {
+      cache: 'no-store',
+    });
+
+    if (!res.ok) {
+      throw new Error('서버와의 통신이 원활하지 않습니다.');
+    }
+
+    const responseBody: ApiResponse<QuizChecklistResponseDto> = await res.json();
+
+    if (!responseBody.success) {
+      throw new Error(responseBody.message || '체크리스트 목록을 불러오는데 실패했습니다.');
+    }
+
+    return responseBody.data;
+  } catch (error) {
+    console.error('Fetch Quizzes Error:', error);
     throw error;
   }
 }

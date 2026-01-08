@@ -105,7 +105,6 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       if (e instanceof ApiError) {
         errorMessage = e.message;
       }
-
       setMessage(errorMessage);
       setStatus('recorded');
     }
