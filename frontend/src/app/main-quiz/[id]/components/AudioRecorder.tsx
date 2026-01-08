@@ -95,17 +95,15 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     setStatus('submitting');
 
     try {
-      const MAIN_QUIZ_ID = 1;
-      const { solvedQuizId } = await postSpeechesStt(MAIN_QUIZ_ID, audioBlob);
+      const { solvedQuizId } = await postSpeechesStt(quizId, audioBlob);
       setSolvedQuizId(solvedQuizId);
-      router.push(`/checklist/main-quiz/${MAIN_QUIZ_ID}`);
+      router.push(`/checklist/main-quiz/${quizId}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
 
       if (e instanceof ApiError) {
         errorMessage = e.message;
       }
-
       setMessage(errorMessage);
       setStatus('recorded');
     }
