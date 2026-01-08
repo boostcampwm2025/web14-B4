@@ -93,7 +93,12 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     setStatus('submitting');
 
     try {
+<<<<<<< HEAD:frontend/src/app/main-quiz/[id]/components/AudioRecorder.tsx
       const { solvedQuizId } = await postSpeechesStt(audioBlob, quizId);
+=======
+      const MAIN_QUIZ_ID = 1;
+      const { solvedQuizId } = await postSpeechesStt(MAIN_QUIZ_ID, audioBlob);
+>>>>>>> 95b2b12 (fix: post speeches stt 요청 body가 안맞아 발생하는 에러 및 응답 타입):frontend/src/app/main-quiz/components/AudioRecorder.tsx
       router.push(`/checklist/${solvedQuizId}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
