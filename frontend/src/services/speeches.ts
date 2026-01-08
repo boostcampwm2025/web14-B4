@@ -1,6 +1,5 @@
-
-import { SpeechItemDto } from '../app/checklist/types/speeches.types';
 import { apiFetch } from '@/services/http/apiFetch';
+import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 
 export type SttResult = {
   solvedQuizId: number;
@@ -18,11 +17,7 @@ export type SpeechesTextResponse = {
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-<<<<<<< HEAD
-export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Promise<SttResult> {
-=======
 export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Promise<SttResult> {
->>>>>>> 95b2b12 (fix: post speeches stt 요청 body가 안맞아 발생하는 에러 및 응답 타입)
   const formData = new FormData();
   formData.append(
     'audio',
@@ -32,18 +27,12 @@ export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Prom
   );
   formData.append('mainQuizId', mainQuizId.toString());
 
-<<<<<<< HEAD
-  formData.append('mainQuizId', mainQuizId.toString());
-
-  const data = await apiFetch<SttResult>('/speeches/stt', {
-=======
   // const data = await apiFetch<SttResult>('/speeches/stt', {
   //   method: 'POST',
   //   body: formData,
   // });
 
   const response = await fetch('http://localhost:8080/api/speeches/stt', {
->>>>>>> 95b2b12 (fix: post speeches stt 요청 body가 안맞아 발생하는 에러 및 응답 타입)
     method: 'POST',
     body: formData,
   });

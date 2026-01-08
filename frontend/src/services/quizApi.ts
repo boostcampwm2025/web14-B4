@@ -61,10 +61,6 @@ export async function fetchCategoryCounts() {
   }
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4c3350b (chore: 충돌 해결)
 export async function fetchQuiz(id: number): Promise<Quiz> {
   try {
     const res = await fetch(`${BASE_URL}/quizzes/${id}`, {
@@ -88,14 +84,9 @@ export async function fetchQuiz(id: number): Promise<Quiz> {
   }
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> dbca6bb (chore: 충돌 해결)
-=======
->>>>>>> 4c3350b (chore: 충돌 해결)
 export async function fetchQuizChecklistItems(mainQuizId: number) {
   try {
-    const res = await fetch(`${BASE_URL}/api/quizzes/${mainQuizId}/checklist`, {
+    const res = await fetch(`${BASE_URL}/quizzes/${mainQuizId}/checklist`, {
       cache: 'no-store',
     });
 

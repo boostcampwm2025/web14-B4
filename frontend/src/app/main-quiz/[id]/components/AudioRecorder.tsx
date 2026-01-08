@@ -7,6 +7,7 @@ import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speeches';
 import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
+import { useQuizStore } from '@/store/quizStore';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -20,6 +21,7 @@ export type RecordStatus =
 
 export default function AudioRecorder({ quizId }: AudioRecorderProps) {
   const router = useRouter();
+  const { setSolvedQuizId } = useQuizStore();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
@@ -93,13 +95,10 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     setStatus('submitting');
 
     try {
-<<<<<<< HEAD:frontend/src/app/main-quiz/[id]/components/AudioRecorder.tsx
-      const { solvedQuizId } = await postSpeechesStt(audioBlob, quizId);
-=======
       const MAIN_QUIZ_ID = 1;
       const { solvedQuizId } = await postSpeechesStt(MAIN_QUIZ_ID, audioBlob);
->>>>>>> 95b2b12 (fix: post speeches stt 요청 body가 안맞아 발생하는 에러 및 응답 타입):frontend/src/app/main-quiz/components/AudioRecorder.tsx
-      router.push(`/checklist/${solvedQuizId}`);
+      setSolvedQuizId(solvedQuizId);
+      router.push(`/checklist/main-quiz/${MAIN_QUIZ_ID}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
 
@@ -116,6 +115,19 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
   return (
     <div>
+      {/* 제출 중 로딩 모달 */}
+      {isSubmitting && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm space-y-4 text-center">
+            <div className="flex justify-center">
+              <div className="w-12 h-12 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
+            </div>
+            <div className="text-base font-semibold text-gray-900">음성 답변 처리 중...</div>
+            <p className="text-sm text-gray-600">STT 변환이 진행 중입니다. 잠시만 기다려주세요.</p>
+          </div>
+        </div>
+      )}
+
       {/* 마이크 권한 안내 팝업창 */}
       {isConsentOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
