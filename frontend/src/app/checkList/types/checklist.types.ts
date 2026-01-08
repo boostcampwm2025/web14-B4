@@ -21,7 +21,7 @@ export interface QuizChecklistResponseDto {
 }
 
 export interface ChecklistItemDto {
-  checklistItemId: number;
+  checklistItemId: string;
   sortOrder: number;
   content: string;
 }
