@@ -2,12 +2,6 @@ import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
 import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 
-interface Category {
-  id: number;
-  name: string;
-  count: number;
-}
-
 interface PageProps {
   searchParams: Promise<{
     category?: string;

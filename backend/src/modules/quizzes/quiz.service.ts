@@ -9,7 +9,7 @@ interface MockQuiz {
   title: string;
   content: string;
   hint: string;
-  difficulty: DifficultyLevel; 
+  difficulty: DifficultyLevel;
   category: { id: number; name: string };
 }
 
@@ -120,7 +120,10 @@ export class QuizService {
     { id: 3, name: '네트워크' },
   ];
 
-  findAll(category?: string, difficulty?: string): Promise<MainQuizEntity[]> {
+  async findAll(
+    category?: string,
+    difficulty?: DifficultyLevel,
+  ): Promise<MainQuizEntity[]> {
     let results = [...this.mockData];
 
     if (category) {
@@ -141,7 +144,7 @@ export class QuizService {
       ).length;
       return {
         ...category,
-        count: count,
+        count,
       };
     });
     return { totalCount, categories };

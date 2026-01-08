@@ -10,7 +10,7 @@ interface QuizCardProps {
 export default function QuizCard({ quiz }: QuizCardProps) {
   const router = useRouter();
   const handleStartQuiz = () => {
-    router.push(`/quizzes/${quiz.id}`);
+    router.push(`/main-quiz/${quiz.id}`);
   };
 
   return (

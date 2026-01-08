@@ -11,7 +11,7 @@ export type SttResult = {
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
+export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Promise<SttResult> {
   const formData = new FormData();
   formData.append(
     'audio',
@@ -19,6 +19,8 @@ export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
       type: audioBlob.type || 'audio/webm',
     }),
   );
+
+  formData.append('mainQuizId', mainQuizId.toString());
 
   const data = await apiFetch<SttResult>('/speeches/stt', {
     method: 'POST',
