@@ -1,4 +1,4 @@
-import { QuizChecklistResponseDto } from '@/app/checkList/types/checklist.types';
+import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
 
 const BASE_URL = 'http://localhost:8080/api';
