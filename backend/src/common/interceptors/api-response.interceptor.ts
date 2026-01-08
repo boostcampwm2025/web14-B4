@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { CommonResponse } from '../interface/api-response.interface';
+import { ApiResponse } from '../interfaces/api-response.interface';
 
 /**
  * 공통 응답 반환 interceptor
@@ -15,12 +15,12 @@ import { CommonResponse } from '../interface/api-response.interface';
 @Injectable()
 export class ApiResponseInterceptor<T> implements NestInterceptor<
   T,
-  CommonResponse<T>
+  ApiResponse<T>
 > {
   intercept(
     context: ExecutionContext,
     next: CallHandler<T>,
-  ): Observable<CommonResponse<T>> {
+  ): Observable<ApiResponse<T>> {
     return next.handle().pipe(
       map((data) => ({
         success: true,
