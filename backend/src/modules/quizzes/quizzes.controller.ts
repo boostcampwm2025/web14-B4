@@ -44,7 +44,7 @@ export class QuizzesController {
     };
   }
 
-  @Get(':mainQuizeId/checklist')
+  @Get(':mainQuizId/checklist')
   async getQuizChecklist(
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ) {
