@@ -33,17 +33,21 @@ export class UsersService {
     }
 
     // 선택한 체크리스트 저장
-    const progressEntities = dto.checklistItems.map((item) =>
-      this.userChecklistProgressRepository.create({
-        userId,
-        solvedQuizId: dto.solvedQuizId,
-        checklistItemId: item.checklistItemId,
-        isChecked: item.isChecked,
-        checkedAt: new Date(),
-        updatedAt: new Date(),
-      }),
-    );
+    const progressEntities = dto.checklistItems.map((item) => ({
+      userId,
+      solvedQuizId: dto.solvedQuizId,
+      checklistItemId: item.checklistItemId,
+      isChecked: item.isChecked,
+      checkedAt: new Date(),
+      updatedAt: new Date(),
+    }));
 
-    return await this.userChecklistProgressRepository.save(progressEntities);
+    return await this.userChecklistProgressRepository.upsert(
+      progressEntities,
+      {
+        conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
+        skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
+      }
+    );
   }
 }
