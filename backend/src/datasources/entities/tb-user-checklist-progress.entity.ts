@@ -8,10 +8,10 @@ import {
 } from 'typeorm';
 import { TbChecklistItem } from './tb-checklist-item.entity';
 
-@Entity('tb_user_checklist_item')
+@Entity('tb_user_checklist_progress')
 @Unique(['userId', 'checklistItemId'])
 export class TbUserChecklistProgress {
-  @PrimaryGeneratedColumn({ name: 'user_checklist_prgress_id' })
+  @PrimaryGeneratedColumn({ name: 'user_checklist_progress_id' })
   userChecklistProgressId: number;
 
   @Column({ name: 'user_id' })
