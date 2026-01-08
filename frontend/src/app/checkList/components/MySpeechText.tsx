@@ -1,11 +1,20 @@
 'use client';
 
 import { SpeechItemDto } from '../types/speeches.types';
+
 interface MySpeechTextProps {
   speechItem: SpeechItemDto;
+  setSpeechItem: React.Dispatch<React.SetStateAction<SpeechItemDto | null>>;
 }
 
-export default function MySpeechText({ speechItem }: MySpeechTextProps) {
+export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechTextProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setSpeechItem({
+      ...speechItem,
+      speechText: e.target.value,
+    });
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 animate-fadeIn">
       <div className="flex items-center justify-between mb-6">
@@ -26,14 +35,12 @@ export default function MySpeechText({ speechItem }: MySpeechTextProps) {
         </div>
       </div>
 
-      <div
-        className="rounded-xl p-6 border-2 mb-6 min-h-[500px]"
+      <textarea
+        value={speechItem.speechText}
+        onChange={handleChange}
+        className="rounded-xl p-6 border-2 mb-6 w-full min-h-[500px] resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400"
         style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
-      >
-        <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">
-          {speechItem.speechText}
-        </p>
-      </div>
+      />
     </div>
   );
 }
