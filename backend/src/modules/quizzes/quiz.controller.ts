@@ -1,6 +1,9 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { QuizService } from './quiz.service';
-import { MainQuizEntity } from '../../../src/datasources/entities/main-quiz.entity';
+import {
+  MainQuizEntity,
+  DifficultyLevel,
+} from '../../datasources/entities/main-quiz.entity';
 
 @Controller('quizzes')
 export class QuizController {
@@ -9,7 +12,7 @@ export class QuizController {
   @Get()
   async getAllQuizzes(
     @Query('category') category?: string,
-    @Query('difficulty') difficulty?: string,
+    @Query('difficulty') difficulty?: DifficultyLevel,
   ) {
     const result: MainQuizEntity[] = await this.quizService.findAll(
       category,
@@ -24,8 +27,8 @@ export class QuizController {
   }
 
   @Get('categories')
-  async getCategories() {
-    const result = await this.quizService.getCategoriesWithCount();
+  getCategories() {
+    const result = this.quizService.getCategoriesWithCount();
     return {
       success: true,
       message: '카테고리 조회를 성공했습니다.',
