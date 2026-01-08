@@ -7,8 +7,8 @@ export class QuizzesController {
 
   @Get(':mainQuizeId/checklist')
   async getQuizChecklist(
-    @Param('mainQuizeId', ParseIntPipe) mainQuizeId: number,
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ) {
-    return this.quizService.getQuizChecklist(mainQuizeId);
+    return this.quizService.getQuizChecklist(mainQuizId);
   }
 }
