@@ -50,7 +50,7 @@ export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Prom
  */
 export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesTextResponse> {
   try {
-    // 해당 Fetch 오류뜸
+    // TODO : 추후 응답 형식 통일 되면, apiFetch로 변경 필요
     // const data = await apiFetch<SpeechesTextResponse>(`/speeches/${mainQuizId}`, {
     //   method: 'GET',
     // });
@@ -75,12 +75,18 @@ export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesT
   }
 }
 
-export async function updateFixedSpeech(
+/**
+ * 수정한 녹음 텍스트를 서버에 update 한다
+ * @param solvedQuizId 반영할 quiz id
+ * @param speechText 수정된 녹음 텍스트
+ */
+export async function updateSpeechText(
   mainQuizId: number,
   solvedQuizId: number,
   speechText: string,
 ) {
   try {
+    // TODO : 추후 응답 형식 통일 되면, apiFetch로 변경 필요
     // const data = await apiFetch(`/speeches/${mainQuizId}`, {
     //   method: 'PATCH',
     //   headers: {
