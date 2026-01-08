@@ -3,9 +3,7 @@ version: '3.8'
 services:
   # Backend (NestJS)
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME}/server-app:latest
     env_file:
       - .env.server
     container_name: nestjs-backend
@@ -13,7 +11,6 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=production
-
     networks:
       - app-network
     restart: unless-stopped
@@ -22,9 +19,7 @@ services:
 
   # Frontend (Next.js)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ${DOCKER_USERNAME}/client-app:latest
     env_file:
       - .env.server
     container_name: nextjs-frontend
