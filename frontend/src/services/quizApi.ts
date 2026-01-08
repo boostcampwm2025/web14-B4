@@ -1,3 +1,4 @@
+import { QuizChecklistResponseDto } from '@/app/checkList/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
 
 const BASE_URL = 'http://localhost:8080';
@@ -70,7 +71,7 @@ export async function fetchQuizChecklistItems(mainQuizId: number) {
       throw new Error('서버와의 통신이 원활하지 않습니다.');
     }
 
-    const responseBody: ApiResponse<Quiz[]> = await res.json();
+    const responseBody: ApiResponse<QuizChecklistResponseDto> = await res.json();
 
     if (!responseBody.success) {
       throw new Error(responseBody.message || '체크리스트 목록을 불러오는데 실패했습니다.');
