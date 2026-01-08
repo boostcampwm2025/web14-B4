@@ -4,7 +4,7 @@ import { SpeechItemDto } from '../types/speeches.types';
 
 interface MySpeechTextProps {
   speechItem: SpeechItemDto;
-  setSpeechItem: React.Dispatch<React.SetStateAction<SpeechItemDto | null>>;
+  setSpeechItem: React.Dispatch<React.SetStateAction<SpeechItemDto>>;
 }
 
 export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechTextProps) {
