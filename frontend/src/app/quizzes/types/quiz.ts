@@ -10,6 +10,6 @@ export interface Quiz {
   title: string;
   content: string;
   hint: string | null;
-  difficultyLevel: Difficulty;
+  difficulty: Difficulty;
   category: QuizCategory;
 }
