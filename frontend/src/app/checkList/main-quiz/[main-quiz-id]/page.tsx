@@ -16,6 +16,7 @@ const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
 };
 
 export default function ResultPage() {
+  const router = useRouter();
   const params = useParams();
   const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
   const { solvedQuizId } = useQuizStore();
@@ -52,6 +53,7 @@ export default function ResultPage() {
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
+      router.push(`/main-quiz/${mainQuizId}`);
     } else {
       e.preventDefault(); // 네비게이션 취소
     }
