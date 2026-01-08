@@ -1,0 +1,15 @@
+export type Difficulty = '상' | '중' | '하';
+
+export interface QuizCategory {
+  id: number;
+  name: string;
+}
+
+export interface Quiz {
+  id: number;
+  title: string;
+  content: string;
+  hint: string | null;
+  difficultyLevel: Difficulty;
+  category: QuizCategory;
+}

@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { ValidationPipe } from '@nestjs/common';
@@ -10,12 +11,13 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true, // ✅ 이게 있어야 타입 변환됨
+      transform: true,
       transformOptions: {
-        enableImplicitConversion: true, // ✅ 암시적 변환 활성화
+        enableImplicitConversion: true,
       },
     }),
   );
+
   app.enableCors({
     origin: ['http://localhost:3000', true],
     credentials: true,

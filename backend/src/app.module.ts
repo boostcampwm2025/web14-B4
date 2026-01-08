@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RecordsModule } from './modules/records/records.module';
 import { QuizModule } from './modules/quizzes/quizzes.module';
+import { SpeechesModule } from './modules/speeches/speeches.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
@@ -42,9 +42,9 @@ import { UsersModule } from './modules/users/users.module';
       },
       inject: [ConfigService],
     }),
-    RecordsModule,
     QuizModule,
     UsersModule,
+    SpeechesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
