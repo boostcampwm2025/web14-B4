@@ -6,15 +6,15 @@ import {
   ParseIntPipe,
   NotFoundException,
 } from '@nestjs/common';
-import { QuizService } from './quiz.service';
+import { QuizzesService } from './quizzes.service';
 import {
   MainQuizEntity,
   DifficultyLevel,
 } from '../../datasources/entities/main-quiz.entity';
 
 @Controller('quizzes')
-export class QuizController {
-  constructor(private readonly quizService: QuizService) {}
+export class QuizzesController {
+  constructor(private readonly quizService: QuizzesService) {}
 
   @Get()
   async getAllQuizzes(
@@ -42,6 +42,13 @@ export class QuizController {
       errorCode: null,
       data: result,
     };
+  }
+
+  @Get(':mainQuizeId/checklist')
+  async getQuizChecklist(
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
+  ) {
+    return this.quizService.getQuizChecklist(mainQuizId);
   }
 
   @Get(':id')
