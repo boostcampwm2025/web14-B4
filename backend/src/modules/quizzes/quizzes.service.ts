@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { TbMainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { QuizChecklistResponseDto } from './dto/quiz-response.dto';
 import {
   MainQuizEntity,
   DifficultyLevel,
@@ -9,12 +11,12 @@ interface MockQuiz {
   title: string;
   content: string;
   hint: string;
-  difficulty: DifficultyLevel; 
+  difficulty: DifficultyLevel;
   category: { id: number; name: string };
 }
 
 @Injectable()
-export class QuizService {
+export class QuizzesService {
   private readonly mockData: MockQuiz[] = [
     {
       id: 1,
@@ -120,7 +122,12 @@ export class QuizService {
     { id: 3, name: '네트워크' },
   ];
 
-  findAll(category?: string, difficulty?: string): Promise<MainQuizEntity[]> {
+  constructor(private readonly quizRepository: TbMainQuizRepository) {}
+
+  async findAll(
+    category?: string,
+    difficulty?: DifficultyLevel,
+  ): Promise<MainQuizEntity[]> {
     let results = [...this.mockData];
 
     if (category) {
@@ -141,9 +148,39 @@ export class QuizService {
       ).length;
       return {
         ...category,
-        count: count,
+        count,
       };
     });
     return { totalCount, categories };
+  }
+
+  findOne(id: number): Promise<MainQuizEntity | undefined> {
+    const quiz = this.mockData.find((q) => q.id === id);
+    return Promise.resolve(quiz as unknown as MainQuizEntity | undefined);
+  }
+
+  async getQuizChecklist(mainQuizId: number) {
+    const quiz = await this.quizRepository.findOneWithChecklist(mainQuizId);
+
+    if (!quiz) {
+      throw new NotFoundException(`해당 퀴즈를 찾을 수 없습니다.`);
+    }
+
+    if (quiz.checklistItems.length <= 0)
+      throw new NotFoundException(
+        `해당 퀴즈에 대한 체크리스트가 존재하지 않습니다.`,
+      );
+
+    return new QuizChecklistResponseDto({
+      mainQuizId: quiz.mainQuizId,
+      title: quiz.title,
+      content: quiz.content,
+      difficultyLevel: quiz.difficultyLevel,
+      checklistItems: quiz.checklistItems.map((item) => ({
+        checklistItemId: item.checklistItemId,
+        sortOrder: item.sortOrder,
+        content: item.content,
+      })),
+    });
   }
 }

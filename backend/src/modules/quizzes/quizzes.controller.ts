@@ -1,0 +1,69 @@
+import {
+  Controller,
+  Get,
+  Query,
+  Param,
+  ParseIntPipe,
+  NotFoundException,
+} from '@nestjs/common';
+import { QuizzesService } from './quizzes.service';
+import {
+  MainQuizEntity,
+  DifficultyLevel,
+} from '../../datasources/entities/main-quiz.entity';
+
+@Controller('quizzes')
+export class QuizzesController {
+  constructor(private readonly quizService: QuizzesService) {}
+
+  @Get()
+  async getAllQuizzes(
+    @Query('category') category?: string,
+    @Query('difficulty') difficulty?: DifficultyLevel,
+  ) {
+    const result: MainQuizEntity[] = await this.quizService.findAll(
+      category,
+      difficulty,
+    );
+    return {
+      success: true,
+      message: '퀴즈 목록 조회를 성공했습니다.',
+      errorCode: null,
+      data: result,
+    };
+  }
+
+  @Get('categories')
+  getCategories() {
+    const result = this.quizService.getCategoriesWithCount();
+    return {
+      success: true,
+      message: '카테고리 조회를 성공했습니다.',
+      errorCode: null,
+      data: result,
+    };
+  }
+
+  @Get(':mainQuizeId/checklist')
+  async getQuizChecklist(
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
+  ) {
+    return this.quizService.getQuizChecklist(mainQuizId);
+  }
+
+  @Get(':id')
+  async getQuiz(@Param('id', ParseIntPipe) id: number) {
+    const result = await this.quizService.findOne(id);
+
+    if (!result) {
+      throw new NotFoundException('퀴즈를 찾을 수 없습니다.');
+    }
+
+    return {
+      success: true,
+      message: '퀴즈 조회를 성공했습니다.',
+      errorCode: null,
+      data: result,
+    };
+  }
+}

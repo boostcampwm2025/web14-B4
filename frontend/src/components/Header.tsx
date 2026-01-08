@@ -3,7 +3,7 @@ import Image from 'next/image';
 
 export default function Header() {
   return (
-    <header className="flex justify-between items-center px-10 py-6 bg-white border-b border-[var(--color-gray-light)]">
+    <header className="flex justify-between items-center px-10 py-5 bg-white border-b border-[var(--color-gray-light)]">
       <Link href="/" className="flex items-center">
         <Image src="/logo.svg" alt="CS 뽁뽁 로고" width={50} height={50} />
       </Link>

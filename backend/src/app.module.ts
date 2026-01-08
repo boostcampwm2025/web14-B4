@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { QuizModule } from './modules/quizzes/quizzes.module';
 import { SpeechesModule } from './modules/speeches/speeches.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -21,10 +25,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
+        extra: {
+          // bigint를 string이 아닌 number로 파싱
+          parseInt8: true,
+        },
       }),
+      async dataSourceFactory(options) {
+        if (!options) {
+          throw new Error('Invalid options passed');
+        }
+        const dataSource = new DataSource(options);
+        await dataSource.initialize();
+
+        // DataSource를 트랜잭션 지원 DataSource로 래핑
+        return addTransactionalDataSource(dataSource);
+      },
       inject: [ConfigService],
     }),
+    UsersModule,
     SpeechesModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],

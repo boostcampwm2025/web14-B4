@@ -9,13 +9,17 @@ import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
 import { useQuizStore } from '@/store/quizStore';
 
+interface AudioRecorderProps {
+  quizId: number;
+}
+
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
   | 'recording' // 녹음 중
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
 
-export default function AudioRecorder() {
+export default function AudioRecorder({ quizId }: AudioRecorderProps) {
   const router = useRouter();
   const { setSolvedQuizId } = useQuizStore();
 
