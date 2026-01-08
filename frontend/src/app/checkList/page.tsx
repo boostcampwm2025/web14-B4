@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import MySpeechText from './components/MySpeechText';
-import { getSpeechesByQuizId, updateFixedSpeech } from '@/services/speeches';
+import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
 import { SpeechItemDto } from './types/speeches.types';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
@@ -34,7 +34,7 @@ export default function ResultPage() {
     try {
       const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
       if (!speechItem) return;
-      await updateFixedSpeech(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
+      await updateSpeechText(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
       alert('음성 답변이 저장되었습니다!');
       // 다음 페이지로 이동 또는 다른 처리
     } catch (error) {
