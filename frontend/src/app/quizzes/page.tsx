@@ -2,6 +2,12 @@ import { fetchQuizzes, fetchCategoryCounts } from '@/src/services/quizApi';
 import QuizCard from '@/src/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 
+interface Category {
+  id: number;
+  name: string;
+  count: number;
+}
+
 interface PageProps {
   searchParams: Promise<{
     category?: string;
@@ -118,7 +124,7 @@ export default async function QuizPage(props: PageProps) {
                 {totalCount}
               </span>
             </Link>
-            {categories.map((cat: any) => (
+            {categories.map((cat: Category) => (
               <Link
                 key={cat.id}
                 href={createQueryString('category', cat.name)}

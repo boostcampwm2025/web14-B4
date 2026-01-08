@@ -19,14 +19,14 @@ export default function QuizCard({ quiz }: QuizCardProps) {
         <h3 className="text-2xl font-bold mb-5 text-gray-800">{quiz.title}</h3>
         <span
           className={`px-3 py-2 rounded-full text-m ${
-            quiz.difficultyLevel === '상'
+            quiz.difficulty === '상'
               ? 'bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]'
-              : quiz.difficultyLevel === '중'
+              : quiz.difficulty === '중'
                 ? 'bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]'
                 : 'bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]'
           }`}
         >
-          {quiz.difficultyLevel}
+          {quiz.difficulty}
         </span>
       </div>
 

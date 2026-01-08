@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SpeechesModule } from './modules/speeches/speeches.module';
+import { QuizModule } from './modules/quizzes/quiz.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -25,6 +26,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
     }),
     SpeechesModule,
+    QuizModule,
   ],
   controllers: [AppController],
   providers: [AppService],
