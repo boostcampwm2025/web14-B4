@@ -17,7 +17,7 @@ export type SpeechesTextResponse = {
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
+export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Promise<SttResult> {
   const formData = new FormData();
   formData.append(
     'audio',
@@ -25,22 +25,37 @@ export async function postSpeechesStt(audioBlob: Blob): Promise<SttResult> {
       type: audioBlob.type || 'audio/webm',
     }),
   );
+  formData.append('mainQuizId', mainQuizId.toString());
 
-  const data = await apiFetch<SttResult>('/speeches/stt', {
+  // const data = await apiFetch<SttResult>('/speeches/stt', {
+  //   method: 'POST',
+  //   body: formData,
+  // });
+
+  const response = await fetch('http://localhost:8080/api/speeches/stt', {
     method: 'POST',
     body: formData,
   });
 
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const data = (await response.json()) as SttResult;
   if (!data) {
     throw new Error('STT 응답 데이터가 없습니다.');
   }
 
   // 런타임 방어
-  if (typeof data.solvedQuizId !== 'number' || typeof data.text !== 'string') {
+  const solvedQuizId =
+    typeof data.solvedQuizId === 'string' ? Number(data.solvedQuizId) : data.solvedQuizId;
+  if (typeof solvedQuizId !== 'number' || isNaN(solvedQuizId) || typeof data.text !== 'string') {
     throw new Error('STT 응답 형식이 올바르지 않습니다.');
   }
 
-  return data;
+  return {
+    solvedQuizId,
+    text: data.text,
+  };
 }
 
 /**
