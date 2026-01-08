@@ -1,8 +1,14 @@
 import { apiFetch } from '@/services/http/apiFetch';
+import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 
 export type SttResult = {
   solvedQuizId: number;
   text: string;
+};
+
+export type GetSpeechesResponse = {
+  quizId: number;
+  speeches: SpeechItemDto[];
 };
 
 /**
@@ -37,4 +43,24 @@ export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Prom
   }
 
   return data;
+}
+
+/**
+ * 사용자가 mainQuizId에서 답변했던 녹음 텍스트를 조회
+ */
+export async function getSpeechesByQuizId(mainQuizId: number): Promise<GetSpeechesResponse> {
+  try {
+    const data = await apiFetch<GetSpeechesResponse>(`/speeches/${mainQuizId}`, {
+      method: 'GET',
+    });
+
+    if (!data) {
+      throw new Error('음성 데이터 조회에 실패했습니다.');
+    }
+
+    return data;
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
+    throw new Error(`음성 조회 실패: ${errorMessage}`);
+  }
 }

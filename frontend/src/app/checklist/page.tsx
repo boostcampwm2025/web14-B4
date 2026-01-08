@@ -1,56 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChecklistItem, ChecklistItemDto, QuizChecklistResponseDto } from './types/checklist.types';
-import { fetchQuizChecklistItems } from '@/services/quizApi';
-import { Checklist } from './components/checklist';
 import MySpeechText from './components/MySpeechText';
-
-interface STTResponse {
-  text: string;
-}
+import { getSpeechesByQuizId } from '@/services/speeches';
+import { SpeechItemDto } from './types/speeches.types';
 
 export default function ResultPage() {
-  const mainQuizId = 1;
-  const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
-  const [options, setOptions] = useState<ChecklistItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  // API에서 체크리스트 아이템 가져오기
-  useEffect(() => {
-    const loadChecklistItems = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchQuizChecklistItems(mainQuizId);
-
-        if (data && data.checklistItems) {
-          // API 응답을 ChecklistItem 형식으로 변환
-          const items: ChecklistItem[] = data.checklistItems.map((item: ChecklistItemDto) => ({
-            id: item.checklistItemId,
-            content: item.content,
-            checked: false, // 초기값은 모두 체크 해제
-          }));
-          setOptions(items);
-        }
-      } catch (error) {
-        console.error('체크리스트 로딩 실패:', error);
-        // 에러 발생 시 기본 데이터 유지 (선택사항)
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadChecklistItems();
-  }, [mainQuizId]);
-
-  const handleOptionChange = (optionId: string, checked: boolean) => {
-    setOptions((prev) =>
-      prev.map((option) => (option.id === optionId ? { ...option, checked } : option)),
-    );
-  };
-
-  const [result, setResult] = useState<STTResponse | null>(() => {
+  const [speechText, setSpeechText] = useState<SpeechItemDto | null>(() => {
     // 클라이언트 사이드에서만 실행
     if (typeof window !== 'undefined') {
       const savedResult = localStorage.getItem('audioResult');
@@ -61,11 +18,31 @@ export default function ResultPage() {
     return { text: '답변이 전송되지 않았습니다.' };
   });
 
+  // 음성 녹음 텍스트 불러오기
+  useEffect(() => {
+    const fetchSpeechData = async () => {
+      try {
+        const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
+        const LATEST = 0;
+        const response = await getSpeechesByQuizId(mainQuizId);
+
+        if (response.speeches && response.speeches.length > 0) {
+          const latestSpeech = response.speeches[LATEST];
+          setSpeechText(latestSpeech);
+        }
+      } catch (error) {
+        console.error('Failed to fetch speeches:', error);
+      }
+    };
+
+    fetchSpeechData();
+  }, []);
+
   const handleReset = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('audioResult');
     }
-    setResult({ text: '답변이 전송되지 않았습니다.' });
+    setSpeechText({ text: '답변이 전송되지 않았습니다.' });
   };
 
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -81,7 +58,7 @@ export default function ResultPage() {
     alert('생각 톡톡으로 이동 !');
   };
 
-  if (!result) {
+  if (!speechText) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
@@ -126,17 +103,168 @@ export default function ResultPage() {
           {/* 메인 콘텐츠 - 좌우 배치 */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             {/* 왼쪽: 나의 답변 */}
-            <MySpeechText result={result} />
+            <MySpeechText result={speechText} />
 
             {/* 오른쪽: 다음 단계 체크리스트 */}
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-fadeIn flex flex-col">
-              <Checklist
-                username="철수"
-                selectedFeeling={selectedFeeling}
-                options={options}
-                onFeelingChange={setSelectedFeeling}
-                onOptionChange={handleOptionChange}
-              />
+              <h3
+                className="text-xl md:text-2xl font-bold mb-6 flex items-center gap-2"
+                style={{ color: '#4278FF' }}
+              >
+                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                체크리스트
+              </h3>
+
+              <div className="space-y-4 md:space-y-6 flex-grow">
+                <div className="bg-blue-50 rounded-xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: '#4278FF' }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">
+                        {' '}
+                        스택이 후입선출(LIFO) 구조임을 명확히 설명했다
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 rounded-xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: '#4278FF' }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">
+                        {' '}
+                        스택이 후입선출(LIFO) 구조임을 명확히 설명했다
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 rounded-xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: '#4278FF' }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">
+                        {' '}
+                        스택이 후입선출(LIFO) 구조임을 명확히 설명했다
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-blue-50 rounded-xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: '#4278FF' }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">
+                        {' '}
+                        스택이 후입선출(LIFO) 구조임을 명확히 설명했다
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-blue-50 rounded-xl p-4 md:p-6 border-2 border-blue-100 hover:border-blue-300 transition">
+                  <div className="flex items-start gap-3">
+                    <div
+                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: '#4278FF' }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-800 mb-1 text-base md:text-lg">
+                        {' '}
+                        스택이 후입선출(LIFO) 구조임을 명확히 설명했다
+                      </h4>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
