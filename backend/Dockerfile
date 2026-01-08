@@ -9,7 +9,6 @@ WORKDIR /app
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
-
 RUN npm run build
 
 EXPOSE 8080
