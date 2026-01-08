@@ -17,7 +17,7 @@ export type SpeechesTextResponse = {
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-export async function postSpeechesStt(audioBlob: Blob, mainQuizId: number): Promise<SttResult> {
+export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Promise<SttResult> {
   const formData = new FormData();
   formData.append(
     'audio',
