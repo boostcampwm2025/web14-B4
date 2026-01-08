@@ -1,5 +1,5 @@
 export interface SpeechItemDto {
   solvedQuizId: number;
   speechText: string;
-  createdAt: Date;
+  createdAt: Date | null;
 }

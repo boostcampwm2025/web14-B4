@@ -1,12 +1,11 @@
 'use client';
 
+import { SpeechItemDto } from '../types/speeches.types';
 interface MySpeechTextProps {
-  result: {
-    text: string;
-  };
+  speechItem: SpeechItemDto;
 }
 
-export default function MySpeechText({ result }: MySpeechTextProps) {
+export default function MySpeechText({ speechItem }: MySpeechTextProps) {
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 animate-fadeIn">
       <div className="flex items-center justify-between mb-6">
@@ -23,7 +22,7 @@ export default function MySpeechText({ result }: MySpeechTextProps) {
               d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>{result.text.length}자</span>
+          <span>{speechItem.speechText.length}자</span>
         </div>
       </div>
 
@@ -31,7 +30,9 @@ export default function MySpeechText({ result }: MySpeechTextProps) {
         className="rounded-xl p-6 border-2 mb-6 min-h-[500px]"
         style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
       >
-        <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">{result.text}</p>
+        <p className="text-gray-800 text-lg leading-relaxed whitespace-pre-wrap">
+          {speechItem.speechText}
+        </p>
       </div>
     </div>
   );
