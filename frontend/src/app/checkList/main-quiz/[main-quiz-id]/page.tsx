@@ -7,7 +7,7 @@ import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
