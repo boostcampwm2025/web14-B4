@@ -40,4 +40,18 @@ export class TbMainQuiz {
 
   @OneToMany(() => TbChecklistItem, (item) => item.mainQuiz)
   checklistItems: TbChecklistItem[];
+
+  getChecklistItemIds(): number[] {
+    return this.checklistItems.map((item) => item.checklistItemId);
+  }
+
+  validateChecklistItem(checklistItemId: number): boolean {
+    return this.checklistItems.some(
+      (item) => Number(item.checklistItemId) === checklistItemId,
+    );
+  }
+
+  validateAllChecklistItems(checklistItemIds: number[]): boolean {
+    return checklistItemIds.every((id) => this.validateChecklistItem(id));
+  }
 }
