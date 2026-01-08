@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import MySpeechText from './components/MySpeechText';
-import { getSpeechesByQuizId } from '@/services/speeches';
+import { getSpeechesByQuizId, updateFixedSpeech } from '@/services/speeches';
 import { SpeechItemDto } from './types/speeches.types';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
@@ -30,6 +30,20 @@ export default function ResultPage() {
     fetchSpeechData();
   }, []);
 
+  const handleUpdateSpeech = async () => {
+    try {
+      const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
+      if (!speechItem) return;
+      await updateFixedSpeech(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
+      alert('음성 답변이 저장되었습니다!');
+      // 다음 페이지로 이동 또는 다른 처리
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '음성 답변 저장에 실패했습니다.';
+      alert(message);
+      console.error('Failed to update speech:', error);
+    }
+  };
+
   const handleReset = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem('audioResult');
@@ -47,7 +61,7 @@ export default function ResultPage() {
   };
 
   const handleNewConversion = () => {
-    alert('생각 톡톡으로 이동 !');
+    handleUpdateSpeech();
   };
 
   return (
