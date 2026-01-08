@@ -91,7 +91,7 @@ export default function AudioRecorder() {
     try {
       const MAIN_QUIZ_ID = 1;
       const { solvedQuizId } = await postSpeechesStt(MAIN_QUIZ_ID, audioBlob);
-      router.push(`/checklist/${solvedQuizId}`);
+      router.push(`/checklist/main-quiz/${MAIN_QUIZ_ID}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
 

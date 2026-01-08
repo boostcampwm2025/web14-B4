@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import MySpeechText from './components/MySpeechText';
 import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
-import { SpeechItemDto } from './types/speeches.types';
+import MySpeechText from '../../components/MySpeechText';
+import { SpeechItemDto } from '../../types/speeches.types';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -13,11 +14,12 @@ const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
 };
 
 export default function ResultPage() {
+  const params = useParams();
+  const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
   const [speechItem, setSpeechItem] = useState<SpeechItemDto | null>(DEFAULT_SPEECH_ITEM);
   // 음성 녹음 텍스트 불러오기
   useEffect(() => {
     const fetchSpeechData = async () => {
-      const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
       const LATEST = 0;
 
       const response = await getSpeechesByQuizId(mainQuizId);
@@ -32,7 +34,6 @@ export default function ResultPage() {
 
   const handleUpdateSpeech = async () => {
     try {
-      const mainQuizId = 1; // TODO: 실제로는 동적으로 가져와야 함
       if (!speechItem) return;
       await updateSpeechText(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
       alert('음성 답변이 저장되었습니다!');
