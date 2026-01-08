@@ -64,7 +64,7 @@ export default function ResultPage() {
           {/* 메인 콘텐츠 - 좌우 배치 */}
           <div className="grid grid-cols-2 gap-6 mb-8">
             {/* 왼쪽: 나의 답변 */}
-            <MySpeechText speechItem={speechItem} />
+            <MySpeechText speechItem={speechItem} setSpeechItem={setSpeechItem} />
 
             {/* 오른쪽: 다음 단계 체크리스트 */}
             <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-fadeIn flex flex-col">
