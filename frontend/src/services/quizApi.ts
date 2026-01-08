@@ -1,4 +1,4 @@
-import { Quiz } from '@/src/app/quizzes/types/quiz';
+import { Quiz } from '@/app/quizzes/types/quiz';
 
 const BASE_URL = 'http://localhost:8080/api';
 

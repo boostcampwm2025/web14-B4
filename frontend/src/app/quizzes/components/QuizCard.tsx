@@ -1,6 +1,6 @@
 'use client';
 
-import { Quiz } from '@/src/app/quizzes/types/quiz';
+import { Quiz } from '@/app/quizzes/types/quiz';
 import { useRouter } from 'next/navigation';
 
 interface QuizCardProps {

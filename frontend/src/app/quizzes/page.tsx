@@ -1,5 +1,5 @@
-import { fetchQuizzes, fetchCategoryCounts } from '@/src/services/quizApi';
-import QuizCard from '@/src/app/quizzes/components/QuizCard';
+import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
+import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 
 interface Category {
@@ -13,6 +13,12 @@ interface PageProps {
     category?: string;
     difficulty?: string;
   }>;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  count: number;
 }
 
 export default async function QuizPage(props: PageProps) {
