@@ -1,5 +1,5 @@
 
-import { SpeechItemDto } from '../app/temp_checklist/types/speeches.types.js';
+import { SpeechItemDto } from '../app/checklist/types/speeches.types.js';
 import { apiFetch } from '@/services/http/apiFetch';
 
 export type SttResult = {
