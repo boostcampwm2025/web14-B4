@@ -1,5 +1,3 @@
-
-import { SpeechItemDto } from '../app/checklist/types/speeches.types.js';
 import { apiFetch } from '@/services/http/apiFetch';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 
