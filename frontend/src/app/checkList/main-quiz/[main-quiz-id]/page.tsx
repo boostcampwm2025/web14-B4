@@ -7,6 +7,7 @@ import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
+import { useRouter } from 'next/router';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -18,7 +19,7 @@ export default function ResultPage() {
   const params = useParams();
   const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
   const { solvedQuizId } = useQuizStore();
-  const [speechItem, setSpeechItem] = useState<SpeechItemDto | null>(DEFAULT_SPEECH_ITEM);
+  const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
   // 음성 녹음 텍스트 불러오기
   useEffect(() => {
     const fetchSpeechData = async () => {
@@ -34,6 +35,7 @@ export default function ResultPage() {
     fetchSpeechData();
   }, []);
 
+  // 음성 녹음 텍스트 업데이트
   const handleUpdateSpeech = async () => {
     try {
       if (!speechItem) return;
@@ -47,17 +49,9 @@ export default function ResultPage() {
     }
   };
 
-  const handleReset = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('audioResult');
-    }
-    setSpeechItem({ text: '답변이 전송되지 않았습니다...' });
-  };
-
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
-      handleReset();
     } else {
       e.preventDefault(); // 네비게이션 취소
     }
