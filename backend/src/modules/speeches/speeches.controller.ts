@@ -17,6 +17,7 @@ import { UpdateSpeechTextRequestDto } from './dto/UpdateSpeechTextRequestDto.dto
 import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.dto';
 import { GetSpeechesResponseDto } from './dto/GetSpeechesResponseDto.dto';
 import { SpeechItemDto } from './dto/SpeechItemDto.dto';
+import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 
 // TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
 const TEST_USER_ID = 1;
@@ -32,7 +33,7 @@ export class SpeechesController {
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<SttResponseDto> {
     if (!recordFile) {
-      throw new BadRequestException('요청에 음성 파일이 포함되지 않았습니다.');
+      throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
     const result = await this.recordsService.speechToText(
