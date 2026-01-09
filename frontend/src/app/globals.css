@@ -25,3 +25,7 @@
   --color-difficulty-low-bg: #a7f1b0;
   --color-difficulty-low-text: #1e912c;
 }
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
