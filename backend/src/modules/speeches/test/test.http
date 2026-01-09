@@ -1,0 +1,27 @@
+### STT 요청 테스트
+POST http://localhost:8080/api/speeches/stt
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; name="mainQuizId"
+
+1
+--boundary
+Content-Disposition: form-data; name="audio"; filename="test.webm"
+Content-Type: audio/webm
+
+< ./test.webm
+--boundary--
+
+
+### speechText 수정 (PATCH)
+PATCH http://localhost:8080/api/speeches/1
+Content-Type: application/json
+
+{
+  "solvedQuizId": 1,
+  "speechText": "수정된 음성 인식 텍스트입니다."
+}
+
+### mainQuizId로 speeches 조회 (GET)
+GET http://localhost:8080/api/speeches/1

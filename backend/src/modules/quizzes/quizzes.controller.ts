@@ -15,7 +15,7 @@ import {
 @Controller('quizzes')
 export class QuizzesController {
   constructor(private readonly quizService: QuizzesService) {}
-
+  
   @Get()
   async getAllQuizzes(
     @Query('category') category?: string,
@@ -44,11 +44,17 @@ export class QuizzesController {
     };
   }
 
-  @Get(':mainQuizeId/checklist')
+  @Get(':mainQuizId/checklist')
   async getQuizChecklist(
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ) {
-    return this.quizService.getQuizChecklist(mainQuizId);
+    const result = await this.quizService.getQuizChecklist(mainQuizId);
+    return {
+      success: true,
+      message: '성공했습니다.',
+      errorCode: null,
+      data: result,
+    };
   }
 
   @Get(':id')
