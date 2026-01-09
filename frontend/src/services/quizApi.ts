@@ -1,7 +1,10 @@
 import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
 
-const BASE_URL = 'http://localhost:8080/api';
+const isServer = typeof window === 'undefined';
+const BASE_URL = isServer 
+  ? (process.env.API_URL || 'http://backend:8080/api') 
+  : '/api';
 
 interface ApiResponse<T> {
   success: boolean;
