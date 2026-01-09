@@ -1,0 +1,4 @@
+{
+  "typescript.preferences.importModuleSpecifierFormat": "non-relative",
+  "javascript.preferences.importModuleSpecifierFormat": "non-relative"
+}

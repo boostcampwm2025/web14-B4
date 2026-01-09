@@ -26,6 +26,8 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T |
     throw new ApiError('서버 응답을 해석할 수 없습니다.', res.status, null);
   }
 
+  console.log(json);
+
   if (!res.ok || !json.success) {
     throw new ApiError(json.message || `요청 실패 (${res.status})`, res.status, json.errorCode);
   }

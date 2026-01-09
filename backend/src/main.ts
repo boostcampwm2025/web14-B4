@@ -3,11 +3,11 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
+  initializeTransactionalContext();
   const app = await NestFactory.create(AppModule);
-
-  // 전역 Validation Pipe 설정
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
