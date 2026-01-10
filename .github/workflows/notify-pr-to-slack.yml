@@ -31,7 +31,7 @@ jobs:
 
           payload=$(cat <<EOF
           {
-            "text": "📝 *PR 생성 알림* \n - *작성자* : ${PR_CREATOR} \n - *제목* : ${PR_TITLE}${LABELS_TEXT}\n - *브랜치* : ${COMPARE_BRANCH} → ${BASE_BRANCH} \n \n - *링크* : ${PR_URL}"
+            "text": "📝 *PR 생성 알림* \n * `${PR_CREATOR}`* 님이 PR을 생성하였어요. \n \n - *제목* : ${PR_TITLE}${LABELS_TEXT}\n - *브랜치* : `${COMPARE_BRANCH}` → `${BASE_BRANCH}` \n - *링크* : ${PR_URL}"
           }
           EOF
           )
