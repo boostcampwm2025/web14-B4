@@ -1,0 +1,42 @@
+# PR 등록시, Slack 채널에 자동 알림
+name: Notify PR Opened to Slack
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send PR opened notification to Slack
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_CREATOR: ${{ github.event.pull_request.user.login }}
+
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+          COMPARE_BRANCH: ${{ github.event.pull_request.head.ref }}
+          LABELS: ${{ join(github.event.pull_request.labels.*.name, ', ') }}
+
+        run: |
+          if [ -z "${LABELS}" ]; then
+            LABELS_TEXT=""
+          else
+            LABELS_TEXT=" [${LABELS}]"
+          fi
+
+          payload=$(cat <<EOF
+          {
+            "text": "📝 *PR 생성 알림* \n - *작성자* : ${PR_CREATOR} \n - *제목* : ${PR_TITLE}${LABELS_TEXT}\n - *브랜치* : ${COMPARE_BRANCH} → ${BASE_BRANCH} \n \n - *링크* : ${PR_URL}"
+          }
+          EOF
+          )
+
+          curl -X POST \
+            -H "Content-type: application/json" \
+            --data "${payload}" \
+            ${SLACK_WEBHOOK_URL}
