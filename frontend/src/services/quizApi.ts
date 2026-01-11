@@ -1,5 +1,6 @@
 import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
 import { Quiz } from '@/app/quizzes/types/quiz';
+import { CommonResponse } from './http/types';
 
 const isServer = typeof window === 'undefined';
 const BASE_URL = isServer 
@@ -11,6 +12,15 @@ interface ApiResponse<T> {
   message: string;
   errorCode: string | null;
   data: T;
+}
+
+export interface ChecklistSubmitRequestDto {
+  mainQuizId: number;
+  solvedQuizId: number;
+  checklistItems: {
+    checklistItemId: number;
+    isChecked: boolean;
+  }[];
 }
 
 export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
@@ -46,10 +56,6 @@ export async function fetchCategoryCounts() {
     const res = await fetch(`${BASE_URL}/quizzes/categories`, {
       cache: 'no-store',
     });
-
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
 
     const responseBody = await res.json();
 
@@ -89,13 +95,9 @@ export async function fetchQuiz(id: number): Promise<Quiz> {
 
 export async function fetchQuizChecklistItems(mainQuizId: number) {
   try {
-    const res = await fetch(`${BASE_URL}/quizzes/${mainQuizId}/checklist`, {
+    const res = await fetch(`http://localhost:8080/api/quizzes/${mainQuizId}/checklist`, {
       cache: 'no-store',
     });
-
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
 
     const responseBody: ApiResponse<QuizChecklistResponseDto> = await res.json();
 
@@ -108,4 +110,22 @@ export async function fetchQuizChecklistItems(mainQuizId: number) {
     console.error('Fetch Quizzes Error:', error);
     throw error;
   }
+}
+
+export async function submitChecklist(data: ChecklistSubmitRequestDto) {
+  const response = await fetch(`http://localhost:8080/api/users/checklist-progress`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  const responseBody: CommonResponse<null> = await response.json();
+
+  if (!responseBody.success) {
+    throw new Error(responseBody.message || `체크리스트 제출이 실패했습니다.`);
+  }
+
+  return responseBody.data;
 }
