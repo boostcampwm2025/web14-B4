@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
 import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
-import { postSpeechesStt } from '@/services/speeches';
+import { postSpeechesStt } from '@/services/speechesApi';
 import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
 import { useQuizStore } from '@/store/quizStore';

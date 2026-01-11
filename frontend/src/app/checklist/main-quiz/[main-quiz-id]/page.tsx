@@ -3,12 +3,16 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
+import { getSpeechesByQuizId, updateSpeechText } from '@/services/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
-import { ChecklistItem, ChecklistItemDto, QuizChecklistResponseDto } from '../../types/checklist.types';
+import {
+  ChecklistItem,
+  ChecklistItemDto,
+  QuizChecklistResponseDto,
+} from '../../types/checklist.types';
 import { fetchQuizChecklistItems } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
 
@@ -75,7 +79,6 @@ export default function ResultPage() {
       prev.map((option) => (option.id === optionId ? { ...option, checked } : option)),
     );
   };
-
 
   // 음성 녹음 텍스트 업데이트
   const handleUpdateSpeech = async () => {
