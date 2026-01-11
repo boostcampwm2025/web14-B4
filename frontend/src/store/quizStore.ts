@@ -18,6 +18,6 @@ export const useQuizStore = create<QuizStore>()(
     }),
     {
       name: 'quiz-storage', // localStorage 키
-    }
-  )
+    },
+  ),
 );

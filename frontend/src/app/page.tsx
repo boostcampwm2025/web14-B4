@@ -6,14 +6,14 @@ export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col justify-between overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image 
-          src="/wave-bg.svg" 
+        <Image
+          src="/wave-bg.svg"
           alt="wave background"
           width={0}
           height={0}
           sizes="100vw"
-          className="w-full h-auto" 
-          priority 
+          className="w-full h-auto"
+          priority
         />
       </div>
       <div className="absolute bottom-[10%] right-[5%] md:bottom-[15%] md:right-[15%] z-20">

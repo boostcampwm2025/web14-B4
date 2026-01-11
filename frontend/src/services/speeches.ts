@@ -41,7 +41,7 @@ export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Prom
   if (!responseBody.success) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  const data : SttResult = responseBody.data;
+  const data: SttResult = responseBody.data;
 
   if (!data) {
     throw new Error('STT 응답 데이터가 없습니다.');
