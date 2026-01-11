@@ -1,4 +1,3 @@
-import { apiFetch } from '@/services/http/apiFetch';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 
 export type SttResult = {

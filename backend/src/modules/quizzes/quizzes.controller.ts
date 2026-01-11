@@ -15,7 +15,7 @@ import {
 @Controller('quizzes')
 export class QuizzesController {
   constructor(private readonly quizService: QuizzesService) {}
-  
+
   @Get()
   async getAllQuizzes(
     @Query('category') category?: string,
@@ -32,7 +32,7 @@ export class QuizzesController {
   @Get('categories')
   getCategories() {
     const result = this.quizService.getCategoriesWithCount();
-    return result
+    return result;
   }
 
   @Get(':mainQuizId/checklist')

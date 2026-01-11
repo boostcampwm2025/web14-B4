@@ -42,12 +42,9 @@ export class UsersService {
       updatedAt: new Date(),
     }));
 
-    return await this.userChecklistProgressRepository.upsert(
-      progressEntities,
-      {
-        conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
-        skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
-      }
-    );
+    return await this.userChecklistProgressRepository.upsert(progressEntities, {
+      conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
+      skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
+    });
   }
 }
