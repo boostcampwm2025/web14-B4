@@ -1,4 +1,4 @@
-import { CommonResponse } from '@/services/http/types';
+import { CommonResponse, NullDataErrorMessage } from '@/services/http/types';
 import { ApiError } from '@/services/http/errors';
 
 // 슬래시 중복 방지
@@ -28,7 +28,11 @@ function getApiBaseUrl() {
  * - 성공 시: data 필드에 내용이 존재해야 함 (null이면 예외 처리)
  */
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  emptyData?: NullDataErrorMessage,
+): Promise<T> {
   const API_BASE = getApiBaseUrl();
 
   let res: Response;
@@ -49,6 +53,10 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T |
 
   if (!res.ok || !json.success) {
     throw new ApiError(json.message || `요청 실패 (${res.status})`, res.status, json.errorCode);
+  }
+
+  if (json.data === null) {
+    throw new ApiError(emptyData?.message || '응답 데이터가 없습니다.', res.status, json.errorCode);
   }
 
   return json.data;

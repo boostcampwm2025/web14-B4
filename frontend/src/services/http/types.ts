@@ -4,3 +4,7 @@ export type CommonResponse<T> = {
   errorCode: string | null;
   data: T | null;
 };
+
+export type NullDataErrorMessage = {
+  message?: string;
+};
