@@ -1,16 +1,37 @@
 import { CommonResponse } from '@/services/http/types';
 import { ApiError } from '@/services/http/errors';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080/api';
+// 슬래시 중복 방지
+function normalizeBaseUrl(baseUrl: string) {
+  return baseUrl.replace(/\/$/, '');
+}
+
+function getApiBaseUrl() {
+  const isServer = typeof window === 'undefined';
+
+  if (isServer) {
+    // Next 서버에서 실행되는 컴포넌트
+    const serverBase = process.env.API_BASE_URL;
+    if (serverBase) return normalizeBaseUrl(serverBase);
+  }
+
+  // 브라우저에서 실행되는 컴포넌트
+  const publicBase = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (publicBase) return normalizeBaseUrl(publicBase);
+
+  return '/api';
+}
 
 /**
  * - 공통 API 처리
  * - 실패 시: 서버 message throw (추후 사용자 친화적 메시지 매핑이 필요해진다면 수정 필요)
- * - 응답 data 필드 null 허용
+ * - 성공 시: data 필드에 내용이 존재해야 함 (null이면 예외 처리)
  */
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
-  let res: Response;
 
+export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
+  const API_BASE = getApiBaseUrl();
+
+  let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, init);
   } catch {
@@ -25,8 +46,6 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T |
     // 응답은 받았으나 공통 응답 json 파싱 실패
     throw new ApiError('서버 응답을 해석할 수 없습니다.', res.status, null);
   }
-
-  console.log(json);
 
   if (!res.ok || !json.success) {
     throw new ApiError(json.message || `요청 실패 (${res.status})`, res.status, json.errorCode);
