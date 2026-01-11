@@ -13,3 +13,11 @@ export interface Quiz {
   difficulty: Difficulty;
   category: QuizCategory;
 }
+
+export interface QuizCategoryWithCount extends QuizCategory {
+  count: number;
+}
+export interface CategoryCountsResponseDto {
+  totalCount: number;
+  categories: QuizCategoryWithCount[];
+}
