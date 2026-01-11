@@ -25,23 +25,14 @@ export class QuizzesController {
       category,
       difficulty,
     );
-    return {
-      success: true,
-      message: '퀴즈 목록 조회를 성공했습니다.',
-      errorCode: null,
-      data: result,
-    };
+
+    return result;
   }
 
   @Get('categories')
   getCategories() {
     const result = this.quizService.getCategoriesWithCount();
-    return {
-      success: true,
-      message: '카테고리 조회를 성공했습니다.',
-      errorCode: null,
-      data: result,
-    };
+    return result
   }
 
   @Get(':mainQuizId/checklist')
@@ -49,12 +40,7 @@ export class QuizzesController {
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ) {
     const result = await this.quizService.getQuizChecklist(mainQuizId);
-    return {
-      success: true,
-      message: '성공했습니다.',
-      errorCode: null,
-      data: result,
-    };
+    return result;
   }
 
   @Get(':id')
@@ -65,11 +51,6 @@ export class QuizzesController {
       throw new NotFoundException('퀴즈를 찾을 수 없습니다.');
     }
 
-    return {
-      success: true,
-      message: '퀴즈 조회를 성공했습니다.',
-      errorCode: null,
-      data: result,
-    };
+    return result;
   }
 }
