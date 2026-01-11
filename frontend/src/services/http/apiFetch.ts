@@ -7,18 +7,20 @@ function normalizeBaseUrl(baseUrl: string) {
 }
 
 function getApiBaseUrl() {
-  const isServer = typeof window === 'undefined';
+  // NextJS 서버에서 실행중인지 확인
+  // window는 브라우저에만 존재하는 전역 객체. window가 없으면 = 브라우저가 아님 = Next 서버
+  const isNextServer = typeof window === 'undefined';
 
-  const serverBase = isServer ? process.env.API_BASE_URL : process.env.NEXT_PUBLIC_API_BASE_URL;
+  const baseUrl = isNextServer ? process.env.API_BASE_URL : process.env.NEXT_PUBLIC_API_BASE_URL;
 
-  if (!serverBase) {
+  if (!baseUrl) {
     throw new Error(
       '[apiFetch] API Base URL이 설정되지 않았습니다. ' +
         '.env 파일의 API_BASE_URL 또는 NEXT_PUBLIC_API_BASE_URL을 확인하세요.',
     );
   }
 
-  return normalizeBaseUrl(serverBase);
+  return normalizeBaseUrl(baseUrl);
 }
 
 /**
