@@ -9,17 +9,16 @@ function normalizeBaseUrl(baseUrl: string) {
 function getApiBaseUrl() {
   const isServer = typeof window === 'undefined';
 
-  if (isServer) {
-    // Next 서버에서 실행되는 컴포넌트
-    const serverBase = process.env.API_BASE_URL;
-    if (serverBase) return normalizeBaseUrl(serverBase);
+  const serverBase = isServer ? process.env.API_BASE_URL : process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!serverBase) {
+    throw new Error(
+      '[apiFetch] API Base URL이 설정되지 않았습니다. ' +
+        '.env 파일의 API_BASE_URL 또는 NEXT_PUBLIC_API_BASE_URL을 확인하세요.',
+    );
   }
 
-  // 브라우저에서 실행되는 컴포넌트
-  const publicBase = process.env.NEXT_PUBLIC_API_BASE_URL;
-  if (publicBase) return normalizeBaseUrl(publicBase);
-
-  return '/api';
+  return normalizeBaseUrl(serverBase);
 }
 
 /**
