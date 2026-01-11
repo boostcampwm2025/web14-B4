@@ -106,23 +106,30 @@ export default function ResultPage() {
     handleUpdateSpeech();
   };
 
-  const handleSubmit = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
     const confirmed = window.confirm('답변을 제출하시겠습니까?');
     if (confirmed) {
       const checklistItems = options.map((option) => ({
-          checklistItemId: Number(option.id),
-          isChecked: option.checked,
-        }))
+        checklistItemId: Number(option.id),
+        isChecked: option.checked,
+      }));
 
       const requestBody = {
-        mainQuizId : Number(mainQuizId),
-        solvedQuizId : Number(solvedQuizId),
-        checklistItems : checklistItems
-      }
+        mainQuizId: Number(mainQuizId),
+        solvedQuizId: Number(solvedQuizId),
+        checklistItems: checklistItems,
+      };
 
-      submitChecklist(requestBody);
-    } else {
-      e.preventDefault();
+      try {
+        await submitChecklist(requestBody);
+        // 성공 시 페이지 이동 등
+        router.push('/result');
+      } catch (error) {
+        console.error('제출 실패:', error);
+        alert('제출에 실패했습니다.');
+      }
     }
   };
 
