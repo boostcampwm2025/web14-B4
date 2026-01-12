@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
-import { QuizFixture } from './quizzes.fixture';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
 
 describe('QuizzesService', () => {
   let service: QuizzesService;
@@ -40,8 +39,6 @@ describe('QuizzesService', () => {
 
     it('퀴즈와 체크리스트를 정상적으로 반환한다', async () => {
       // Given
-      const mockQuiz = QuizFixture.createQuiz();
-      repository.findOneWithChecklist.mockResolvedValue(mockQuiz);
 
       // When
       const result = await service.getQuizChecklist(1);

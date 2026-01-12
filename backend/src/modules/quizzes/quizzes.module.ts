@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { QuizzesController } from './quizzes.controller';
 import { QuizzesService } from './quizzes.service';
-import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
 
 import { MainQuiz } from '../../datasources/entities/tb-main-quiz.entity';
 import { ChecklistItem } from '../../datasources/entities/tb-checklist-item.entity';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, DeepPartial, Repository } from 'typeorm';
 import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 
@@ -10,16 +10,8 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   }
 
   async createSolvedQuiz(
-    userId: number,
-    mainQuizId: number,
-    speechText: string,
+    solvedQuiz: DeepPartial<SolvedQuiz>,
   ): Promise<SolvedQuiz> {
-    const solvedQuiz = this.create({
-      userId: { userId },
-      mainQuizId: { mainQuizId },
-      speechText,
-    });
-
     return await this.save(solvedQuiz);
   }
 

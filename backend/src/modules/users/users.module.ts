@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
-import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.respository';
+import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MainQuiz } from 'src/datasources/entities/tb-main-quiz.entity';

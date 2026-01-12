@@ -1,11 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { UserChecklistProgress } from '../entities/tb-user-checklist-progress.entity';
 
 @Injectable()
-export class UserChecklistProgressRepository extends Repository<UserChecklistProgress> {
-  constructor(@InjectDataSource() private dataSource: DataSource) {
-    super(UserChecklistProgress, dataSource.createEntityManager());
+export class UserChecklistProgressRepository {
+  constructor(
+    @InjectRepository(UserChecklistProgress)
+    private readonly repository: Repository<UserChecklistProgress>,
+  ) {}
+
+  save(progress: UserChecklistProgress): Promise<UserChecklistProgress> {
+    return this.repository.save(progress);
+  }
+
+  findByUserId(userId: number): Promise<UserChecklistProgress[]> {
+    return this.repository.find({
+      where: {
+        userId: { userId },
+      },
+      relations: ['checklistItem', 'userId'],
+    });
+  }
+
+  async deleteById(id: number): Promise<void> {
+    await this.repository.delete(id);
   }
 }

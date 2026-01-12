@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
 import { UserChecklistProgressRepository } from '../../datasources/repositories/tb-user-checklist-progress.repository';
 import { SaveChecklistProgressDto } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
@@ -36,23 +36,21 @@ export class UsersService {
       );
     }
 
-    // 선택한 체크리스트 저장
-    const progressEntities = dto.checklistItems.map((item) => ({
-      userId: { userId },
-      checklistItemId: { checklistItemId: item.checklistItemId },
-      solvedQuizId: dto.solvedQuizId,
-      isChecked: item.isChecked,
-      checkedAt: new Date(),
-    }));
-
-    const result = await this.userChecklistProgressRepository.upsert(
-      progressEntities,
-      {
-        conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
-        skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
-      },
+    const progressEntities = dto.checklistItems.map((item) =>
+      this.userChecklistProgressRepository.save(
+        this.userChecklistProgressRepository['repository'].create({
+          userId: { userId },
+          checklistItemId: { checklistItemId: item.checklistItemId },
+          solvedQuizId: dto.solvedQuizId,
+          isChecked: item.isChecked,
+          checkedAt: item.isChecked ? new Date() : null,
+        }),
+      ),
     );
 
-    return { savedCount: result.identifiers.length };
+    // save 대기
+    await Promise.all(progressEntities);
+
+    return { savedCount: dto.checklistItems.length };
   }
 }
