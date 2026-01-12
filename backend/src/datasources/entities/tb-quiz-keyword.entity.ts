@@ -17,7 +17,7 @@ export class QuizKeyword {
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuiz: MainQuiz;
+  mainQuizId: MainQuiz;
 
   @Column({ name: 'keyword', type: 'varchar', length: 255 })
   keyword: string;

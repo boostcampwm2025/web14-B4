@@ -17,7 +17,7 @@ export class MultipleChoiceOption {
 
   @ManyToOne(() => MultipleChoice, { nullable: false })
   @JoinColumn({ name: 'multiple_choice_id' })
-  multipleChoice: MultipleChoice;
+  multipleChoiceId: MultipleChoice;
 
   @Column({ name: 'option', type: 'varchar', length: 255 })
   option: string;

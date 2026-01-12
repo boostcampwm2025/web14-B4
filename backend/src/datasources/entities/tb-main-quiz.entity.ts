@@ -32,7 +32,7 @@ export class MainQuiz {
     nullable: false,
   })
   @JoinColumn({ name: 'quiz_category_id' })
-  quizCategory: QuizCategory;
+  quizCategoryId: QuizCategory;
 
   @Column({ name: 'difficulty_level', type: 'enum', enum: DifficultyLevel })
   difficultyLevel: DifficultyLevel;
@@ -60,13 +60,13 @@ export class MainQuiz {
   })
   updatedAt: Date;
 
-  @OneToMany(() => ChecklistItem, (item) => item.mainQuiz)
+  @OneToMany(() => ChecklistItem, (item) => item.mainQuizId)
   checklistItems: ChecklistItem[];
 
-  @OneToMany(() => SolvedQuiz, (solved) => solved.mainQuiz)
+  @OneToMany(() => SolvedQuiz, (solved) => solved.mainQuizId)
   solvedQuizzes: SolvedQuiz[];
 
-  @OneToMany(() => QuizKeyword, (keyword) => keyword.mainQuiz)
+  @OneToMany(() => QuizKeyword, (keyword) => keyword.mainQuizId)
   keywords: QuizKeyword[];
 
   getChecklistItemIds(): number[] {

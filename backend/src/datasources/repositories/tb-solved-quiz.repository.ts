@@ -15,8 +15,8 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
     speechText: string,
   ): Promise<SolvedQuiz> {
     const solvedQuiz = this.create({
-      userId,
-      mainQuizId,
+      userId: { userId },
+      mainQuizId: { mainQuizId },
       speechText,
     });
 
@@ -29,7 +29,11 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
     userId: number,
   ): Promise<SolvedQuiz[]> {
     return await this.find({
-      where: { mainQuizId, userId },
+      where: {
+        mainQuizId: { mainQuizId },
+        userId: { userId },
+      },
+      relations: ['mainQuiz', 'user'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -42,6 +46,9 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   }
 
   async getById(solvedQuizId: number): Promise<SolvedQuiz | null> {
-    return await this.findOne({ where: { solvedQuizId } });
+    return await this.findOne({
+      where: { solvedQuizId },
+      relations: ['mainQuiz', 'user'],
+    });
   }
 }

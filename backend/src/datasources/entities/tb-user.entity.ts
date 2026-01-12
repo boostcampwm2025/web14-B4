@@ -61,6 +61,6 @@ export class User {
   @Column({ name: 'updated_by', type: 'bigint', nullable: true })
   updatedBy?: number;
 
-  @OneToMany(() => SolvedQuiz, (solved) => solved.user)
+  @OneToMany(() => SolvedQuiz, (solved) => solved.userId)
   solvedQuizzes: SolvedQuiz[];
 }

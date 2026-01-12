@@ -25,7 +25,7 @@ export class QuizFixture {
 
     const quiz = new MainQuiz(); // 👈 new 키워드 사용
     quiz.mainQuizId = 1;
-    quiz.quizCategory = this.createQuizCategory(); // 👈 메서드 재사용
+    quiz.quizCategoryId = this.createQuizCategory(); // 👈 메서드 재사용
     quiz.difficultyLevel = DifficultyLevel.MEDIUM;
     quiz.title = '테스트 퀴즈';
     quiz.content = '퀴즈 내용';
@@ -53,7 +53,7 @@ export class QuizFixture {
     const now = new Date();
 
     return Array.from({ length: count }, (_, i) => {
-      const item = new ChecklistItem(); // 👈 new 키워드 사용
+      const item = new ChecklistItem();
       item.checklistItemId = i + 1;
       item.mainQuizId = mainQuizId;
       item.content = `체크리스트 항목 ${i + 1}`;
