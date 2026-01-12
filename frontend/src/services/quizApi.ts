@@ -2,14 +2,29 @@ import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types'
 import { Quiz, CategoryCountsResponseDto } from '@/app/quizzes/types/quiz';
 import { apiFetch } from '@/services/http/apiFetch';
 
+export interface ChecklistSubmitRequestDto {
+  mainQuizId: number;
+  solvedQuizId: number;
+  checklistItems: {
+    checklistItemId: number;
+    isChecked: boolean;
+  }[];
+}
+
+export interface ChecklistSubmitResponseDto {
+  savedCount: number;
+}
+
 export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
   const params = new URLSearchParams();
 
   if (category) params.append('category', category);
   if (difficulty) params.append('difficulty', difficulty);
 
+  const query = params.toString();
+
   const data = await apiFetch<Quiz[]>(
-    `/quizzes?${params.toString()}`,
+    `/quizzes${query ? `?${query}` : ''}`,
     { method: 'GET', cache: 'no-store' },
     { message: '퀴즈 목록 응답 데이터가 없습니다.' },
   );
@@ -43,6 +58,22 @@ export async function fetchQuizChecklistItems(
     `/quizzes/${mainQuizId}/checklist`,
     { method: 'GET', cache: 'no-store' },
     { message: '체크리스트 목록 응답 데이터가 없습니다.' },
+  );
+
+  return data;
+}
+
+export async function submitChecklist(req: ChecklistSubmitRequestDto) {
+  const data = await apiFetch<ChecklistSubmitResponseDto>(
+    '/users/checklist-progress',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+    },
+    { message: '체크리스트 제출이 실패했습니다.' },
   );
 
   return data;

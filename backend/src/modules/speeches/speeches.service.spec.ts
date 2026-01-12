@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SpeechesService } from './speeches.service';
 import { ConfigService } from '@nestjs/config';
-import { SolvedQuizRepository } from '../../datasources/repositories/solved-quiz.repository';
+import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 
 type SolvedQuizEntity = {

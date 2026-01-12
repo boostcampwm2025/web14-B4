@@ -6,11 +6,11 @@ import {
   JoinColumn,
   Unique,
 } from 'typeorm';
-import { TbChecklistItem } from './tb-checklist-item.entity';
+import { ChecklistItem } from './tb-checklist-item.entity';
 
 @Entity('tb_user_checklist_progress')
 @Unique('uk_user_checklist_quiz', ['userId', 'checklistItemId', 'solvedQuizId'])
-export class TbUserChecklistProgress {
+export class UserChecklistProgress {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
     name: 'user_checklist_progress_id',
@@ -46,7 +46,7 @@ export class TbUserChecklistProgress {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => TbChecklistItem, (item) => item.userProgress)
+  @ManyToOne(() => ChecklistItem, (item) => item.userProgress)
   @JoinColumn({ name: 'checklist_item_id' })
-  checklistItem: TbChecklistItem;
+  checklistItem: ChecklistItem;
 }
