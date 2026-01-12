@@ -3,6 +3,7 @@ import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.
 import { UserChecklistProgressRepository } from '../../datasources/repositories/tb-user-checklist-progress.repository';
 import { SaveChecklistProgressDto } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
+import { SaveChecklistProgressResponseDto } from './dto/users-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,7 +13,10 @@ export class UsersService {
   ) {}
 
   @Transactional()
-  async saveChecklistProgress(userId: number, dto: SaveChecklistProgressDto) {
+  async saveChecklistProgress(
+    userId: number,
+    dto: SaveChecklistProgressDto,
+  ): Promise<SaveChecklistProgressResponseDto> {
     // TODO userId 존재 여부 체크
 
     // mainQuiz와 체크리스트 아이템 존재 여부 확인
@@ -42,9 +46,14 @@ export class UsersService {
       updatedAt: new Date(),
     }));
 
-    return await this.userChecklistProgressRepository.upsert(progressEntities, {
-      conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
-      skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
-    });
+    const result = await this.userChecklistProgressRepository.upsert(
+      progressEntities,
+      {
+        conflictPaths: ['userId', 'solvedQuizId', 'checklistItemId'], // 중복 판단 기준 컬럼
+        skipUpdateIfNoValuesChanged: true, // 값이 변경되지 않으면 업데이트 스킵
+      },
+    );
+
+    return { savedCount: result.identifiers.length };
   }
 }

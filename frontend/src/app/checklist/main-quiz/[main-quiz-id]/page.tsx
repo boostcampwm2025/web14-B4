@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
+import { getSpeechesByQuizId, updateSpeechText } from '@/services/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';

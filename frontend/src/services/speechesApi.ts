@@ -1,0 +1,94 @@
+import { apiFetch } from '@/services/http/apiFetch';
+import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
+
+export type SttResult = {
+  solvedQuizId: number;
+  text: string;
+};
+
+export type SpeechesTextResponse = {
+  quizId: number;
+  speeches: SpeechItemDto[];
+};
+
+export type UpdateSpeechTextResponse = {
+  mainQuizId: number;
+  solvedQuizId: number;
+  speechText: string;
+};
+
+/**
+ * 음성 파일을 STT 변환 API로 전송
+ * - POST /speeches/stt
+ * - form-data key: audio, filename: audio.webm
+ * - 응답: { solvedQuizId, text }
+ */
+export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Promise<SttResult> {
+  const formData = new FormData();
+  formData.append(
+    'audio',
+    new File([audioBlob], 'audio.webm', {
+      type: audioBlob.type || 'audio/webm',
+    }),
+  );
+  formData.append('mainQuizId', mainQuizId.toString());
+
+  const data = await apiFetch<SttResult>(
+    '/speeches/stt',
+    { method: 'POST', body: formData },
+    { message: 'STT 응답 데이터가 없습니다.' },
+  );
+
+  // 런타임 방어
+  const solvedQuizId =
+    typeof data.solvedQuizId === 'string' ? Number(data.solvedQuizId) : data.solvedQuizId;
+  if (typeof solvedQuizId !== 'number' || isNaN(solvedQuizId) || typeof data.text !== 'string') {
+    throw new Error('STT 응답 형식이 올바르지 않습니다.');
+  }
+
+  return {
+    solvedQuizId,
+    text: data.text,
+  };
+}
+
+/**
+ * 사용자가 mainQuizId에서 답변했던 녹음 텍스트를 조회
+ */
+export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesTextResponse> {
+  const data = await apiFetch<SpeechesTextResponse>(
+    `/speeches/${mainQuizId}`,
+    { method: 'GET' },
+    { message: '음성 데이터 조회 응답이 없습니다.' },
+  );
+
+  return data;
+}
+
+/**
+ * 수정한 녹음 텍스트를 서버에 update 한다
+ * @param solvedQuizId 반영할 quiz id
+ * @param speechText 수정된 녹음 텍스트
+ */
+export async function updateSpeechText(
+  mainQuizId: number,
+  solvedQuizId: number,
+  speechText: string,
+): Promise<UpdateSpeechTextResponse> {
+  const data = await apiFetch<UpdateSpeechTextResponse>(
+    `/speeches/${mainQuizId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        solvedQuizId,
+        speechText,
+      }),
+    },
+    { message: '음성 텍스트 수정 응답 데이터가 없습니다.' },
+  );
+
+  return data;
+}

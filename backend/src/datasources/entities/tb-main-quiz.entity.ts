@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 import { ChecklistItem } from './tb-checklist-item.entity';
 import { QuizCategory } from './tb-quiz-category.entity';
 
@@ -18,9 +25,9 @@ export class MainQuiz {
 
   @OneToOne(() => QuizCategory, {
     eager: true,
-    nullable: false, 
+    nullable: false,
   })
-  @JoinColumn({ name: 'quiz_category_id' }) 
+  @JoinColumn({ name: 'quiz_category_id' })
   quizCategory: QuizCategory;
 
   @Column({ name: 'difficulty_level', type: 'enum', enum: DifficultyLevel })

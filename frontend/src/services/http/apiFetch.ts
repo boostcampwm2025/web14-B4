@@ -1,16 +1,42 @@
-import { CommonResponse } from '@/services/http/types';
+import { CommonResponse, NullDataErrorMessage } from '@/services/http/types';
 import { ApiError } from '@/services/http/errors';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080/api';
+// 슬래시 중복 방지
+function normalizeBaseUrl(baseUrl: string) {
+  return baseUrl.replace(/\/$/, '');
+}
+
+function getApiBaseUrl() {
+  // NextJS 서버에서 실행중인지 확인
+  // window는 브라우저에만 존재하는 전역 객체. window가 없으면 = 브라우저가 아님 = Next 서버
+  const isNextServer = typeof window === 'undefined';
+
+  const baseUrl = isNextServer ? process.env.API_BASE_URL : process.env.NEXT_PUBLIC_API_BASE_URL;
+
+  if (!baseUrl) {
+    throw new Error(
+      '[apiFetch] API Base URL이 설정되지 않았습니다. ' +
+        '.env 파일의 API_BASE_URL 또는 NEXT_PUBLIC_API_BASE_URL을 확인하세요.',
+    );
+  }
+
+  return normalizeBaseUrl(baseUrl);
+}
 
 /**
  * - 공통 API 처리
  * - 실패 시: 서버 message throw (추후 사용자 친화적 메시지 매핑이 필요해진다면 수정 필요)
- * - 응답 data 필드 null 허용
+ * - 성공 시: data 필드에 내용이 존재해야 함 (null이면 예외 처리)
  */
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T | null> {
-  let res: Response;
 
+export async function apiFetch<T>(
+  path: string,
+  init?: RequestInit,
+  emptyData?: NullDataErrorMessage,
+): Promise<T> {
+  const API_BASE = getApiBaseUrl();
+
+  let res: Response;
   try {
     res = await fetch(`${API_BASE}${path}`, init);
   } catch {
@@ -26,10 +52,12 @@ export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T |
     throw new ApiError('서버 응답을 해석할 수 없습니다.', res.status, null);
   }
 
-  console.log(json);
-
   if (!res.ok || !json.success) {
     throw new ApiError(json.message || `요청 실패 (${res.status})`, res.status, json.errorCode);
+  }
+
+  if (json.data === null) {
+    throw new ApiError(emptyData?.message || '응답 데이터가 없습니다.', res.status, json.errorCode);
   }
 
   return json.data;

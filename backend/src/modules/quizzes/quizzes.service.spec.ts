@@ -7,7 +7,7 @@ import { QuizFixture } from './quizzes.fixture';
 describe('QuizzesService', () => {
   let service: QuizzesService;
   let repository: jest.Mocked<MainQuizRepository>;
-  
+
   beforeEach(async () => {
     const mockRepository = {
       findOneWithChecklist: jest.fn(),
@@ -17,8 +17,8 @@ describe('QuizzesService', () => {
       providers: [
         QuizzesService,
         {
-          provide: MainQuizRepository,  // 실제 Repository 대신
-          useValue: mockRepository,      // Mock으로 대체
+          provide: MainQuizRepository, // 실제 Repository 대신
+          useValue: mockRepository, // Mock으로 대체
         },
       ],
     }).compile();
@@ -31,7 +31,7 @@ describe('QuizzesService', () => {
     it('퀴즈가 존재하지 않으면 NotFoundException을 던진다', async () => {
       // Given
       repository.findOneWithChecklist.mockResolvedValue(null);
-      
+
       // When & Then
       await expect(service.getQuizChecklist(999)).rejects.toThrow(
         new NotFoundException('해당 퀴즈를 찾을 수 없습니다.'),

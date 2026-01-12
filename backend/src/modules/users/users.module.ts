@@ -9,7 +9,9 @@ import { UserChecklistProgressRepository } from 'src/datasources/repositories/tb
 import { QuizCategory } from 'src/datasources/entities/tb-quiz-category.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuizCategory, MainQuiz, UserChecklistProgress])],
+  imports: [
+    TypeOrmModule.forFeature([QuizCategory, MainQuiz, UserChecklistProgress]),
+  ],
   controllers: [UsersController],
   providers: [
     UsersService,

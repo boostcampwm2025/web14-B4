@@ -12,7 +12,7 @@ interface MockQuiz {
   content: string;
   hint: string;
   difficulty: DifficultyLevel;
-  quizCategory: { id: number; name: string };
+  category: { id: number; name: string };
 }
 
 @Injectable()
@@ -24,7 +24,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.EASY,
-      quizCategory: { id: 1, name: '운영체제' },
+      category: { id: 1, name: '운영체제' },
     },
     {
       id: 2,
@@ -32,7 +32,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.HARD,
-      quizCategory: { id: 2, name: '데이터베이스' },
+      category: { id: 2, name: '데이터베이스' },
     },
     {
       id: 3,
@@ -40,7 +40,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.EASY,
-      quizCategory: { id: 3, name: '네트워크' },
+      category: { id: 3, name: '네트워크' },
     },
     {
       id: 4,
@@ -48,7 +48,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.HARD,
-      quizCategory: { id: 1, name: '운영체제' },
+      category: { id: 1, name: '운영체제' },
     },
     {
       id: 5,
@@ -56,7 +56,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.EASY,
-      quizCategory: { id: 2, name: '데이터베이스' },
+      category: { id: 2, name: '데이터베이스' },
     },
     {
       id: 6,
@@ -64,7 +64,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.MEDIUM,
-      quizCategory: { id: 3, name: '네트워크' },
+      category: { id: 3, name: '네트워크' },
     },
     {
       id: 7,
@@ -72,7 +72,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.HARD,
-      quizCategory: { id: 1, name: '운영체제' },
+      category: { id: 1, name: '운영체제' },
     },
     {
       id: 8,
@@ -80,7 +80,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.HARD,
-      quizCategory: { id: 2, name: '데이터베이스' },
+      category: { id: 2, name: '데이터베이스' },
     },
     {
       id: 9,
@@ -88,7 +88,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.EASY,
-      quizCategory: { id: 3, name: '네트워크' },
+      category: { id: 3, name: '네트워크' },
     },
     {
       id: 10,
@@ -96,7 +96,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.EASY,
-      quizCategory: { id: 1, name: '운영체제' },
+      category: { id: 1, name: '운영체제' },
     },
     {
       id: 11,
@@ -104,7 +104,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.MEDIUM,
-      quizCategory: { id: 2, name: '데이터베이스' },
+      category: { id: 2, name: '데이터베이스' },
     },
     {
       id: 12,
@@ -112,7 +112,7 @@ export class QuizzesService {
       content: '프로세스와 스레드의 결정적인 차이는 무엇일까요?',
       hint: '메모리 공유 여부를 생각해보세요.',
       difficulty: DifficultyLevel.HARD,
-      quizCategory: { id: 3, name: '네트워크' },
+      category: { id: 3, name: '네트워크' },
     },
   ];
 
@@ -131,7 +131,7 @@ export class QuizzesService {
     let results = [...this.mockData];
 
     if (category) {
-      results = results.filter((quiz) => quiz.quizCategory.name === category);
+      results = results.filter((quiz) => quiz.category.name === category);
     }
 
     if (difficulty) {
@@ -144,7 +144,7 @@ export class QuizzesService {
     const totalCount = this.mockData.length;
     const categories = this.mockCategories.map((category) => {
       const count = this.mockData.filter(
-        (quiz) => quiz.quizCategory?.name === category.name,
+        (quiz) => quiz.category?.name === category.name,
       ).length;
       return {
         ...category,

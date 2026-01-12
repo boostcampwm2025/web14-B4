@@ -1,14 +1,18 @@
-import { MainQuiz } from '../../datasources/entities/tb-main-quiz.entity';
+import {
+  MainQuiz,
+  DifficultyLevel,
+} from '../../datasources/entities/tb-main-quiz.entity';
 import { ChecklistItem } from '../../datasources/entities/tb-checklist-item.entity';
 import { QuizCategory } from '../../datasources/entities/tb-quiz-category.entity';
 
 export class QuizFixture {
-
-  static createQuizCategory(overrides: Partial<QuizCategory> = {}): QuizCategory {
+  static createQuizCategory(
+    overrides: Partial<QuizCategory> = {},
+  ): QuizCategory {
     const quizCategory = new QuizCategory(); // 👈 new 키워드 사용
     quizCategory.quizCategoryId = 1;
     quizCategory.name = '네트워크';
-    
+
     Object.assign(quizCategory, overrides);
     return quizCategory;
   }
@@ -22,7 +26,7 @@ export class QuizFixture {
     const quiz = new MainQuiz(); // 👈 new 키워드 사용
     quiz.mainQuizId = 1;
     quiz.quizCategory = this.createQuizCategory(); // 👈 메서드 재사용
-    quiz.difficultyLevel = 'MEDIUM' as any;
+    quiz.difficultyLevel = DifficultyLevel.MEDIUM;
     quiz.title = '테스트 퀴즈';
     quiz.content = '퀴즈 내용';
     quiz.hint = '힌트 내용';
@@ -58,7 +62,7 @@ export class QuizFixture {
       item.updatedAt = now;
       item.mainQuiz = new MainQuiz(); // 순환 참조 방지
       item.userProgress = [];
-      
+
       return item;
     });
   }

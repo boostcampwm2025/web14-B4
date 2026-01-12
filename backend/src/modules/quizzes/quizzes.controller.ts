@@ -25,7 +25,6 @@ export class QuizzesController {
       category,
       difficulty,
     );
-
     return result;
   }
 

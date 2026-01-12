@@ -26,10 +26,10 @@
   },
   "lint-staged": {
     "frontend/**/*.{ts,tsx}": [
-      "cd frontend && npm run lint:fix"
+      "npm run lint:fix --prefix frontend"
     ],
     "backend/**/*.ts": [
-      "cd backend && npm run lint:fix"
+      "npm run lint:fix --prefix backend"
     ],
     "**/*.{ts,tsx,js,jsx,json,md}": [
       "prettier --write"

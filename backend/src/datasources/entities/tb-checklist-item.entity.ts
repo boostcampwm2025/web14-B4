@@ -44,9 +44,6 @@ export class ChecklistItem {
   @JoinColumn({ name: 'main_quiz_id' })
   mainQuiz: MainQuiz;
 
-  @OneToMany(
-    () => UserChecklistProgress,
-    (progress) => progress.checklistItem,
-  )
+  @OneToMany(() => UserChecklistProgress, (progress) => progress.checklistItem)
   userProgress: UserChecklistProgress[];
 }
