@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import type { Request, Response } from 'express';
-import { buildHttpAccessLog } from '../utils/log-print.util';
+import { buildHttpLog } from '../utils/http-log.util';
 
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
@@ -33,7 +33,7 @@ export class LoggingInterceptor implements NestInterceptor {
           const durationMs = Date.now() - start;
 
           this.logger.log(
-            buildHttpAccessLog({
+            buildHttpLog({
               method,
               url: originalUrl,
               status: res.statusCode,

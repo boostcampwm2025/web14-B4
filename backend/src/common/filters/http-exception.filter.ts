@@ -11,7 +11,7 @@ import { Response, Request } from 'express';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { ApiResponse } from '../interfaces/api-response.interface';
 import { ERROR_MESSAGES } from '../constants/error-messages';
-import { buildHttpErrorLog } from '../utils/log-print.util';
+import { buildHttpLog } from '../utils/http-log.util';
 
 // NestJS 내장 에러 응답 객체 구조 정의 (any 방지용)
 interface ErrorResponseObject {
@@ -71,7 +71,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const exceptionMessage =
       exception instanceof Error ? exception.message : String(exception);
 
-    const logMessage = buildHttpErrorLog({
+    const logMessage = buildHttpLog({
       method: req.method,
       url: req.originalUrl,
       status,
