@@ -8,6 +8,12 @@ import {
 } from 'typeorm';
 import { MainQuiz } from './tb-main-quiz.entity';
 
+export enum ComprehensionLevel {
+  HIGH = 'HIGH',
+  NORMAL = 'NORMAL',
+  LOW = 'LOW',
+}
+
 @Entity('tb_solved_quiz')
 export class SolvedQuiz {
   @PrimaryGeneratedColumn('increment', {
@@ -24,9 +30,21 @@ export class SolvedQuiz {
   @JoinColumn({ name: 'main_quiz_id' })
   mainQuiz: MainQuiz;
 
+  // @ManyToOne(() => User, { nullable: false })
+  // @JoinColumn({ name: 'user_id' })
+  // user: User;
+
   @Column('text', { name: 'speech_text' })
   speechText: string;
 
-  @CreateDateColumn()
+  @Column({
+    name: 'comprehension_level',
+    type: 'enum',
+    enum: ComprehensionLevel,
+    nullable: true,
+  })
+  comprehensionLevel?: ComprehensionLevel;
+
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 }
