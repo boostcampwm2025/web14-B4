@@ -22,7 +22,7 @@ services:
       - .env.server
     container_name: nextjs-frontend
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=production 
       - PORT=3000
     depends_on:
       - backend
