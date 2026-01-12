@@ -11,6 +11,7 @@ import {
 import { ChecklistItem } from './tb-checklist-item.entity';
 import { QuizCategory } from './tb-quiz-category.entity';
 import { SolvedQuiz } from './tb-solved-quiz.entity';
+import { QuizKeyword } from './tb-quiz-keyword.entity';
 
 export enum DifficultyLevel {
   HARD = '상',
@@ -65,8 +66,8 @@ export class MainQuiz {
   @OneToMany(() => SolvedQuiz, (solved) => solved.mainQuiz)
   solvedQuizzes: SolvedQuiz[];
 
-  // @OneToMany(() => QuizKeyword, (keyword) => keyword.mainQuiz)
-  // keywords: QuizKeyword[];
+  @OneToMany(() => QuizKeyword, (keyword) => keyword.mainQuiz)
+  keywords: QuizKeyword[];
 
   getChecklistItemIds(): number[] {
     return this.checklistItems.map((item) => item.checklistItemId);
