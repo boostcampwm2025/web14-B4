@@ -3,9 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { MainQuiz } from './tb-main-quiz.entity';
+import { MultipleChoiceOption } from './tb-multiple-choice-option.entity';
 
 @Entity('tb_multiple_choice')
 export class MultipleChoice {
@@ -22,6 +24,6 @@ export class MultipleChoice {
   @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })
   content?: string;
 
-  // @OneToMany(() => MultipleChoiceOption, (option) => option.MultipleChoice)
-  // options: MultipleChoiceOption[];
+  @OneToMany(() => MultipleChoiceOption, (option) => option.multipleChoice)
+  options: MultipleChoiceOption[];
 }
