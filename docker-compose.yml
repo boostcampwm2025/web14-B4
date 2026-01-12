@@ -28,8 +28,6 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - API_BASE_URL=http://backend:8080/api
-      - NEXT_PUBLIC_API_BASE_URL=/api
     depends_on:
       - backend
     networks:
