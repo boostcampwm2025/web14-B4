@@ -24,7 +24,7 @@ import { UsersModule } from './modules/users/users.module';
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: false,
+        synchronize: true,
         extra: {
           // bigint를 string이 아닌 number로 파싱
           parseInt8: true,

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { TbMainQuiz } from '../entities/tb-main-quiz.entity';
+import { MainQuiz } from '../entities/tb-main-quiz.entity';
 
 @Injectable()
-export class TbMainQuizRepository extends Repository<TbMainQuiz> {
+export class MainQuizRepository extends Repository<MainQuiz> {
   constructor(@InjectDataSource() private dataSource: DataSource) {
-    super(TbMainQuiz, dataSource.createEntityManager());
+    super(MainQuiz, dataSource.createEntityManager());
   }
 
   async findById(mainQuizId: number) {

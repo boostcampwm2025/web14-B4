@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import {
-  MainQuizEntity,
+  MainQuiz,
   DifficultyLevel,
-} from '../../datasources/entities/main-quiz.entity';
+} from '../../datasources/entities/tb-main-quiz.entity';
 
 @Controller('quizzes')
 export class QuizzesController {
@@ -21,7 +21,7 @@ export class QuizzesController {
     @Query('category') category?: string,
     @Query('difficulty') difficulty?: DifficultyLevel,
   ) {
-    const result: MainQuizEntity[] = await this.quizService.findAll(
+    const result: MainQuiz[] = await this.quizService.findAll(
       category,
       difficulty,
     );

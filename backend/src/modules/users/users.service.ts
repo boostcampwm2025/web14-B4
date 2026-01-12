@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { TbMainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
-import { TbUserChecklistProgressRepository } from '../../datasources/repositories/tb-user-checklist-progress.repository';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { UserChecklistProgressRepository } from '../../datasources/repositories/tb-user-checklist-progress.repository';
 import { SaveChecklistProgressDto } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class UsersService {
   constructor(
-    private readonly userChecklistProgressRepository: TbUserChecklistProgressRepository,
-    private readonly mainQuizRepository: TbMainQuizRepository,
+    private readonly userChecklistProgressRepository: UserChecklistProgressRepository,
+    private readonly mainQuizRepository: MainQuizRepository,
   ) {}
 
   @Transactional()
