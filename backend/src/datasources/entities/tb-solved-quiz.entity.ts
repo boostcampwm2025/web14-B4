@@ -7,6 +7,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { MainQuiz } from './tb-main-quiz.entity';
+import { User } from './tb-user.entity';
 
 export enum ComprehensionLevel {
   HIGH = 'HIGH',
@@ -22,17 +23,13 @@ export class SolvedQuiz {
   })
   solvedQuizId: number;
 
-  @Column('bigint', { name: 'user_id' })
-  // TODO: User Entity 생성 후 외래키로 추가
-  userId: number;
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
   mainQuiz: MainQuiz;
-
-  // @ManyToOne(() => User, { nullable: false })
-  // @JoinColumn({ name: 'user_id' })
-  // user: User;
 
   @Column('text', { name: 'speech_text' })
   speechText: string;
