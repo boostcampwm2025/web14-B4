@@ -101,7 +101,7 @@ export class SpeechesService {
     }
 
     return {
-      mainQuizId: updatedSolvedQuiz.mainQuizId,
+      mainQuizId: updatedSolvedQuiz.mainQuiz.mainQuizId,
       solvedQuizId: updatedSolvedQuiz.solvedQuizId,
       speechText: updatedSolvedQuiz.speechText,
     };

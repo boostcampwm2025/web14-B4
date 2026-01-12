@@ -3,7 +3,10 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { MainQuiz } from './tb-main-quiz.entity';
 
 @Entity('tb_solved_quiz')
 export class SolvedQuiz {
@@ -17,9 +20,9 @@ export class SolvedQuiz {
   // TODO: User Entity 생성 후 외래키로 추가
   userId: number;
 
-  @Column('bigint', { name: 'main_quiz_id' })
-  // TODO: mainQuiz Entity 생성 후 외래키로 추가
-  mainQuizId: number;
+  @ManyToOne(() => MainQuiz, { nullable: false })
+  @JoinColumn({ name: 'main_quiz_id' })
+  mainQuiz: MainQuiz;
 
   @Column('text', { name: 'speech_text' })
   speechText: string;
