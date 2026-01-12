@@ -14,10 +14,12 @@ export function buildHttpLog(data: HttpLog): string {
       ? ` | duration: ${data.durationMs}ms`
       : '';
 
-  const codePart = data.errorCode ? ` | code: ${data.errorCode}` : '';
-  const exPart = data.exceptionName ? ` | ex: ${data.exceptionName}` : '';
+  const codePart = data.errorCode ? ` | errorCode: ${data.errorCode}` : '';
+  const exPart = data.exceptionName
+    ? ` | exception: ${data.exceptionName}`
+    : '';
   const msgPart = data.exceptionMessage
-    ? ` | exception: ${data.exceptionMessage}`
+    ? ` | message: ${data.exceptionMessage}`
     : '';
 
   return `[${data.method}] ${data.url} | status: ${data.status}${durationPart}${codePart}${exPart}${msgPart}`;
