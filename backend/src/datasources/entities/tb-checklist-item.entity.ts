@@ -6,11 +6,11 @@ import {
   JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { TbMainQuiz } from './tb-main-quiz.entity';
-import { TbUserChecklistProgress } from './tb-user-checklist-progress.entity';
+import { MainQuiz } from './tb-main-quiz.entity';
+import { UserChecklistProgress } from './tb-user-checklist-progress.entity';
 
 @Entity('tb_checklist_item')
-export class TbChecklistItem {
+export class ChecklistItem {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
     name: 'checklist_item_id',
@@ -40,13 +40,13 @@ export class TbChecklistItem {
   })
   updatedAt: Date;
 
-  @ManyToOne(() => TbMainQuiz, (quiz) => quiz.checklistItems)
+  @ManyToOne(() => MainQuiz, (quiz) => quiz.checklistItems)
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuiz: TbMainQuiz;
+  mainQuiz: MainQuiz;
 
   @OneToMany(
-    () => TbUserChecklistProgress,
+    () => UserChecklistProgress,
     (progress) => progress.checklistItem,
   )
-  userProgress: TbUserChecklistProgress[];
+  userProgress: UserChecklistProgress[];
 }

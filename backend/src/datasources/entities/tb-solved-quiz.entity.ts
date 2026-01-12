@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity('solved_quiz')
+@Entity('tb_solved_quiz')
 export class SolvedQuiz {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',

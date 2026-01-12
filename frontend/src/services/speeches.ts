@@ -1,4 +1,3 @@
-import { apiFetch } from '@/services/http/apiFetch';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 
 export type SttResult = {
@@ -37,10 +36,13 @@ export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Prom
     body: formData,
   });
 
-  if (!response.ok) {
+  const responseBody = await response.json();
+
+  if (!responseBody.success) {
     throw new Error(`HTTP error! status: ${response.status}`);
   }
-  const data = (await response.json()) as SttResult;
+  const data: SttResult = responseBody.data;
+
   if (!data) {
     throw new Error('STT 응답 데이터가 없습니다.');
   }
@@ -52,10 +54,7 @@ export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Prom
     throw new Error('STT 응답 형식이 올바르지 않습니다.');
   }
 
-  return {
-    solvedQuizId,
-    text: data.text,
-  };
+  return data;
 }
 
 /**
@@ -75,13 +74,13 @@ export async function getSpeechesByQuizId(mainQuizId: number): Promise<SpeechesT
       },
     });
 
-    const data = response.json();
+    const responseBody = await response.json();
 
-    if (!data) {
+    if (!responseBody.data) {
       throw new Error('음성 데이터 조회에 실패했습니다.');
     }
 
-    return data;
+    return responseBody.data;
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
     throw new Error(`음성 조회 실패: ${errorMessage}`);
