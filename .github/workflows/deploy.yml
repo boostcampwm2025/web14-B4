@@ -23,7 +23,9 @@ jobs:
           context: ./frontend     
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/client-app:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/client-app:latest
+            ${{ secrets.DOCKER_USERNAME }}/client-app:${{ github.sha }}
 
       - name: 서버 이미지 Build & Push 
         uses: docker/build-push-action@v4
@@ -31,7 +33,9 @@ jobs:
           context: ./backend     
           file: ./backend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/server-app:latest
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/server-app:latest
+            ${{ secrets.DOCKER_USERNAME }}/server-app:${{ github.sha }}
 
       - name: 설정 파일 NCP로 복사 
         uses: appleboy/scp-action@v0.1.7
