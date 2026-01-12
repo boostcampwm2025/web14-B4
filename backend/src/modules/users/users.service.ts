@@ -38,12 +38,11 @@ export class UsersService {
 
     // 선택한 체크리스트 저장
     const progressEntities = dto.checklistItems.map((item) => ({
-      userId,
+      userId: { userId },
+      checklistItemId: { checklistItemId: item.checklistItemId },
       solvedQuizId: dto.solvedQuizId,
-      checklistItemId: item.checklistItemId,
       isChecked: item.isChecked,
       checkedAt: new Date(),
-      updatedAt: new Date(),
     }));
 
     const result = await this.userChecklistProgressRepository.upsert(
