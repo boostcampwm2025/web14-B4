@@ -19,11 +19,11 @@ export class SaveChecklistProgressDto {
   @IsArray()
   @ArrayMinSize(1, { message: 'checklistItems는 최소 1개 이상이어야 합니다.' })
   @ValidateNested({ each: true })
-  @Type(() => ChecklistPregressItemDto)
-  checklistItems: ChecklistPregressItemDto[];
+  @Type(() => ChecklistProgressItemDto)
+  checklistItems: ChecklistProgressItemDto[];
 }
 
-export class ChecklistPregressItemDto {
+export class ChecklistProgressItemDto {
   @IsNumber()
   @Type(() => Number)
   checklistItemId: number;
