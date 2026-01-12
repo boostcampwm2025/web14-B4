@@ -4,9 +4,9 @@ import {
   Column,
   OneToMany,
   JoinColumn,
-  OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { ChecklistItem } from './tb-checklist-item.entity';
 import { QuizCategory } from './tb-quiz-category.entity';
@@ -26,7 +26,7 @@ export class MainQuiz {
   })
   mainQuizId: number;
 
-  @OneToOne(() => QuizCategory, {
+  @ManyToOne(() => QuizCategory, {
     eager: true,
     nullable: false,
   })
