@@ -4,10 +4,14 @@ import {
   Column,
   OneToMany,
   JoinColumn,
-  OneToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { ChecklistItem } from './tb-checklist-item.entity';
 import { QuizCategory } from './tb-quiz-category.entity';
+import { SolvedQuiz } from './tb-solved-quiz.entity';
+import { QuizKeyword } from './tb-quiz-keyword.entity';
 
 export enum DifficultyLevel {
   HARD = '상',
@@ -23,7 +27,7 @@ export class MainQuiz {
   })
   mainQuizId: number;
 
-  @OneToOne(() => QuizCategory, {
+  @ManyToOne(() => QuizCategory, {
     eager: true,
     nullable: false,
   })
@@ -33,23 +37,23 @@ export class MainQuiz {
   @Column({ name: 'difficulty_level', type: 'enum', enum: DifficultyLevel })
   difficultyLevel: DifficultyLevel;
 
-  @Column({ name: 'title', length: 255 })
+  @Column({ name: 'title', type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ name: 'content', length: 255 })
+  @Column({ name: 'content', type: 'varchar', length: 255 })
   content: string;
 
-  @Column({ name: 'hint', length: 255, nullable: true })
-  hint: string;
+  @Column({ name: 'hint', type: 'varchar', length: 255, nullable: true })
+  hint?: string;
 
-  @Column({
+  @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
   })
   createdAt: Date;
 
-  @Column({
+  @UpdateDateColumn({
     name: 'updated_at',
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
@@ -58,6 +62,12 @@ export class MainQuiz {
 
   @OneToMany(() => ChecklistItem, (item) => item.mainQuiz)
   checklistItems: ChecklistItem[];
+
+  @OneToMany(() => SolvedQuiz, (solved) => solved.mainQuiz)
+  solvedQuizzes: SolvedQuiz[];
+
+  @OneToMany(() => QuizKeyword, (keyword) => keyword.mainQuiz)
+  keywords: QuizKeyword[];
 
   getChecklistItemIds(): number[] {
     return this.checklistItems.map((item) => item.checklistItemId);

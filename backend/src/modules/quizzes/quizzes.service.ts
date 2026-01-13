@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
 import { QuizChecklistResponseDto } from './dto/quiz-response.dto';
 import {
   MainQuiz,

@@ -52,11 +52,11 @@ export class SpeechesService {
       );
     }
 
-    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz(
-      userId,
-      mainQuizId,
-      sttText,
-    );
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
+      user: { userId: userId },
+      mainQuiz: { mainQuizId: mainQuizId },
+      speechText: sttText,
+    });
 
     return {
       solvedQuizId: solvedQuiz.solvedQuizId,
@@ -101,7 +101,7 @@ export class SpeechesService {
     }
 
     return {
-      mainQuizId: updatedSolvedQuiz.mainQuizId,
+      mainQuizId: updatedSolvedQuiz.mainQuiz.mainQuizId,
       solvedQuizId: updatedSolvedQuiz.solvedQuizId,
       speechText: updatedSolvedQuiz.speechText,
     };

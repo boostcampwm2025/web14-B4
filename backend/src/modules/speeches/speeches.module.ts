@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { SpeechesService } from './speeches.service';
 import { SpeechesController } from './speeches.controller';
-import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
+import { DatasourcesModule } from 'src/datasources/datasources.module';
 
 @Module({
+  imports: [DatasourcesModule],
   controllers: [SpeechesController],
-  providers: [SpeechesService, SolvedQuizRepository],
+  providers: [SpeechesService],
 })
 export class SpeechesModule {}

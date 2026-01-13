@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatasourcesModule } from 'src/datasources/datasources.module';
 import { QuizzesController } from './quizzes.controller';
 import { QuizzesService } from './quizzes.service';
-import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
 
-import { MainQuiz } from '../../datasources/entities/tb-main-quiz.entity';
-import { ChecklistItem } from '../../datasources/entities/tb-checklist-item.entity';
-import { QuizCategory } from 'src/datasources/entities/tb-quiz-category.entity';
+// Entities are provided via DatasourcesModule
 
 @Module({
-  imports: [TypeOrmModule.forFeature([QuizCategory, MainQuiz, ChecklistItem])],
+  imports: [DatasourcesModule],
   controllers: [QuizzesController],
-  providers: [QuizzesService, MainQuizRepository],
+  providers: [QuizzesService],
   exports: [QuizzesService],
 })
 export class QuizModule {}
