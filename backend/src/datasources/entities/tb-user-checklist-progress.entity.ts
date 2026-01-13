@@ -13,7 +13,7 @@ import { User } from './tb-user.entity';
 import { SolvedQuiz } from './tb-solved-quiz.entity';
 
 @Entity('tb_user_checklist_progress')
-@Unique('uk_user_checklist_quiz', ['userId', 'checklistItemId', 'solvedQuizId'])
+@Unique('uk_user_checklist_quiz', ['user', 'checklistItem', 'solvedQuiz'])
 export class UserChecklistProgress {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
@@ -30,7 +30,7 @@ export class UserChecklistProgress {
   checklistItem: ChecklistItem;
 
   @ManyToOne(() => SolvedQuiz, { nullable: false })
-  @Column({ name: 'solved_quiz_id' })
+  @JoinColumn({ name: 'solved_quiz_id' })
   solvedQuiz: SolvedQuiz;
 
   @Column({ name: 'is_checked', default: false, nullable: true })
