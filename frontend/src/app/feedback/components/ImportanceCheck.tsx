@@ -17,20 +17,20 @@ const OPTIONS: Option[] = [
   {
     value: 'LOW',
     label: '이미 알고 있었거나\n흥미 분야가 아니에요',
-    graySrc: '/images/bad-gray.png',
-    blueSrc: '/images/bad-blue.png',
+    graySrc: '/images/bad-gray.svg',
+    blueSrc: '/images/bad-blue.svg',
   },
   {
     value: 'MEDIUM',
     label: '보통이에요',
-    graySrc: '/images/normal-gray.png',
-    blueSrc: '/images/normal-blue.png',
+    graySrc: '/images/normal-gray.svg',
+    blueSrc: '/images/normal-blue.svg',
   },
   {
     value: 'HIGH',
     label: '더 공부해보고 싶어요',
-    graySrc: '/images/good-gray.png',
-    blueSrc: '/images/good-blue.png',
+    graySrc: '/images/good-gray.svg',
+    blueSrc: '/images/good-blue.svg',
   },
 ];
 
@@ -76,10 +76,13 @@ export default function ImportanceCheck({ userName = '철수' }: Props) {
               <button
                 key={opt.value}
                 type="button"
-                className="group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl p-4"
+                className={[
+                  'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl p-4',
+                  'hover:scale-105',
+                ].join(' ')}
                 onMouseEnter={() => setHovered(opt.value)}
                 onMouseLeave={() => setHovered(null)}
-                onClick={() => setSelected(opt.value)}
+                onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
                 aria-pressed={isSelected}
               >
                 <Image
