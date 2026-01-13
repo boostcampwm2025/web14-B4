@@ -26,6 +26,8 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/client-app:latest
             ${{ secrets.DOCKER_USERNAME }}/client-app:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=/api
 
       - name: 서버 이미지 Build & Push 
         uses: docker/build-push-action@v4
