@@ -36,20 +36,12 @@ export class UsersService {
       );
     }
 
-    const progressEntities = dto.checklistItems.map((item) =>
-      this.userChecklistProgressRepository.save(
-        this.userChecklistProgressRepository['repository'].create({
-          user: { userId },
-          checklistItem: { checklistItemId: item.checklistItemId },
-          solvedQuiz: dto.solvedQuizId,
-          isChecked: item.isChecked,
-          checkedAt: item.isChecked ? new Date() : null,
-        }),
-      ),
+    // upsert 진행
+    await this.userChecklistProgressRepository.upsertProgresses(
+      userId,
+      dto.solvedQuizId,
+      dto.checklistItems,
     );
-
-    // save 대기
-    await Promise.all(progressEntities);
 
     return { savedCount: dto.checklistItems.length };
   }

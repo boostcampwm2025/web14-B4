@@ -31,7 +31,7 @@ export class UserChecklistProgress {
 
   @ManyToOne(() => SolvedQuiz, { nullable: false })
   @Column({ name: 'solved_quiz_id' })
-  solvedQuiz: number;
+  solvedQuiz: SolvedQuiz;
 
   @Column({ name: 'is_checked', default: false, nullable: true })
   isChecked: boolean;

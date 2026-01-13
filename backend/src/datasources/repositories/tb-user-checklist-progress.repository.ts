@@ -28,4 +28,28 @@ export class UserChecklistProgressRepository {
   async deleteById(id: number): Promise<void> {
     await this.repository.delete(id);
   }
+
+  async upsertProgresses(
+    userId: number,
+    solvedQuizId: number,
+    checklistItems: {
+      checklistItemId: number;
+      isChecked: boolean;
+    }[],
+  ): Promise<void> {
+    if (checklistItems.length === 0) return;
+
+    const rows = checklistItems.map((item) => ({
+      user: { userId },
+      checklistItem: { checklistItemId: item.checklistItemId },
+      solvedQuiz: { solvedQuizId },
+      isChecked: item.isChecked,
+      checkedAt: item.isChecked ? new Date() : null,
+    }));
+
+    await this.repository.upsert(rows, {
+      conflictPaths: ['user', 'checklistItem', 'solvedQuiz'],
+      skipUpdateIfNoValuesChanged: true,
+    });
+  }
 }
