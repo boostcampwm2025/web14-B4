@@ -14,6 +14,7 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { FeedbackModule } from './modules/feedback/feedback.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
     UsersModule,
     SpeechesModule,
     QuizModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [
