@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class SolvedQuizRepository extends Repository<SolvedQuiz> {
-  constructor(private dataSource: DataSource) {
-    super(SolvedQuiz, dataSource.createEntityManager());
-  }
+export class SolvedQuizRepository {
+  constructor(
+    @InjectRepository(SolvedQuiz)
+    private readonly repository: Repository<SolvedQuiz>,
+  ) {}
 
   async createSolvedQuiz(
     solvedQuiz: DeepPartial<SolvedQuiz>,
   ): Promise<SolvedQuiz> {
-    return await this.save(solvedQuiz);
+    return await this.repository.save(solvedQuiz);
   }
 
   // 최신 순으로 조회
@@ -20,7 +22,7 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
     mainQuizId: number,
     userId: number,
   ): Promise<SolvedQuiz[]> {
-    return await this.find({
+    return await this.repository.find({
       where: {
         mainQuiz: { mainQuizId },
         user: { userId },
@@ -34,11 +36,11 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
     id: number,
     speechText: string,
   ): Promise<UpdateResult> {
-    return await this.update(id, { speechText });
+    return await this.repository.update(id, { speechText });
   }
 
   async getById(solvedQuizId: number): Promise<SolvedQuiz | null> {
-    return await this.findOne({
+    return await this.repository.findOne({
       where: { solvedQuizId },
       relations: ['mainQuiz', 'user'],
     });
