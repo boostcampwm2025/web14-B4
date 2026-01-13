@@ -52,7 +52,6 @@ export const Checklist: React.FC<ChecklistProps> = ({
             content={option.content}
             checked={option.checked}
             onChange={(checked) => {
-              console.log('ChecklistItem onChange:', option.id, checked);
               onOptionChange?.(option.id, checked);
             }}
           />

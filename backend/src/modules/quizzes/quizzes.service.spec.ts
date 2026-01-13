@@ -1,30 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import { TbMainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
+import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.respository';
 import { QuizFixture } from './quizzes.fixture';
 
 describe('QuizzesService', () => {
   let service: QuizzesService;
-  let repository: jest.Mocked<TbMainQuizRepository>;
+  let repository: jest.Mocked<MainQuizRepository>;
 
   beforeEach(async () => {
     const mockRepository = {
-      getQuizWithChecklist: jest.fn(),
+      findOneWithChecklist: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QuizzesService,
         {
-          provide: TbMainQuizRepository,
-          useValue: mockRepository,
+          provide: MainQuizRepository, // 실제 Repository 대신
+          useValue: mockRepository, // Mock으로 대체
         },
       ],
     }).compile();
 
     service = module.get<QuizzesService>(QuizzesService);
-    repository = module.get(TbMainQuizRepository);
+    repository = module.get(MainQuizRepository);
   });
 
   describe('getQuizChecklist', () => {

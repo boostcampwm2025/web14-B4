@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 
 async function bootstrap() {
@@ -16,6 +18,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalInterceptors(new ApiResponseInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   app.enableCors({
     origin: ['http://localhost:3000', true],

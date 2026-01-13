@@ -1,16 +1,18 @@
 import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
-import { Quiz } from '@/app/quizzes/types/quiz';
+import { Quiz, CategoryCountsResponseDto } from '@/app/quizzes/types/quiz';
+import { apiFetch } from '@/services/http/apiFetch';
 
-const isServer = typeof window === 'undefined';
-const BASE_URL = isServer 
-  ? (process.env.API_URL || 'http://backend:8080/api') 
-  : '/api';
+export interface ChecklistSubmitRequestDto {
+  mainQuizId: number;
+  solvedQuizId: number;
+  checklistItems: {
+    checklistItemId: number;
+    isChecked: boolean;
+  }[];
+}
 
-interface ApiResponse<T> {
-  success: boolean;
-  message: string;
-  errorCode: string | null;
-  data: T;
+export interface ChecklistSubmitResponseDto {
+  savedCount: number;
 }
 
 export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
@@ -19,93 +21,60 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
   if (category) params.append('category', category);
   if (difficulty) params.append('difficulty', difficulty);
 
-  try {
-    const res = await fetch(`${BASE_URL}/quizzes?${params.toString()}`, {
-      cache: 'no-store',
-    });
+  const query = params.toString();
 
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
+  const data = await apiFetch<Quiz[]>(
+    `/quizzes${query ? `?${query}` : ''}`,
+    { method: 'GET', cache: 'no-store' },
+    { message: '퀴즈 목록 응답 데이터가 없습니다.' },
+  );
 
-    const responseBody: ApiResponse<Quiz[]> = await res.json();
-
-    if (!responseBody.success) {
-      throw new Error(responseBody.message || '퀴즈 목록을 불러오는데 실패했습니다.');
-    }
-
-    return responseBody.data;
-  } catch (error) {
-    console.error('Fetch Quizzes Error:', error);
-    throw error;
-  }
+  return data;
 }
 
-export async function fetchCategoryCounts() {
-  try {
-    const res = await fetch(`${BASE_URL}/quizzes/categories`, {
-      cache: 'no-store',
-    });
-
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
-
-    const responseBody = await res.json();
-
-    if (!responseBody.success) {
-      throw new Error(responseBody.message || '카테고리 정보를 불러오는데 실패했습니다.');
-    }
-
-    return responseBody.data;
-  } catch (error) {
-    console.error('Fetch Categories Error:', error);
-    throw error;
-  }
+export async function fetchCategoryCounts(): Promise<CategoryCountsResponseDto> {
+  const data = await apiFetch<CategoryCountsResponseDto>(
+    '/quizzes/categories',
+    { method: 'GET', cache: 'no-store' },
+    { message: '카테고리 정보 응답 데이터가 없습니다.' },
+  );
+  return data;
 }
 
 export async function fetchQuiz(id: number): Promise<Quiz> {
-  try {
-    const res = await fetch(`${BASE_URL}/quizzes/${id}`, {
-      cache: 'no-store',
-    });
+  const data = await apiFetch<Quiz>(
+    `/quizzes/${id}`,
+    { method: 'GET', cache: 'no-store' },
+    { message: '퀴즈 정보 응답 데이터가 없습니다.' },
+  );
 
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
-
-    const responseBody: ApiResponse<Quiz> = await res.json();
-
-    if (!responseBody.success) {
-      throw new Error(responseBody.message || '퀴즈 정보를 불러오는데 실패했습니다.');
-    }
-
-    return responseBody.data;
-  } catch (error) {
-    console.error('Fetch Quiz Error:', error);
-    throw error;
-  }
+  return data;
 }
 
-export async function fetchQuizChecklistItems(mainQuizId: number) {
-  try {
-    const res = await fetch(`${BASE_URL}/quizzes/${mainQuizId}/checklist`, {
-      cache: 'no-store',
-    });
+export async function fetchQuizChecklistItems(
+  mainQuizId: number,
+): Promise<QuizChecklistResponseDto> {
+  const data = await apiFetch<QuizChecklistResponseDto>(
+    `/quizzes/${mainQuizId}/checklist`,
+    { method: 'GET', cache: 'no-store' },
+    { message: '체크리스트 목록 응답 데이터가 없습니다.' },
+  );
 
-    if (!res.ok) {
-      throw new Error('서버와의 통신이 원활하지 않습니다.');
-    }
+  return data;
+}
 
-    const responseBody: ApiResponse<QuizChecklistResponseDto> = await res.json();
+export async function submitChecklist(req: ChecklistSubmitRequestDto) {
+  const data = await apiFetch<ChecklistSubmitResponseDto>(
+    '/users/checklist-progress',
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(req),
+    },
+    { message: '체크리스트 제출이 실패했습니다.' },
+  );
 
-    if (!responseBody.success) {
-      throw new Error(responseBody.message || '체크리스트 목록을 불러오는데 실패했습니다.');
-    }
-
-    return responseBody.data;
-  } catch (error) {
-    console.error('Fetch Quizzes Error:', error);
-    throw error;
-  }
+  return data;
 }

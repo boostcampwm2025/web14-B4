@@ -3,13 +3,17 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { getSpeechesByQuizId, updateSpeechText } from '@/services/speeches';
+import { getSpeechesByQuizId, updateSpeechText } from '@/services/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
-import { ChecklistItem, ChecklistItemDto, QuizChecklistResponseDto } from '../../types/checklist.types';
-import { fetchQuizChecklistItems } from '@/services/quizApi';
+import {
+  ChecklistItem,
+  ChecklistItemDto,
+  QuizChecklistResponseDto,
+} from '../../types/checklist.types';
+import { fetchQuizChecklistItems, submitChecklist } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
@@ -22,7 +26,8 @@ export default function ResultPage() {
   const router = useRouter();
   const params = useParams();
   const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
-  const { solvedQuizId } = useQuizStore();
+  const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
+  const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
   const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
@@ -76,7 +81,6 @@ export default function ResultPage() {
     );
   };
 
-
   // 음성 녹음 텍스트 업데이트
   const handleUpdateSpeech = async () => {
     try {
@@ -94,6 +98,7 @@ export default function ResultPage() {
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
+      clearSolvedQuizId();
       router.push(`/main-quiz/${mainQuizId}`);
     } else {
       e.preventDefault(); // 네비게이션 취소
@@ -102,6 +107,33 @@ export default function ResultPage() {
 
   const handleNewConversion = () => {
     handleUpdateSpeech();
+  };
+
+  const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+
+    const confirmed = window.confirm('답변을 제출하시겠습니까?');
+    if (confirmed) {
+      const checklistItems = options.map((option) => ({
+        checklistItemId: Number(option.id),
+        isChecked: option.checked,
+      }));
+
+      const requestBody = {
+        mainQuizId: Number(mainQuizId),
+        solvedQuizId: Number(solvedQuizId),
+        checklistItems: checklistItems,
+      };
+
+      try {
+        await submitChecklist(requestBody);
+        // 성공 시 페이지 이동 등
+        router.push('/result');
+      } catch (error) {
+        console.error('제출 실패:', error);
+        alert('제출에 실패했습니다.');
+      }
+    }
   };
 
   return (
@@ -142,7 +174,7 @@ export default function ResultPage() {
               다시풀기
             </Link>
             <button
-              onClick={handleNewConversion}
+              onClick={handleSubmit}
               className="flex-1 py-3 md:py-4 text-white rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 text-sm md:text-base"
               style={{ backgroundColor: '#4278FF' }}
             >

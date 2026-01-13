@@ -1,5 +1,5 @@
 import './globals.css';
-import Header from '@/components/Header';
+import ConditionalHeader from '@/components/ConditionalHeader';
 
 export default function RootLayout({
   children,
@@ -9,7 +9,7 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body>
-        <Header />
+        <ConditionalHeader />
         <main>{children}</main>
       </body>
     </html>

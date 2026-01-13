@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { TbUserChecklistProgress } from '../entities/tb-user-checklist-progress.entity';
+import { UserChecklistProgress } from '../entities/tb-user-checklist-progress.entity';
 
 @Injectable()
-export class TbUserChecklistProgressRepository extends Repository<TbUserChecklistProgress> {
+export class UserChecklistProgressRepository extends Repository<UserChecklistProgress> {
   constructor(@InjectDataSource() private dataSource: DataSource) {
-    super(TbUserChecklistProgress, dataSource.createEntityManager());
+    super(UserChecklistProgress, dataSource.createEntityManager());
   }
 }

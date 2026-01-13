@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { UsersModule } from './modules/users/users.module';
+import { FeedbackModule } from './modules/feedback/feedback.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { UsersModule } from './modules/users/users.module';
     UsersModule,
     SpeechesModule,
     QuizModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

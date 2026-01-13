@@ -8,7 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
-import { SolvedQuizRepository } from '../../datasources/repositories/solved-quiz.repository';
+import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 
 // TODO : 추가로 처리해야할 예외
 /* 답변 텍스트가 너무 짧은 경우, 예외 처리.
