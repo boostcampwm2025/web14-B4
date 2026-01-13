@@ -7,8 +7,6 @@ services:
     env_file:
       - .env.server
     container_name: nestjs-backend
-    ports:
-      - '8080:8080'
     environment:
       - NODE_ENV=production
     networks:
@@ -23,10 +21,8 @@ services:
     env_file:
       - .env.server
     container_name: nextjs-frontend
-    ports:
-      - '3000:3000'
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=production 
       - PORT=3000
     depends_on:
       - backend
