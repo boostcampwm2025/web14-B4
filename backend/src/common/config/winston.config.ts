@@ -2,6 +2,25 @@ import { format, transports, type LoggerOptions } from 'winston';
 import type { TransformableInfo } from 'logform';
 import 'winston-daily-rotate-file';
 
+function safeStringify(value: unknown): string {
+  const seen = new WeakSet<object>();
+
+  return JSON.stringify(value, (_key: string, val: unknown): unknown => {
+    if (typeof val === 'object' && val !== null) {
+      if (seen.has(val)) {
+        return '[Circular]';
+      }
+      seen.add(val);
+    }
+
+    if (typeof val === 'bigint') {
+      return val.toString();
+    }
+
+    return val;
+  });
+}
+
 function stringifyMessage(value: unknown): string {
   if (typeof value === 'string') {
     return value;
@@ -9,7 +28,11 @@ function stringifyMessage(value: unknown): string {
   if (value instanceof Error) {
     return value.stack ?? value.message;
   }
-  return JSON.stringify(value);
+  try {
+    return safeStringify(value);
+  } catch {
+    return String(value);
+  }
 }
 
 function formatLog({
