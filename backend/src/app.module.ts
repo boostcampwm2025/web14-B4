@@ -8,6 +8,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { UsersModule } from './modules/users/users.module';
+import { WinstonModule } from 'nest-winston';
+import { winstonConfig } from './common/config/winston.config';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
+import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 
 @Module({
@@ -15,6 +21,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
     ConfigModule.forRoot({
       isGlobal: true, // 전역 사용
     }),
+    WinstonModule.forRoot(winstonConfig),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -49,6 +56,11 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
     FeedbackModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_INTERCEPTOR, useClass: ApiResponseInterceptor },
+    { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+  ],
 })
 export class AppModule {}

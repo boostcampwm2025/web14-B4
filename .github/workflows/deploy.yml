@@ -2,12 +2,12 @@ name: CD
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,37 +17,39 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: 클라이언드 이미지 Build & Push 
+      - name: 클라이언드 이미지 Build & Push
         uses: docker/build-push-action@v4
         with:
-          context: ./frontend     
+          context: ./frontend
           file: ./frontend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/client-app:latest
             ${{ secrets.DOCKER_USERNAME }}/client-app:${{ github.sha }}
+          build-args: |
+            NEXT_PUBLIC_API_BASE_URL=/api
 
-      - name: 서버 이미지 Build & Push 
+      - name: 서버 이미지 Build & Push
         uses: docker/build-push-action@v4
         with:
-          context: ./backend     
+          context: ./backend
           file: ./backend/Dockerfile
           push: true
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/server-app:latest
             ${{ secrets.DOCKER_USERNAME }}/server-app:${{ github.sha }}
 
-      - name: 설정 파일 NCP로 복사 
+      - name: 설정 파일 NCP로 복사
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.SSH_PORT }}
-          source: "docker-compose.yml,nginx/nginx.conf" 
-          target: "/home/${{ secrets.USERNAME }}/project-deploy/"
+          source: 'docker-compose.yml,nginx/nginx.conf'
+          target: '/home/${{ secrets.USERNAME }}/project-deploy/'
 
-      - name: 배포 명령 실행 
+      - name: 배포 명령 실행
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
@@ -57,7 +59,7 @@ jobs:
           script: |
             mkdir -p ~/project-deploy
             cd ~/project-deploy
-            
+
             echo "${{ secrets.ENV_SERVER }}" > .env.server
 
             export DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}

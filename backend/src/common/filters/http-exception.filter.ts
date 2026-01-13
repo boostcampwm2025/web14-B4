@@ -4,12 +4,14 @@ import {
   ArgumentsHost,
   HttpException,
   HttpStatus,
-  Logger,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { Response, Request } from 'express';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { ApiResponse } from '../interfaces/api-response.interface';
 import { ERROR_MESSAGES } from '../constants/error-messages';
+import { buildHttpLog } from '../utils/http-log.util';
 
 // NestJS 내장 에러 응답 객체 구조 정의 (any 방지용)
 interface ErrorResponseObject {
@@ -17,9 +19,13 @@ interface ErrorResponseObject {
   errorCode?: string;
   statusCode?: number;
 }
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(HttpExceptionFilter.name);
+  constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
+  ) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
     const ctx = host.switchToHttp();
@@ -60,7 +66,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
       message = ERROR_MESSAGES.INTERNAL_SERVER_ERROR.message;
     }
 
-    const logMessage = `[${req.method}] ${req.originalUrl} | status: ${status} | code: ${errorCode}`;
+    const exceptionName =
+      exception instanceof Error ? exception.name : 'UnknownException';
+    const exceptionMessage =
+      exception instanceof Error ? exception.message : String(exception);
+
+    const logMessage = buildHttpLog({
+      method: req.method,
+      url: req.originalUrl,
+      status,
+      errorCode,
+      exceptionName,
+      exceptionMessage,
+    });
+
     if (status >= 500) {
       this.logger.error(
         logMessage,
