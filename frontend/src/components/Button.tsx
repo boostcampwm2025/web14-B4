@@ -15,11 +15,12 @@ const base =
   'disabled:cursor-not-allowed disabled:opacity-50';
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'bg-[var(--color-primary)] text-white hover:brightness-90 active:brightness-80',
+  primary:
+    'bg-[var(--color-primary)] text-white hover:brightness-90 cursor-pointer active:brightness-80',
   secondary:
-    'bg-white text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-accent-sky)] active:brightness-95',
+    'bg-white text-[var(--color-primary)] border border-[var(--color-primary)] hover:bg-[var(--color-accent-sky)] cursor-pointer active:brightness-95',
   dashed:
-    'bg-white text-[var(--color-primary)] border border-dashed border-[var(--color-primary)] hover:bg-[var(--color-accent-sky)] active:brightness-95',
+    'bg-white text-[var(--color-primary)] border border-dashed border-[var(--color-primary)] hover:bg-[var(--color-accent-sky)] cursor-pointer active:brightness-95',
 };
 
 const sizes: Record<ButtonSize, string> = {
