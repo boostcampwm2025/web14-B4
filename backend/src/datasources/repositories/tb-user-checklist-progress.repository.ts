@@ -10,7 +10,9 @@ export class UserChecklistProgressRepository {
     private readonly repository: Repository<UserChecklistProgress>,
   ) {}
 
-  save(progress: UserChecklistProgress): Promise<UserChecklistProgress> {
+  createChecklistProgress(
+    progress: UserChecklistProgress,
+  ): Promise<UserChecklistProgress> {
     return this.repository.save(progress);
   }
 

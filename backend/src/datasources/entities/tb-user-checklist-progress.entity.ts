@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ChecklistItem } from './tb-checklist-item.entity';
 import { User } from './tb-user.entity';
+import { SolvedQuiz } from './tb-solved-quiz.entity';
 
 @Entity('tb_user_checklist_progress')
 @Unique('uk_user_checklist_quiz', ['userId', 'checklistItemId', 'solvedQuizId'])
@@ -28,7 +29,7 @@ export class UserChecklistProgress {
   @JoinColumn({ name: 'checklist_item_id' })
   checklistItem: ChecklistItem;
 
-  // FK 등록 x
+  @ManyToOne(() => SolvedQuiz, { nullable: false })
   @Column({ name: 'solved_quiz_id' })
   solvedQuiz: number;
 
