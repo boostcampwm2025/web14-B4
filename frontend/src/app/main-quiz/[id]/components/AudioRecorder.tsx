@@ -9,6 +9,7 @@ import { ApiError } from '@/services/http/errors';
 import { Button } from '@/components/Button';
 import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
+import { getRecorderConfig } from '@/utils/recorder';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -139,9 +140,13 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
     try {
       chunksRef.current = [];
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'video/webm;codecs=vp9',
-      });
+
+      const config = getRecorderConfig();
+
+      const mediaRecorder = new MediaRecorder(
+        stream,
+        config.mimeType ? { mimeType: config.mimeType } : {},
+      );
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -150,7 +155,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: 'video/webm' });
+        const blob = new Blob(chunksRef.current, { type: config.mimeType || 'video/webm' });
         const url = URL.createObjectURL(blob);
         setRecordedVideos((prev) => [...prev, url]);
         chunksRef.current = [];
