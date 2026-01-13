@@ -39,9 +39,9 @@ export class UsersService {
     const progressEntities = dto.checklistItems.map((item) =>
       this.userChecklistProgressRepository.save(
         this.userChecklistProgressRepository['repository'].create({
-          userId: { userId },
-          checklistItemId: { checklistItemId: item.checklistItemId },
-          solvedQuizId: dto.solvedQuizId,
+          user: { userId },
+          checklistItem: { checklistItemId: item.checklistItemId },
+          solvedQuiz: dto.solvedQuizId,
           isChecked: item.isChecked,
           checkedAt: item.isChecked ? new Date() : null,
         }),

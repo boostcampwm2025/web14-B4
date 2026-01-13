@@ -17,7 +17,7 @@ export class UserChecklistProgressRepository {
   findByUserId(userId: number): Promise<UserChecklistProgress[]> {
     return this.repository.find({
       where: {
-        userId: { userId },
+        user: { userId },
       },
       relations: ['checklistItem', 'userId'],
     });

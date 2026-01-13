@@ -22,15 +22,15 @@ export class UserChecklistProgress {
 
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  userId: User;
+  user: User;
 
   @ManyToOne(() => ChecklistItem, { nullable: false })
   @JoinColumn({ name: 'checklist_item_id' })
-  checklistItemId: ChecklistItem;
+  checklistItem: ChecklistItem;
 
   // FK 등록 x
   @Column({ name: 'solved_quiz_id' })
-  solvedQuizId: number;
+  solvedQuiz: number;
 
   @Column({ name: 'is_checked', default: false, nullable: true })
   isChecked: boolean;

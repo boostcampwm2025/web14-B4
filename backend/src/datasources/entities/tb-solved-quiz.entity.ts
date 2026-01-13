@@ -25,11 +25,11 @@ export class SolvedQuiz {
 
   @ManyToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  userId: User;
+  user: User;
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuizId: MainQuiz;
+  mainQuiz: MainQuiz;
 
   @Column('text', { name: 'speech_text' })
   speechText: string;

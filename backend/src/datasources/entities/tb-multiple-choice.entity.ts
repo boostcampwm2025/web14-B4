@@ -19,11 +19,11 @@ export class MultipleChoice {
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuizId: MainQuiz;
+  mainQuiz: MainQuiz;
 
   @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })
   content?: string;
 
-  @OneToMany(() => MultipleChoiceOption, (option) => option.multipleChoiceId)
+  @OneToMany(() => MultipleChoiceOption, (option) => option.multipleChoice)
   options: MultipleChoiceOption[];
 }

@@ -22,8 +22,8 @@ export class SolvedQuizRepository extends Repository<SolvedQuiz> {
   ): Promise<SolvedQuiz[]> {
     return await this.find({
       where: {
-        mainQuizId: { mainQuizId },
-        userId: { userId },
+        mainQuiz: { mainQuizId },
+        user: { userId },
       },
       relations: ['mainQuiz', 'user'],
       order: { createdAt: 'DESC' },

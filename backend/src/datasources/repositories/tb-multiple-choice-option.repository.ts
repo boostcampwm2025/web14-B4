@@ -15,7 +15,7 @@ export class MultipleChoiceOptionRepository {
   ): Promise<MultipleChoiceOption[]> {
     return this.repository.find({
       where: {
-        multipleChoiceId: { multipleChoiceId },
+        multipleChoice: { multipleChoiceId },
       },
     });
   }

@@ -19,12 +19,9 @@ export class ChecklistItem {
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuizId: MainQuiz;
+  mainQuiz: MainQuiz;
 
-  @OneToMany(
-    () => UserChecklistProgress,
-    (progress) => progress.checklistItemId,
-  )
+  @OneToMany(() => UserChecklistProgress, (progress) => progress.checklistItem)
   userProgress: UserChecklistProgress[];
 
   @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })

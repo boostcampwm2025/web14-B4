@@ -17,7 +17,7 @@ export class Flashcard {
 
   @ManyToOne(() => MainQuiz, { nullable: false })
   @JoinColumn({ name: 'main_quiz_id' })
-  mainQuizId: MainQuiz;
+  mainQuiz: MainQuiz;
 
   @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })
   content?: string;

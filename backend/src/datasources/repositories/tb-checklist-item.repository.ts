@@ -13,7 +13,7 @@ export class ChecklistItemRepository {
   findByMainQuizId(mainQuizId: number): Promise<ChecklistItem[]> {
     return this.repository.find({
       where: {
-        mainQuizId: { mainQuizId },
+        mainQuiz: { mainQuizId },
       },
       order: { sortOrder: 'ASC' },
     });

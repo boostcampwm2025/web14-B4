@@ -13,7 +13,7 @@ export class FlashcardRepository {
   findByMainQuizId(mainQuizId: number): Promise<Flashcard[]> {
     return this.repository.find({
       where: {
-        mainQuizId: { mainQuizId },
+        mainQuiz: { mainQuizId },
       },
     });
   }

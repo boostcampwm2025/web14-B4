@@ -13,7 +13,7 @@ export class FollowUpQuestionRepository {
   findByMainQuizId(mainQuizId: number): Promise<FollowUpQuestion[]> {
     return this.repository.find({
       where: {
-        mainQuizId: { mainQuizId },
+        mainQuiz: { mainQuizId },
       },
     });
   }

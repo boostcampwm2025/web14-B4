@@ -53,8 +53,8 @@ export class SpeechesService {
     }
 
     const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
-      userId: { userId: userId },
-      mainQuizId: { mainQuizId: mainQuizId },
+      user: { userId: userId },
+      mainQuiz: { mainQuizId: mainQuizId },
       speechText: sttText,
     });
 
@@ -101,7 +101,7 @@ export class SpeechesService {
     }
 
     return {
-      mainQuizId: updatedSolvedQuiz.mainQuizId.mainQuizId,
+      mainQuizId: updatedSolvedQuiz.mainQuiz.mainQuizId,
       solvedQuizId: updatedSolvedQuiz.solvedQuizId,
       speechText: updatedSolvedQuiz.speechText,
     };

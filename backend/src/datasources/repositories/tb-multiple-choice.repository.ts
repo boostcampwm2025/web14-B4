@@ -13,7 +13,7 @@ export class MultipleChoiceRepository {
   findByMainQuizId(mainQuizId: number): Promise<MultipleChoice[]> {
     return this.repository.find({
       where: {
-        mainQuizId: { mainQuizId },
+        mainQuiz: { mainQuizId },
       },
       relations: ['options'],
     });
