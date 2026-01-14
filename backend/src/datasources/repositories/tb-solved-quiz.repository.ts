@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
-import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
+import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -53,5 +53,12 @@ export class SolvedQuizRepository {
     });
 
     return result?.speechText ?? null;
+  }
+
+  async updateImportance(
+    solvedQuizId: number,
+    importance: Importance,
+  ): Promise<UpdateResult> {
+    return await this.repository.update(solvedQuizId, { importance });
   }
 }
