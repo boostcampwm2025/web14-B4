@@ -398,8 +398,13 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
             {/* 메시지 */}
             {(permissionMessage || videoPermissionMessage || message) && (
-              <div className="rounded-xl bg-white p-3 text-sm text-red-600">
-                {permissionMessage || videoPermissionMessage || message}
+              <div>
+                <div className="rounded-xl bg-white p-3 text-sm text-red-600">
+                  {permissionMessage || message}
+                </div>
+                <div className="rounded-xl bg-white p-3 text-sm text-red-600">
+                  {videoPermissionMessage || message}
+                </div>
               </div>
             )}
 

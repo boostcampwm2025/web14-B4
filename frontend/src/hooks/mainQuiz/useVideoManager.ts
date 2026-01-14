@@ -52,7 +52,9 @@ export function useVideoManager() {
 
       if (e?.name === 'NotAllowedError' || e?.name === 'SecurityError') {
         setStatus('denied');
-        setMessage('카메라 권한이 필요합니다. 브라우저 설정에서 카메라를 허용해주세요.');
+        setMessage(
+          '미러링 기능을 사용하기 위해서는 카메라 권한이 필요합니다. 브라우저 설정에서 카메라를 허용해주세요. 새로고침 후, 카메라 권한 동의를 추가해주세요.',
+        );
         return;
       }
 
@@ -63,7 +65,9 @@ export function useVideoManager() {
 
   const denyPermission = () => {
     setStatus('denied');
-    setMessage('카메라 권한이 필요합니다. 동의 후 카메라를 허용해주세요.');
+    setMessage(
+      '미러링 기능을 사용하기 위해서는 카메라 권한이 필요합니다. 동의 후 카메라를 허용해주세요. 새로고침 후, 카메라 권한 동의를 추가해주세요.',
+    );
   };
 
   const videoOptions: VideoOption[] = [
