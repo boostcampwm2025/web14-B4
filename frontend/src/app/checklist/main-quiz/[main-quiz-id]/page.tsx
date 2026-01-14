@@ -13,9 +13,9 @@ export default async function ResultPage({
   const resolvedParams = await params;
   const mainQuizId = parseInt(resolvedParams['main-quiz-id'], 10);
 
+  const quiz = await fetchQuiz(mainQuizId);
   // 서버에서 모든 데이터 병렬로 fetching
-  const [quiz, checklistData, speechData] = await Promise.all([
-    fetchQuiz(mainQuizId),
+  const [checklistData, speechData] = await Promise.all([
     fetchQuizChecklistItems(mainQuizId),
     getSpeechesByQuizId(mainQuizId),
   ]);
