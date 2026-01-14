@@ -2,6 +2,7 @@ import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
 import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 import { QuizCategoryWithCount } from './types/quiz';
+import { FilterLink } from './components/filters/FilterLink';
 
 interface PageProps {
   searchParams: Promise<{
@@ -78,30 +79,34 @@ export default async function QuizPage(props: PageProps) {
         <div className="flex flex-col">
           <div className="mb-3 text-xl font-semibold">난이도</div>
           <div className="flex gap-2 mb-8">
-            <Link
-              href={createQueryString('difficulty', '전체')}
+            <FilterLink
+              param="difficulty"
+              value="전체"
+              text="전체"
+              currentParams={{ category, difficulty }}
               className={getDifficultyButtonStyle('전체')}
-            >
-              전체
-            </Link>
-            <Link
-              href={createQueryString('difficulty', '상')}
+            />
+            <FilterLink
+              param="difficulty"
+              value="상"
+              text="상"
+              currentParams={{ category, difficulty }}
               className={getDifficultyButtonStyle('상')}
-            >
-              상
-            </Link>
-            <Link
-              href={createQueryString('difficulty', '중')}
+            />
+            <FilterLink
+              param="difficulty"
+              value="중"
+              text="중"
+              currentParams={{ category, difficulty }}
               className={getDifficultyButtonStyle('중')}
-            >
-              중
-            </Link>
-            <Link
-              href={createQueryString('difficulty', '하')}
+            />
+            <FilterLink
+              param="difficulty"
+              value="하"
+              text="하"
+              currentParams={{ category, difficulty }}
               className={getDifficultyButtonStyle('하')}
-            >
-              하
-            </Link>
+            />
           </div>
         </div>
 
