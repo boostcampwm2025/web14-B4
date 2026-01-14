@@ -23,7 +23,7 @@ export class ChecklistItemRepository {
     userId: number,
     mainQuizId: number,
     solvedQuizId: number,
-  ) {
+  ): Promise<ChecklistItem[] | null> {
     return this.repository
       .createQueryBuilder('checklistItem')
       .select(['checklistItem.checklistItemId', 'checklistItem.content'])
