@@ -52,4 +52,19 @@ export class UserChecklistProgressRepository {
       skipUpdateIfNoValuesChanged: true,
     });
   }
+
+  // solved quiz의 체크리스트를 가져온다
+  async getChecklistProgressBySolved(
+    solvedQuizId: number,
+  ): Promise<UserChecklistProgress[] | null> {
+    return this.repository
+      .createQueryBuilder('userChecklistProgress')
+      .select(['checklistItem.content', 'userChecklistProgress.isChecked'])
+      .leftJoin('userChecklistProgress.checklistItem', 'checklistItem')
+      .where('userChecklistProgress.solvedQuizId = :solvedQuizId', {
+        solvedQuizId,
+      })
+      .orderBy('checklistItem.sortOrder', 'ASC')
+      .getMany();
+  }
 }
