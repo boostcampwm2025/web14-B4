@@ -14,7 +14,7 @@ export default async function MainQuizPage({ params }: PageProps) {
 
   return (
     <main>
-      <div className="flex justify-center m-5">
+      <div className="flex justify-center pt-5">
         <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
           <span className="px-3 text-base font-medium">{quiz.category.name}</span>
           <span className="px-3 text-base font-medium flex items-center gap-2">
