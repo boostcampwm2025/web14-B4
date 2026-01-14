@@ -8,11 +8,7 @@ import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
-import {
-  ChecklistItem,
-  ChecklistItemDto,
-  QuizChecklistResponseDto,
-} from '../../types/checklist.types';
+import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
 import { fetchQuizChecklistItems, submitChecklist } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
 
@@ -47,6 +43,13 @@ export default function ResultPage() {
     };
     fetchSpeechData();
   }, []);
+
+  // solved quiz 가 없는 경우, quizzes 페이지로 리다이렉트
+  useEffect(() => {
+    if (!solvedQuizId || solvedQuizId <= 0) {
+      router.push(`/main-quiz/${mainQuizId}`);
+    }
+  });
 
   // API에서 체크리스트 아이템 가져오기
   useEffect(() => {
