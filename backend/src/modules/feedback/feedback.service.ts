@@ -35,7 +35,7 @@ export class FeedbackService {
     );
 
     // 유저가 선택한 체크리스트 목록 가져오기
-    const userChecklistProgress = await this.usersService.getUserChecklisItems(
+    const userChecklistProgress = await this.usersService.getUserChecklistItems(
       userId,
       requestDto.mainQuizId,
       requestDto.solvedQuizId,

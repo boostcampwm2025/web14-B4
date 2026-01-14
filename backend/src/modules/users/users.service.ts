@@ -20,7 +20,7 @@ export class UsersService {
    * @param mainQuizId
    * @param solvedQuizId
    */
-  async getUserChecklisItems(
+  async getUserChecklistItems(
     userId: number,
     mainQuizId: number,
     solvedQuizId: number,
