@@ -7,17 +7,11 @@ import {
 } from '../../datasources/entities/tb-main-quiz.entity';
 import { FindOptionsWhere } from 'typeorm';
 
-interface CategoryCountResult {
-  id: string;
-  name: string;
-  count: string;
-}
-
 @Injectable()
 export class QuizzesService {
   constructor(private readonly quizRepository: MainQuizRepository) {}
 
-  async findAll(
+  async getQuizzes(
     category?: string,
     difficulty?: DifficultyLevel,
   ): Promise<MainQuiz[]> {
@@ -39,16 +33,7 @@ export class QuizzesService {
   }
 
   async getCategoriesWithCount() {
-    const result = await this.quizRepository
-      .createQueryBuilder('mq')
-      .leftJoin('mq.quizCategory', 'qc')
-      .select('qc.name', 'name')
-      .addSelect('qc.quizCategoryId', 'id')
-      .addSelect('COUNT(mq.mainQuizId)', 'count')
-      .groupBy('qc.quizCategoryId')
-      .addGroupBy('qc.name')
-      .getRawMany<CategoryCountResult>();
-
+    const result = await this.quizRepository.getCategoriesWithCount();
     const totalCount = await this.quizRepository.count();
 
     const categories = result.map((row) => ({
@@ -61,10 +46,7 @@ export class QuizzesService {
   }
 
   async findOne(id: number): Promise<MainQuiz | undefined> {
-    const quiz = await this.quizRepository.findOne({
-      where: { mainQuizId: id },
-      relations: ['quizCategory'],
-    });
+    const quiz = await this.quizRepository.findById(id);
     return quiz || undefined;
   }
 
