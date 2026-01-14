@@ -7,9 +7,7 @@ interface Category {
 }
 
 interface CategoryFilterProps {
-  /** 카테고리 목록 */
   categories: Category[];
-  /** 전체 퀴즈 개수 */
   totalCount: number;
   /** 현재 선택된 카테고리 */
   category?: string;

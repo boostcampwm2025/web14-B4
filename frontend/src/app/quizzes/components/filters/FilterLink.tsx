@@ -3,7 +3,6 @@ import Link from 'next/link';
 interface FilterLinkProps {
   /** 변경할 쿼리 파라미터 이름 */
   param: string;
-
   /** 쿼리 파라미터 값 */
   value: string;
 
@@ -12,13 +11,11 @@ interface FilterLinkProps {
     category?: string;
     difficulty?: string;
   };
-
-  /** Link 내부 UI */
   children: React.ReactNode;
-
   className?: string;
 }
 
+// Link 를 공용으로 사용하기 위한 컴포넌트
 export function FilterLink({ param, value, currentParams, children, className }: FilterLinkProps) {
   const params = new URLSearchParams();
 
