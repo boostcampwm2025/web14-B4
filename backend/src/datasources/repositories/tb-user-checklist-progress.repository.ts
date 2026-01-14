@@ -59,11 +59,9 @@ export class UserChecklistProgressRepository {
   ): Promise<UserChecklistProgress[] | null> {
     return this.repository
       .createQueryBuilder('userChecklistProgress')
-      .select(['checklistItem.content', 'userChecklistProgress.isChecked'])
-      .leftJoin('userChecklistProgress.checklistItem', 'checklistItem')
-      .where('userChecklistProgress.solvedQuizId = :solvedQuizId', {
-        solvedQuizId,
-      })
+      .leftJoinAndSelect('userChecklistProgress.checklistItem', 'checklistItem')
+      .leftJoin('userChecklistProgress.solvedQuiz', 'solvedQuiz')
+      .where('solvedQuiz.solvedQuizId = :solvedQuizId', { solvedQuizId })
       .orderBy('checklistItem.sortOrder', 'ASC')
       .getMany();
   }

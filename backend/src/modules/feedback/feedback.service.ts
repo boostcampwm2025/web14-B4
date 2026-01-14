@@ -13,6 +13,8 @@ import {
   AI_FEEDBACK_SYSTEM_PROMPT,
   RESPONSE_SCHEMA,
 } from './constants/ai-constant';
+import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
+import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 
 @Injectable()
 export class FeedbackService {
@@ -38,28 +40,44 @@ export class FeedbackService {
     const mainQuizDetail = await this.getMainQuiz(requestDto.mainQuizId);
 
     // 나의 답변 가져오기
-    const answer = await this.speechesService.getSolvedQuizInfo(
+    const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
 
-    // 유저가 선택한 체크리스트 목록 가져오기
-    const userChecklistProgress = await this.usersService.getUserChecklistItems(
-      userId,
-      requestDto.mainQuizId,
-      requestDto.solvedQuizId,
-    );
+    // 유저가 체크한 체크리스트의 목록만 가져오기
+    const ChecklistCheckedByUser =
+      await this.usersService.getUserChecklistItems(
+        userId,
+        requestDto.mainQuizId,
+        requestDto.solvedQuizId,
+      );
+
+    // 유저가 푼 문제의 체크리스트 내용과 체크 여부 조회
+    const checklistInSolvedQuiz =
+      await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
     // AI 프롬프트 구성
+    const userText = this.createTxtForAi(
+      mainQuizDetail.content,
+      userAnswer,
+      mainQuizDetail.keywords,
+      checklistInSolvedQuiz,
+    );
     // AI API 호출
+    const aiFeedback = await this.analyzeAnswer(userText);
     // 피드백 저장
     const result = {
-      data: { mainQuizDetail, answer, userChecklistProgress },
-      result: '피드백 내용이 여기에 저장됩니다.',
+      data: {
+        mainQuizDetail,
+        answer: userAnswer,
+        userChecklistProgress: ChecklistCheckedByUser,
+      },
+      result: aiFeedback,
     };
     return result;
   }
 
-  async analyzeAnswer(quizContent: string, userAnswer: string) {
+  async analyzeAnswer(userText: string) {
     try {
       const response = await this.genAI.models.generateContent({
         model: 'gemini-2.5-flash-lite',
@@ -68,7 +86,6 @@ export class FeedbackService {
           systemInstruction: AI_FEEDBACK_SYSTEM_PROMPT,
           responseMimeType: 'application/json',
           responseSchema: RESPONSE_SCHEMA,
-          temperature: 0.1,
         },
 
         contents: [
@@ -76,7 +93,7 @@ export class FeedbackService {
             role: 'user',
             parts: [
               {
-                text: this.createUserTxt(quizContent, userAnswer),
+                text: userText,
               },
             ],
           },
@@ -109,7 +126,14 @@ export class FeedbackService {
     return mainQuiz;
   }
 
-  private createUserTxt(quizContent: string, userAnswer: string): string {
+  private createTxtForAi(
+    quizContent: string,
+    userAnswer: string,
+    keywords: QuizKeyword[],
+    checklists: UserChecklistProgress[],
+  ): string {
+    const keywordsText = keywords.map((v) => v.keyword).join(', ');
+
     const txt = `
     [퀴즈]
     ${quizContent}
@@ -118,11 +142,10 @@ export class FeedbackService {
     ${userAnswer}
 
     [사용자 체크리스트]
-    - (체크 항목 1): ✅ 또는 ❌
-    ...
+    ${checklists.map((checklist) => `${checklist.checklistItem.content} : ${checklist.isChecked}`).join('\n')}
 
     [핵심 키워드 목록]
-    키워드1, 키워드2, 키워드3, ...
+    ${keywordsText}
     `;
 
     return txt;
