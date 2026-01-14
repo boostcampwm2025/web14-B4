@@ -27,14 +27,16 @@ export class ChecklistItemRepository {
     return this.repository
       .createQueryBuilder('checklistItem')
       .select(['checklistItem.checklistItemId', 'checklistItem.content'])
-      .leftJoin(
-        'checklistItem.userProgress',
-        'userChecklistProgress',
-        'userChecklistProgress.user.userId = :userId AND userChecklistProgress.solvedQuiz.solvedQuizId = :solvedQuizId AND userChecklistProgress.isChecked = :isChecked',
-        { userId, solvedQuizId, isChecked: true },
-      )
+      .leftJoin('checklistItem.userProgress', 'userChecklistProgress')
+      .leftJoin('userChecklistProgress.user', 'user')
+      .leftJoin('userChecklistProgress.solvedQuiz', 'solvedQuiz')
       .leftJoin('checklistItem.mainQuiz', 'mainQuiz')
       .where('mainQuiz.mainQuizId = :mainQuizId', { mainQuizId })
+      .andWhere('user.userId = :userId', { userId })
+      .andWhere('solvedQuiz.solvedQuizId = :solvedQuizId', { solvedQuizId })
+      .andWhere('userChecklistProgress.isChecked = :isChecked', {
+        isChecked: true,
+      })
       .orderBy('checklistItem.sortOrder', 'ASC')
       .getMany();
   }
