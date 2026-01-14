@@ -4,8 +4,11 @@ import {
   ValidateNested,
   ArrayMinSize,
   IsBoolean,
+  IsInt,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity';
 
 export class SaveChecklistProgressDto {
   @IsNumber()
@@ -30,4 +33,17 @@ export class ChecklistProgressItemDto {
 
   @IsBoolean()
   isChecked: boolean;
+}
+
+export class SaveImportanceRequestDto {
+  @IsInt()
+  @Type(() => Number)
+  mainQuizId: number;
+
+  @IsInt()
+  @Type(() => Number)
+  solvedQuizId: number;
+
+  @IsEnum(Importance, { message: '중요도 값이 올바르지 않습니다.' })
+  importance: Importance;
 }
