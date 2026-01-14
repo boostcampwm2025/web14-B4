@@ -1,9 +1,8 @@
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
-import QuizCard from '@/app/quizzes/components/QuizCard';
-import Link from 'next/link';
-import { QuizCategoryWithCount } from './types/quiz';
+import QuizCard from '@/app/quizzes/components/card/QuizCard';
 import DifficultyFilter from './components/filters/DifficultyFilter';
 import CategoryFilter from './components/filters/CategoryFilter';
+import QuizGrid from './components/card/QuizGrid';
 
 interface PageProps {
   searchParams: Promise<{
@@ -20,35 +19,6 @@ export default async function QuizPage(props: PageProps) {
     fetchCategoryCounts(),
   ]);
   const { totalCount, categories } = categoryData;
-
-  const createQueryString = (name: string, value: string) => {
-    const params = new URLSearchParams();
-    if (category) params.set('category', category);
-    if (difficulty) params.set('difficulty', difficulty);
-
-    if (value === '전체') {
-      params.delete(name);
-    } else {
-      params.set(name, value);
-    }
-    return params.toString() ? `?${params.toString()}` : '/quizzes';
-  };
-
-  const getCategoryButtonStyle = (target: string) => {
-    const isActive = target === '전체' ? !category : category === target;
-    if (isActive) {
-      return 'flex items-center justify-center px-2 py-1 bg-[var(--color-primary)] text-white rounded-lg text-lg transition';
-    }
-    return 'flex items-center justify-center px-2 py-1 bg-white text-black rounded-lg text-lg hover:bg-gray-200 transition';
-  };
-
-  const getCountBadgeStyle = (targetName: string) => {
-    const isActive = targetName === '전체' ? !category : category === targetName;
-
-    if (isActive) return 'm-1 bg-white text-black';
-
-    return 'm-1 bg-[var(--color-gray-light)] text-black';
-  };
 
   return (
     <main className="mx-auto p-10 bg-[var(--color-bg-default)]">
@@ -69,15 +39,7 @@ export default async function QuizPage(props: PageProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-        {quizzes.length > 0 ? (
-          quizzes.map((quiz) => <QuizCard key={quiz.mainQuizId} quiz={quiz} />)
-        ) : (
-          <p className="col-span-full text-center text-gray-500 py-10">
-            해당하는 퀴즈가 없습니다. 😅
-          </p>
-        )}
-      </div>
+      <QuizGrid quizzes={quizzes} />
     </main>
   );
 }
