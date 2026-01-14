@@ -3,6 +3,7 @@ import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 import { QuizCategoryWithCount } from './types/quiz';
 import DifficultyFilter from './components/filters/DifficultyFilter';
+import CategoryFilter from './components/filters/CategoryFilter';
 
 interface PageProps {
   searchParams: Promise<{
@@ -60,36 +61,12 @@ export default async function QuizPage(props: PageProps) {
 
       <div className="flex justify-between items-center">
         <DifficultyFilter difficulty={difficulty} category={category} />
-        <div className="flex flex-col">
-          <div className="mb-3 text-xl font-semibold">분야</div>
-          <div className="flex gap-2 mb-8">
-            <Link
-              href={createQueryString('category', '전체')}
-              className={getCategoryButtonStyle('전체')}
-            >
-              <span>전체</span>
-              <span
-                className={`flex items-center justify-center w-7 h-7 p-2 rounded-full text-lg ${getCountBadgeStyle('전체')}`}
-              >
-                {totalCount}
-              </span>
-            </Link>
-            {categories.map((cat: QuizCategoryWithCount) => (
-              <Link
-                key={cat.id}
-                href={createQueryString('category', cat.name)}
-                className={getCategoryButtonStyle(cat.name)}
-              >
-                <span>{cat.name}</span>
-                <span
-                  className={`flex items-center justify-center w-7 h-7 p-2 rounded-full text-lg ${getCountBadgeStyle(cat.name)}`}
-                >
-                  {cat.count}
-                </span>
-              </Link>
-            ))}
-          </div>
-        </div>
+        <CategoryFilter
+          categories={categories}
+          totalCount={totalCount}
+          category={category}
+          difficulty={difficulty}
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">

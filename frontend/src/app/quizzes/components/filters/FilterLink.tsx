@@ -1,24 +1,25 @@
 import Link from 'next/link';
 
 interface FilterLinkProps {
-  /**변경할 쿼리 파라미터 이름*/
+  /** 변경할 쿼리 파라미터 이름 */
   param: string;
 
-  /** 쿼리 파라미터 값*/
+  /** 쿼리 파라미터 값 */
   value: string;
-
-  /** Link 에 넣을 텍스트 */
-  text: string;
 
   /** 현재 페이지의 쿼리 상태 */
   currentParams: {
     category?: string;
     difficulty?: string;
   };
+
+  /** Link 내부 UI */
+  children: React.ReactNode;
+
   className?: string;
 }
 
-export function FilterLink({ param, value, text, currentParams, className }: FilterLinkProps) {
+export function FilterLink({ param, value, currentParams, children, className }: FilterLinkProps) {
   const params = new URLSearchParams();
 
   Object.entries(currentParams).forEach(([key, val]) => {
@@ -32,7 +33,7 @@ export function FilterLink({ param, value, text, currentParams, className }: Fil
 
   return (
     <Link href={href} className={className}>
-      {text}
+      {children}
     </Link>
   );
 }

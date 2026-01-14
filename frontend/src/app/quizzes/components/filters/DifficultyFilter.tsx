@@ -48,10 +48,12 @@ export default function DifficultyFilter({ difficulty, category }: DifficultyFil
             key={level}
             param="difficulty"
             value={level}
-            text={level}
             currentParams={currentParams}
             className={getButtonStyle(level)}
-          />
+          >
+            {' '}
+            {level}{' '}
+          </FilterLink>
         ))}
       </div>
     </div>
