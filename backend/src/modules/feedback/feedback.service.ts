@@ -90,12 +90,11 @@ export class FeedbackService {
       const textResponse = response.text;
 
       if (!textResponse) {
-        throw new Error('AI 응답이 비어있습니다.');
+        throw new InternalServerErrorException('AI 응답이 비어있습니다.');
       }
 
       return JSON.parse(textResponse) as Record<string, unknown>;
-    } catch (error) {
-      console.error('AI Analysis Error:', error);
+    } catch {
       throw new InternalServerErrorException(
         '답변 분석 중 오류가 발생했습니다.',
       );
