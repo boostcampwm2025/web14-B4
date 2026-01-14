@@ -3,8 +3,7 @@
 import Image from 'next/image';
 import * as React from 'react';
 import { Button } from '@/components/Button';
-
-type Importance = 'LOW' | 'MEDIUM' | 'HIGH';
+import type { Importance } from '@/types/solvedQuiz.types.ts';
 
 type Option = {
   value: Importance;
@@ -21,7 +20,7 @@ const OPTIONS: Option[] = [
     blueSrc: '/images/bad-blue.svg',
   },
   {
-    value: 'MEDIUM',
+    value: 'NORMAL',
     label: '보통이에요',
     graySrc: '/images/normal-gray.svg',
     blueSrc: '/images/normal-blue.svg',
@@ -78,7 +77,7 @@ export default function ImportanceCheck({ userName = '철수' }: Props) {
                 type="button"
                 className={[
                   'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl p-4',
-                  'hover:scale-105',
+                  'hover:scale-110',
                 ].join(' ')}
                 onMouseEnter={() => setHovered(opt.value)}
                 onMouseLeave={() => setHovered(null)}
