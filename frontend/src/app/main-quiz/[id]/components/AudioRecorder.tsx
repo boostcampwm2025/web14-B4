@@ -347,10 +347,9 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
       {/* 메인 컨텐츠: 좌우 레이아웃 */}
       <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* 왼쪽: 설정 및 컨트롤 */}
-          <div className="space-y-4">
-            <div className="relative bg-black rounded-lg overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="space-y-6 lg:col-span-3">
+            <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
               <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto" />
               {isRecording && (
                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full">
@@ -361,29 +360,12 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
             </div>
           </div>
 
-          {/* 오른쪽: 비디오 미리보기 */}
-          <div className="space-y-4">
+          <div className="space-y-3 lg:col-span-2">
             {/* 카메라 선택 */}
-            <div className="space-y-2">
+            <div className="relative space-y-2">
               <div className="text-sm font-medium text-gray-800">카메라</div>
               <select
-                value={selectedVideoId}
-                onChange={(e) => setSelectedVideoId(e.target.value)}
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm"
-              >
-                {videoOptions.map((opt, idx) => (
-                  <option key={`${opt.value}-${idx}`} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* 마이크 선택 */}
-            <div className="space-y-2">
-              <div className="text-sm font-medium text-gray-800">마이크</div>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-4 pr-10 text-sm appearance-none cursor-pointer"
                 value={selectedMicId}
                 onChange={(e) => setSelectedMicId(e.target.value)}
                 disabled={recordStatus === 'recording' || isSubmitting}
@@ -394,23 +376,70 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
                   </option>
                 ))}
               </select>
+              {/* 커스텀 화살표 */}
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none translate-y-[10px]">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
+            </div>
+
+            {/* 마이크 선택 */}
+            <div className="relative space-y-2">
+              <div className="text-sm font-medium text-gray-800">마이크</div>
+              <select
+                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-4 appearance-none cursor-pointer text-sm"
+                value={selectedMicId}
+                onChange={(e) => setSelectedMicId(e.target.value)}
+                disabled={recordStatus === 'recording' || isSubmitting}
+              >
+                {micOptions.map((opt, idx) => (
+                  <option key={`${opt.value}-${idx}`} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              {/* 커스텀 화살표 */}
+              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none translate-y-[10px]">
+                <svg
+                  className="w-5 h-5 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </div>
             </div>
 
             {/* 메시지 */}
             {(permissionMessage || videoPermissionMessage || message) && (
               <div>
-                <div className="rounded-xl bg-white p-3 text-sm text-red-600">
+                <div className="rounded-xl text-sm text-red-600">
                   {permissionMessage || message}
                 </div>
-                <div className="rounded-xl bg-white p-3 text-sm text-red-600">
-                  {videoPermissionMessage || message}
-                </div>
+                <div className="rounded-xl p-3 text-sm text-red-600">{videoPermissionMessage}</div>
               </div>
             )}
 
             {/* 오디오 미리보기 */}
             {audioUrl && (
-              <div className="rounded-xl bg-white p-3">
+              <div className="rounded-xl p-3">
                 <audio controls src={audioUrl} className="w-full" />
               </div>
             )}
