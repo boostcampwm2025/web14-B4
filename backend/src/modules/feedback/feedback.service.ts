@@ -35,7 +35,7 @@ export class FeedbackService {
     requestDto: CreateAIFeedbackRequestDto,
   ) {
     // 퀴즈 정보 조회(퀴즈 및 체크리스트, 핵심키워드 정보 포함)
-    const mainQuizDetail = await this.validateQuiz(requestDto.mainQuizId);
+    const mainQuizDetail = await this.getMainQuiz(requestDto.mainQuizId);
 
     // 나의 답변 가져오기
     const answer = await this.speechesService.getSolvedQuizInfo(
@@ -89,7 +89,7 @@ export class FeedbackService {
         throw new Error('AI 응답이 비어있습니다.');
       }
 
-      return JSON.parse(textResponse) as Record<string, any>;
+      return JSON.parse(textResponse) as Record<string, unknown>;
     } catch (error) {
       console.error('AI Analysis Error:', error);
       throw new InternalServerErrorException(
@@ -98,7 +98,7 @@ export class FeedbackService {
     }
   }
 
-  private async validateQuiz(mainQuizId: number): Promise<MainQuiz> {
+  private async getMainQuiz(mainQuizId: number): Promise<MainQuiz> {
     const mainQuiz =
       await this.mainQuizRepository.findByIdWithDetails(mainQuizId);
 
