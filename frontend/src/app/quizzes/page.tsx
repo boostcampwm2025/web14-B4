@@ -2,7 +2,7 @@ import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
 import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
 import { QuizCategoryWithCount } from './types/quiz';
-import { FilterLink } from './components/filters/FilterLink';
+import DifficultyFilter from './components/filters/DifficultyFilter';
 
 interface PageProps {
   searchParams: Promise<{
@@ -33,23 +33,6 @@ export default async function QuizPage(props: PageProps) {
     return params.toString() ? `?${params.toString()}` : '/quizzes';
   };
 
-  const difficultyStyleMap: Record<string, string> = {
-    상: 'bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]',
-    중: 'bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]',
-    하: 'bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]',
-  };
-
-  const getDifficultyButtonStyle = (target: string) => {
-    const isActive = target === '전체' ? !difficulty : difficulty === target;
-    if (isActive) {
-      if (target === '전체') {
-        return 'px-3 py-2 bg-blue-500 text-white rounded-full text-lg transition font-bold';
-      }
-      return `px-3 py-2 ${difficultyStyleMap[target]} rounded-full text-lg transition font-bold`;
-    }
-    return 'px-3 py-2 bg-[var(--color-gray-light)] text-[var(--color-gray-dark)] rounded-full text-lg hover:bg-gray-200 transition';
-  };
-
   const getCategoryButtonStyle = (target: string) => {
     const isActive = target === '전체' ? !category : category === target;
     if (isActive) {
@@ -76,40 +59,7 @@ export default async function QuizPage(props: PageProps) {
       </header>
 
       <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <div className="mb-3 text-xl font-semibold">난이도</div>
-          <div className="flex gap-2 mb-8">
-            <FilterLink
-              param="difficulty"
-              value="전체"
-              text="전체"
-              currentParams={{ category, difficulty }}
-              className={getDifficultyButtonStyle('전체')}
-            />
-            <FilterLink
-              param="difficulty"
-              value="상"
-              text="상"
-              currentParams={{ category, difficulty }}
-              className={getDifficultyButtonStyle('상')}
-            />
-            <FilterLink
-              param="difficulty"
-              value="중"
-              text="중"
-              currentParams={{ category, difficulty }}
-              className={getDifficultyButtonStyle('중')}
-            />
-            <FilterLink
-              param="difficulty"
-              value="하"
-              text="하"
-              currentParams={{ category, difficulty }}
-              className={getDifficultyButtonStyle('하')}
-            />
-          </div>
-        </div>
-
+        <DifficultyFilter difficulty={difficulty} category={category} />
         <div className="flex flex-col">
           <div className="mb-3 text-xl font-semibold">분야</div>
           <div className="flex gap-2 mb-8">
