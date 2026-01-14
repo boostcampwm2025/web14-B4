@@ -54,4 +54,18 @@ export class SolvedQuizRepository {
 
     return result?.speechText ?? null;
   }
+
+  /* update 성공 시, true. 실패시 false 반환 */
+  async updateAiFeedback(
+    solvedQuizId: number,
+    aiFeedback: Record<string, unknown>,
+  ): Promise<boolean> {
+    const result = await this.repository.update(
+      { solvedQuizId },
+      { aiFeedback },
+    );
+
+    if (!result.affected || result.affected <= 0) return false;
+    return true;
+  }
 }

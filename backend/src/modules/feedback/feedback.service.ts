@@ -15,6 +15,7 @@ import {
 } from './constants/ai-constant';
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
+import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 
 @Injectable()
 export class FeedbackService {
@@ -22,6 +23,7 @@ export class FeedbackService {
 
   constructor(
     private mainQuizRepository: MainQuizRepository,
+    private solvedQuizRepository: SolvedQuizRepository,
     private speechesService: SpeechesService,
     private usersService: UsersService,
   ) {
@@ -32,45 +34,30 @@ export class FeedbackService {
     this.genAI = new GoogleGenAI(apiKey);
   }
 
-  async generateAIFeedback(
-    userId: number,
-    requestDto: CreateAIFeedbackRequestDto,
-  ) {
-    // 퀴즈 정보 조회(퀴즈 및 체크리스트, 핵심키워드 정보 포함)
+  async generateAIFeedback(requestDto: CreateAIFeedbackRequestDto) {
+    // 데이터 조회
     const mainQuizDetail = await this.getMainQuiz(requestDto.mainQuizId);
-
-    // 나의 답변 가져오기
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
-
-    // 유저가 체크한 체크리스트의 목록만 가져오기
-    const ChecklistCheckedByUser =
-      await this.usersService.getUserChecklistItems(
-        userId,
-        requestDto.mainQuizId,
-        requestDto.solvedQuizId,
-      );
-
-    // 유저가 푼 문제의 체크리스트 내용과 체크 여부 조회
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
-    // AI 프롬프트 구성
-    const userText = this.createTxtForAi(
+    // ai 피드백
+    const userPromptText = this.createTxtForAi(
       mainQuizDetail.content,
       userAnswer,
       mainQuizDetail.keywords,
       checklistInSolvedQuiz,
     );
-    // AI API 호출
-    const aiFeedback = await this.analyzeAnswer(userText);
-    // 피드백 저장
+    const aiFeedback = await this.analyzeAnswer(userPromptText);
+    await this.updateAiFeedback(requestDto.solvedQuizId, aiFeedback);
+
     const result = {
       data: {
         mainQuizDetail,
         answer: userAnswer,
-        userChecklistProgress: ChecklistCheckedByUser,
+        userChecklistProgress: this.toChecklistResponse(checklistInSolvedQuiz),
       },
       result: aiFeedback,
     };
@@ -126,6 +113,21 @@ export class FeedbackService {
     return mainQuiz;
   }
 
+  async updateAiFeedback(
+    solvedQuizId: number,
+    aiFeedBackObj: Record<string, unknown>,
+  ) {
+    const success = await this.solvedQuizRepository.updateAiFeedback(
+      solvedQuizId,
+      aiFeedBackObj,
+    );
+    if (!success)
+      throw new InternalServerErrorException(
+        'ai feedback을 저장하는데 오류가 발생하였습니다',
+      );
+  }
+
+  // ai user prompt 텍스트 생성 함수
   private createTxtForAi(
     quizContent: string,
     userAnswer: string,
@@ -137,17 +139,23 @@ export class FeedbackService {
     const txt = `
     [퀴즈]
     ${quizContent}
-
     [사용자 답변]
     ${userAnswer}
-
     [사용자 체크리스트]
     ${checklists.map((checklist) => `${checklist.checklistItem.content} : ${checklist.isChecked}`).join('\n')}
-
     [핵심 키워드 목록]
     ${keywordsText}
     `;
 
     return txt;
+  }
+
+  private toChecklistResponse(checklistInSolvedQuiz: UserChecklistProgress[]) {
+    return checklistInSolvedQuiz
+      .filter((item) => item.isChecked === true)
+      .map((item) => ({
+        checklistItemId: item.checklistItem.checklistItemId,
+        content: item.checklistItem.content,
+      }));
   }
 }
