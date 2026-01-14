@@ -4,6 +4,8 @@ import Image from 'next/image';
 import * as React from 'react';
 import { Button } from '@/components/Button';
 import type { Importance } from '@/types/solvedQuiz.types.ts';
+import { postImportance } from '@/services/usersApi';
+import { useRouter } from 'next/navigation';
 
 type Option = {
   value: Importance;
@@ -35,29 +37,47 @@ const OPTIONS: Option[] = [
 
 type Props = {
   userName?: string;
+  mainQuizId: number;
+  solvedQuizId: number;
 };
 
-export default function ImportanceCheck({ userName = '철수' }: Props) {
+export default function ImportanceCheck({ userName = '철수', mainQuizId, solvedQuizId }: Props) {
+  const router = useRouter();
   const [hovered, setHovered] = React.useState<Importance | null>(null);
   const [selected, setSelected] = React.useState<Importance | null>(null);
+  const [isSaving, setIsSaving] = React.useState(false);
 
   const getSrc = (opt: Option) => {
     const isActive = hovered === opt.value || selected === opt.value;
     return isActive ? opt.blueSrc : opt.graySrc;
   };
 
-  const handleRetry = async () => {
-    // TODO
-    // 말하기 연습 화면 이동 처리
+  const handleRetry = () => {
+    if (isSaving) {
+      // 저장중 이탈 방지
+      return;
+    }
+    router.push(`/main-quiz/${mainQuizId}`);
   };
 
   const handleFinish = async () => {
-    if (!selected) {
+    setIsSaving(true);
+
+    if (!selected || isSaving) {
       return;
     }
-    // TODO
-    // 중요도 저장 API 호출
-    // 이후 페이지 이동 처리
+
+    try {
+      await postImportance({
+        mainQuizId,
+        solvedQuizId,
+        importance: selected,
+      });
+
+      router.push('/quizzes');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
