@@ -33,7 +33,7 @@ export class UsersService {
         mainQuizId,
         solvedQuizId,
       );
-    if (!userChecklist) {
+    if (userChecklist.length === 0) {
       throw new NotFoundException('체크리스트 내역이 존재하지 않습니다.');
     }
 
