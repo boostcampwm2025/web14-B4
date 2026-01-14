@@ -1,13 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { getSpeechesByQuizId, updateSpeechText } from '@/services/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
-import { useRouter } from 'next/navigation';
 import {
   ChecklistItem,
   ChecklistItemDto,
@@ -15,6 +14,7 @@ import {
 } from '../../types/checklist.types';
 import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import Loader from '@/components/Loader';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -26,7 +26,11 @@ export default function ResultPage() {
   const router = useRouter();
   const params = useParams();
   const mainQuizId = parseInt(params['main-quiz-id'] as string, 10);
-  const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
+  const {
+    solvedQuizId,
+    isAnalyzing,
+    actions: { requestAiFeedback },
+  } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
   const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
@@ -137,8 +141,13 @@ export default function ResultPage() {
 
       try {
         await submitChecklist(requestBody);
-        // 성공 시 페이지 이동 등
-        router.push('/result');
+        const success = await requestAiFeedback(Number(mainQuizId), Number(solvedQuizId));
+
+        if (success) {
+          router.push(`/feedback/${solvedQuizId}`);
+        } else {
+          alert('AI 분석 중 오류가 발생했습니다.');
+        }
       } catch (error) {
         console.error('제출 실패:', error);
         alert('제출에 실패했습니다.');
@@ -148,6 +157,12 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 to-indigo-50">
+      {isAnalyzing && (
+        <Loader
+          message="CS 뽁뽁 생성 중..."
+          subMessage="AI 분석이 진행 중입니다. 잠시만 기다려주세요."
+        />
+      )}
       <div className="px-12 py-12">
         <div className="max-w-[1600px] mx-auto">
           {/* 헤더 */}
