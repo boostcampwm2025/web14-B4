@@ -10,28 +10,24 @@ import { useRouter } from 'next/navigation';
 type Option = {
   value: Importance;
   label: string;
-  graySrc: string;
-  blueSrc: string;
+  src: string;
 };
 
 const OPTIONS: Option[] = [
   {
     value: 'LOW',
     label: '이미 알고 있었거나\n흥미 분야가 아니에요',
-    graySrc: '/images/bad-gray.svg',
-    blueSrc: '/images/bad-blue.svg',
+    src: '/images/bad-blue.svg',
   },
   {
     value: 'NORMAL',
     label: '보통이에요',
-    graySrc: '/images/normal-gray.svg',
-    blueSrc: '/images/normal-blue.svg',
+    src: '/images/normal-blue.svg',
   },
   {
     value: 'HIGH',
     label: '더 공부해보고 싶어요',
-    graySrc: '/images/good-gray.svg',
-    blueSrc: '/images/good-blue.svg',
+    src: '/images/good-blue.svg',
   },
 ];
 
@@ -43,14 +39,8 @@ type Props = {
 
 export default function ImportanceCheck({ userName = '철수', mainQuizId, solvedQuizId }: Props) {
   const router = useRouter();
-  const [hovered, setHovered] = React.useState<Importance | null>(null);
   const [selected, setSelected] = React.useState<Importance | null>(null);
   const [isSaving, setIsSaving] = React.useState(false);
-
-  const getSrc = (opt: Option) => {
-    const isActive = hovered === opt.value || selected === opt.value;
-    return isActive ? opt.blueSrc : opt.graySrc;
-  };
 
   const handleRetry = () => {
     if (isSaving) {
@@ -61,11 +51,11 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
   };
 
   const handleFinish = async () => {
-    setIsSaving(true);
-
     if (!selected || isSaving) {
       return;
     }
+
+    setIsSaving(true);
 
     try {
       await postImportance({
@@ -99,17 +89,20 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
                   'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl p-4',
                   'hover:scale-110',
                 ].join(' ')}
-                onMouseEnter={() => setHovered(opt.value)}
-                onMouseLeave={() => setHovered(null)}
                 onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
                 aria-pressed={isSelected}
               >
                 <Image
-                  src={getSrc(opt)}
+                  src={opt.src}
                   alt={`${opt.value} 중요도`}
                   width={94}
                   height={93}
                   priority
+                  className={[
+                    isSelected
+                      ? 'grayscale-0 opacity-100'
+                      : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
+                  ].join(' ')}
                 />
 
                 <p
