@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
 import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
-import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -32,11 +31,13 @@ export class SolvedQuizRepository {
     });
   }
 
-  async updateSpeechText(
-    id: number,
-    speechText: string,
-  ): Promise<UpdateResult> {
-    return await this.repository.update(id, { speechText });
+  async updateSpeechText(id: number, speechText: string): Promise<boolean> {
+    const updateResult = await this.repository.update(id, { speechText });
+
+    if (!updateResult || updateResult.affected === 0) {
+      return false;
+    }
+    return true;
   }
 
   async getById(solvedQuizId: number): Promise<SolvedQuiz | null> {
