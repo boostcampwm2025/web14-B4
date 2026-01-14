@@ -117,10 +117,6 @@ export default function ResultPage() {
     }
   };
 
-  const handleNewConversion = () => {
-    handleUpdateSpeech();
-  };
-
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
