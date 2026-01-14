@@ -2,22 +2,33 @@ import {
   IsNumber,
   IsArray,
   ValidateNested,
-  ArrayMinSize,
   IsBoolean,
+  IsString,
+  IsNotEmpty,
+  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { ComprehensionLevel } from 'src/datasources/entities/tb-solved-quiz.entity';
 
-export class SaveChecklistProgressDto {
+export default class SaveSolvedQuizRequestDto {
   @IsNumber()
   @Type(() => Number)
+  @IsNotEmpty()
   mainQuizId: number;
 
   @IsNumber()
   @Type(() => Number)
+  @IsNotEmpty()
   solvedQuizId: number;
 
+  @IsString()
+  @IsNotEmpty()
+  speechText: string;
+
+  @IsEnum(ComprehensionLevel)
+  comprehensionLevel: ComprehensionLevel;
+
   @IsArray()
-  @ArrayMinSize(1, { message: 'checklistItems는 최소 1개 이상이어야 합니다.' })
   @ValidateNested({ each: true })
   @Type(() => ChecklistProgressItemDto)
   checklistItems: ChecklistProgressItemDto[];
@@ -26,8 +37,10 @@ export class SaveChecklistProgressDto {
 export class ChecklistProgressItemDto {
   @IsNumber()
   @Type(() => Number)
+  @IsNotEmpty()
   checklistItemId: number;
 
   @IsBoolean()
+  @IsNotEmpty()
   isChecked: boolean;
 }
