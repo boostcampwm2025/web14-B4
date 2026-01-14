@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
 import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
+import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyword.repository';
 
 describe('QuizzesService', () => {
   let service: QuizzesService;
@@ -11,6 +12,9 @@ describe('QuizzesService', () => {
     const mockRepository = {
       findOneWithChecklist: jest.fn(),
     };
+    const mockKeywordRepository = {
+      findByMainQuizId: jest.fn(),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -18,6 +22,10 @@ describe('QuizzesService', () => {
         {
           provide: MainQuizRepository, // 실제 Repository 대신
           useValue: mockRepository, // Mock으로 대체
+        },
+        {
+          provide: QuizKeywordRepository, // 추가된 의존성 Mock 등록
+          useValue: mockKeywordRepository,
         },
       ],
     }).compile();
