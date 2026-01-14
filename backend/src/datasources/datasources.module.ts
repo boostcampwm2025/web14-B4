@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // Entities
 import { ChecklistItem } from './entities/tb-checklist-item.entity';
 import { Flashcard } from './entities/tb-flashcard.entity';
-import { FollowUpQuestion } from './entities/tb-follow-up-question.entity';
 import { MainQuiz } from './entities/tb-main-quiz.entity';
 import { MultipleChoiceOption } from './entities/tb-multiple-choice-option.entity';
 import { MultipleChoice } from './entities/tb-multiple-choice.entity';
@@ -17,7 +16,6 @@ import { User } from './entities/tb-user.entity';
 // Repositories
 import { ChecklistItemRepository } from './repositories/tb-checklist-item.repository';
 import { FlashcardRepository } from './repositories/tb-flashcard.repository';
-import { FollowUpQuestionRepository } from './repositories/tb-follow-up-question.repository';
 import { MainQuizRepository } from './repositories/tb-main-quiz.repository';
 import { MultipleChoiceOptionRepository } from './repositories/tb-multiple-choice-option.repository';
 import { MultipleChoiceRepository } from './repositories/tb-multiple-choice.repository';
@@ -32,7 +30,6 @@ import { UserRepository } from './repositories/tb-user.repository';
     TypeOrmModule.forFeature([
       ChecklistItem,
       Flashcard,
-      FollowUpQuestion,
       MainQuiz,
       MultipleChoiceOption,
       MultipleChoice,
@@ -46,7 +43,6 @@ import { UserRepository } from './repositories/tb-user.repository';
   providers: [
     ChecklistItemRepository,
     FlashcardRepository,
-    FollowUpQuestionRepository,
     MainQuizRepository,
     MultipleChoiceOptionRepository,
     MultipleChoiceRepository,
@@ -60,7 +56,6 @@ import { UserRepository } from './repositories/tb-user.repository';
     TypeOrmModule,
     ChecklistItemRepository,
     FlashcardRepository,
-    FollowUpQuestionRepository,
     MainQuizRepository,
     MultipleChoiceOptionRepository,
     MultipleChoiceRepository,
