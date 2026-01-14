@@ -1,18 +1,13 @@
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
 import QuizCard from '@/app/quizzes/components/QuizCard';
 import Link from 'next/link';
+import { QuizCategoryWithCount } from './types/quiz';
 
 interface PageProps {
   searchParams: Promise<{
     category?: string;
     difficulty?: string;
   }>;
-}
-
-interface Category {
-  id: number;
-  name: string;
-  count: number;
 }
 
 export default async function QuizPage(props: PageProps) {
@@ -124,7 +119,7 @@ export default async function QuizPage(props: PageProps) {
                 {totalCount}
               </span>
             </Link>
-            {categories.map((cat: Category) => (
+            {categories.map((cat: QuizCategoryWithCount) => (
               <Link
                 key={cat.id}
                 href={createQueryString('category', cat.name)}
@@ -144,7 +139,7 @@ export default async function QuizPage(props: PageProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
         {quizzes.length > 0 ? (
-          quizzes.map((quiz) => <QuizCard key={quiz.id} quiz={quiz} />)
+          quizzes.map((quiz) => <QuizCard key={quiz.mainQuizId} quiz={quiz} />)
         ) : (
           <p className="col-span-full text-center text-gray-500 py-10">
             해당하는 퀴즈가 없습니다. 😅
