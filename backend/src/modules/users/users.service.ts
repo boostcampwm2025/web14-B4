@@ -4,13 +4,41 @@ import { UserChecklistProgressRepository } from '../../datasources/repositories/
 import { SaveChecklistProgressDto } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
 import { SaveChecklistProgressResponseDto } from './dto/users-response.dto';
+import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly userChecklistProgressRepository: UserChecklistProgressRepository,
     private readonly mainQuizRepository: MainQuizRepository,
+    private readonly checklistItemRepository: ChecklistItemRepository,
   ) {}
+
+  /**
+   * 유저가 체크한 체크리스트 목록 불러오기
+   * @param userId 유저 아이디
+   * @param mainQuizId
+   * @param solvedQuizId
+   */
+  async getUserChecklistItems(
+    userId: number,
+    mainQuizId: number,
+    solvedQuizId: number,
+  ) {
+    // TODO userId 존재 여부 체크
+
+    const userChecklist =
+      await this.checklistItemRepository.getUserChecklistItems(
+        userId,
+        mainQuizId,
+        solvedQuizId,
+      );
+    if (userChecklist.length === 0) {
+      throw new NotFoundException('체크리스트 내역이 존재하지 않습니다.');
+    }
+
+    return userChecklist;
+  }
 
   @Transactional()
   async saveChecklistProgress(

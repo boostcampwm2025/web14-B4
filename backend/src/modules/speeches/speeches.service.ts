@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   PayloadTooLargeException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
@@ -129,6 +130,22 @@ export class SpeechesService {
       speechText: solvedQuiz.speechText,
       createdAt: solvedQuiz.createdAt,
     }));
+  }
+
+  /**
+   * 푼 퀴즈 id 정보로 사용자가 답변을 조회한다.
+   * @param solvedQuizId : 푼 퀴즈 id
+   * @returns : 음성 텍스트 목록
+   */
+  async getSolvedQuizInfo(solvedQuizId: number) {
+    const solvedQuiz =
+      await this.solvedQuizRepository.getSpeechTextById(solvedQuizId);
+
+    if (!solvedQuiz) {
+      throw new NotFoundException('존재하지 않는 퀴즈 입니다.');
+    }
+
+    return solvedQuiz;
   }
 
   /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */

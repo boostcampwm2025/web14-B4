@@ -33,6 +33,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: false,
+        dropSchema: false,
         extra: {
           // bigint를 string이 아닌 number로 파싱
           parseInt8: true,
