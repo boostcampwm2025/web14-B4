@@ -10,7 +10,7 @@ interface QuizCardProps {
 export default function QuizCard({ quiz }: QuizCardProps) {
   const router = useRouter();
   const handleStartQuiz = () => {
-    router.push(`/main-quiz/${quiz.id}`);
+    router.push(`/main-quiz/${quiz.mainQuizId}`);
   };
 
   return (
@@ -19,19 +19,19 @@ export default function QuizCard({ quiz }: QuizCardProps) {
         <h3 className="text-2xl font-bold mb-5 text-gray-800">{quiz.title}</h3>
         <span
           className={`px-3 py-2 rounded-full text-m ${
-            quiz.difficulty === '상'
+            quiz.difficultyLevel === '상'
               ? 'bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]'
-              : quiz.difficulty === '중'
+              : quiz.difficultyLevel === '중'
                 ? 'bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]'
                 : 'bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]'
           }`}
         >
-          {quiz.difficulty}
+          {quiz.difficultyLevel}
         </span>
       </div>
 
       <span className="p-2 border border-[var(--color-gray-light)] text-m rounded-full">
-        {quiz.category.name}
+        {quiz.quizCategory.name}
       </span>
 
       <button

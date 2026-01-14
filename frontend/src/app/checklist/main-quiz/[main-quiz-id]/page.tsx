@@ -13,7 +13,7 @@ import {
   ChecklistItemDto,
   QuizChecklistResponseDto,
 } from '../../types/checklist.types';
-import { fetchQuizChecklistItems, submitChecklist } from '@/services/quizApi';
+import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
@@ -32,6 +32,7 @@ export default function ResultPage() {
   const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quizContent, setQuizContent] = useState<string>('퀴즈 내용을 불러오는 중...');
 
   // 음성 녹음 텍스트 불러오기
   useEffect(() => {
@@ -50,18 +51,27 @@ export default function ResultPage() {
 
   // API에서 체크리스트 아이템 가져오기
   useEffect(() => {
-    const loadChecklistItems = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const data = await fetchQuizChecklistItems(mainQuizId);
+        const [quizData, checklistData] = await Promise.all([
+          fetchQuiz(mainQuizId),
+          fetchQuizChecklistItems(mainQuizId),
+        ]);
 
-        if (data && data.checklistItems) {
+        if (quizData) {
+          setQuizContent(quizData.content);
+        }
+
+        if (checklistData && checklistData.checklistItems) {
           // API 응답을 ChecklistItem 형식으로 변환
-          const items: ChecklistItem[] = data.checklistItems.map((item: ChecklistItemDto) => ({
-            id: item.checklistItemId,
-            content: item.content,
-            checked: false, // 초기값은 모두 체크 해제
-          }));
+          const items: ChecklistItem[] = checklistData.checklistItems.map(
+            (item: ChecklistItemDto) => ({
+              id: item.checklistItemId,
+              content: item.content,
+              checked: false, // 초기값은 모두 체크 해제
+            }),
+          );
           setOptions(items);
         }
       } catch (error) {
@@ -72,7 +82,7 @@ export default function ResultPage() {
       }
     };
 
-    loadChecklistItems();
+    loadData();
   }, [mainQuizId]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
@@ -142,9 +152,7 @@ export default function ResultPage() {
         <div className="max-w-[1600px] mx-auto">
           {/* 헤더 */}
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-800 mb-2 animate-fadeIn">
-              스택(Stack)과 큐(Queue)는 각각 어떤 구조이며, 언제 사용하나요?
-            </h3>
+            <h3 className="text-3xl font-bold text-gray-800 mb-2 animate-fadeIn">{quizContent}</h3>
           </div>
 
           {/* 메인 콘텐츠 - 좌우 배치 */}
