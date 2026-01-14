@@ -8,13 +8,10 @@ import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
-import {
-  ChecklistItem,
-  ChecklistItemDto,
-  QuizChecklistResponseDto,
-} from '../../types/checklist.types';
-import { fetchQuizChecklistItems, submitChecklist } from '@/services/quizApi';
+import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
+import { fetchQuizChecklistItems } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -29,7 +26,7 @@ export default function ResultPage() {
   const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
   const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
-  const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
+  const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -122,11 +119,14 @@ export default function ResultPage() {
       const requestBody = {
         mainQuizId: Number(mainQuizId),
         solvedQuizId: Number(solvedQuizId),
+        speechText: speechItem.speechText,
+        comprehensionLevel: selectedFeeling,
         checklistItems: checklistItems,
       };
 
       try {
-        await submitChecklist(requestBody);
+        const result = await submitSolvedQuiz(requestBody);
+        await getAIFeedBack(result);
         // 성공 시 페이지 이동 등
         router.push('/result');
       } catch (error) {
