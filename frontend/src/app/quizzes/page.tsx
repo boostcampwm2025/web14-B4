@@ -1,8 +1,8 @@
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
-import QuizCard from '@/app/quizzes/components/card/QuizCard';
 import DifficultyFilter from './components/filters/DifficultyFilter';
 import CategoryFilter from './components/filters/CategoryFilter';
 import QuizGrid from './components/card/QuizGrid';
+import QuizHeader from './components/header/QuizHeader';
 
 interface PageProps {
   searchParams: Promise<{
@@ -22,12 +22,7 @@ export default async function QuizPage(props: PageProps) {
 
   return (
     <main className="mx-auto p-10 bg-[var(--color-bg-default)]">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold mb-2">뽁퀴즈 목록</h1>
-        <p className="text-[var(--color-gray-dark)]">
-          철수님은 어떤 CS 분야에서 성장하고 싶으신가요?
-        </p>
-      </header>
+      <QuizHeader userName="철수" />
 
       <div className="flex justify-between items-center">
         <DifficultyFilter difficulty={difficulty} category={category} />
