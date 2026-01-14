@@ -88,14 +88,16 @@ export default function ChecklistSession({
   };
 
   return (
-    <>
+    <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
       {/* 메인 콘텐츠 - 좌우 배치 */}
       <div className="grid grid-cols-2 gap-6 mb-8">
         {/* 왼쪽: 나의 답변 */}
-        <MySpeechText speechItem={speechItem} setSpeechItem={setSpeechItem} />
+        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-4 animate-fadeIn flex flex-col">
+          <MySpeechText speechItem={speechItem} setSpeechItem={setSpeechItem} />
+        </div>
 
         {/* 오른쪽: 다음 단계 체크리스트 */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 animate-fadeIn flex flex-col">
+        <div className="bg-white rounded-2xl shadow-xl p-6 md:p-4 animate-fadeIn flex flex-col">
           <Checklist
             username="철수"
             selectedFeeling={selectedFeeling}
@@ -123,6 +125,6 @@ export default function ChecklistSession({
           다음
         </button>
       </div>
-    </>
+    </div>
   );
 }
