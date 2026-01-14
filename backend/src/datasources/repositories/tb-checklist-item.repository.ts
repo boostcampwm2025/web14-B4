@@ -18,4 +18,26 @@ export class ChecklistItemRepository {
       order: { sortOrder: 'ASC' },
     });
   }
+
+  getUserChecklistItems(
+    userId: number,
+    mainQuizId: number,
+    solvedQuizId: number,
+  ) {
+    return this.repository
+      .createQueryBuilder('checklistItem')
+      .select(['checklistItem.checklistItemId', 'checklistItem.content'])
+      .leftJoin('checklistItem.userProgress', 'userChecklistProgress')
+      .leftJoin('userChecklistProgress.user', 'user')
+      .leftJoin('userChecklistProgress.solvedQuiz', 'solvedQuiz')
+      .leftJoin('checklistItem.mainQuiz', 'mainQuiz')
+      .where('mainQuiz.mainQuizId = :mainQuizId', { mainQuizId })
+      .andWhere('user.userId = :userId', { userId })
+      .andWhere('solvedQuiz.solvedQuizId = :solvedQuizId', { solvedQuizId })
+      .andWhere('userChecklistProgress.isChecked = :isChecked', {
+        isChecked: true,
+      })
+      .orderBy('checklistItem.sortOrder', 'ASC')
+      .getMany();
+  }
 }

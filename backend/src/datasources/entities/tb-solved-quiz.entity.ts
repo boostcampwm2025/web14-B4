@@ -15,6 +15,12 @@ export enum ComprehensionLevel {
   LOW = 'LOW',
 }
 
+export enum Importance {
+  HIGH = 'HIGH',
+  NORMAL = 'NORMAL',
+  LOW = 'LOW',
+}
+
 @Entity('tb_solved_quiz')
 export class SolvedQuiz {
   @PrimaryGeneratedColumn('increment', {
@@ -41,6 +47,17 @@ export class SolvedQuiz {
     nullable: true,
   })
   comprehensionLevel?: ComprehensionLevel;
+
+  @Column({
+    name: 'importance',
+    type: 'enum',
+    enum: Importance,
+    nullable: true,
+  })
+  importance?: Importance;
+
+  @Column('jsonb', { name: 'ai_feedback', nullable: true })
+  ai_feedback: unknown;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

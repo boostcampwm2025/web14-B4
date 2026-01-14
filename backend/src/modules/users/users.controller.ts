@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { SaveChecklistProgressDto } from './dto/users-request.dto';
 import { SaveChecklistProgressResponseDto } from './dto/users-response.dto';
 
-const TEST_USER_ID = 2;
+const TEST_USER_ID = 1;
 
 @Controller('users')
 export class UsersController {

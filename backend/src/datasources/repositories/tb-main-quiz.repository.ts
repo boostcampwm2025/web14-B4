@@ -23,4 +23,20 @@ export class MainQuizRepository extends Repository<MainQuiz> {
       .orderBy('ci.sortOrder', 'ASC')
       .getOne();
   }
+
+  async findByIdWithDetails(mainQuizId: number) {
+    return this.createQueryBuilder('mainQuiz')
+      .select([
+        'mainQuiz.mainQuizId',
+        'mainQuiz.title',
+        'mainQuiz.content',
+        'mainQuiz.hint',
+      ])
+      .leftJoinAndSelect('mainQuiz.quizCategory', 'quizCategory')
+      .leftJoinAndSelect('mainQuiz.keywords', 'keywords')
+      .leftJoin('mainQuiz.checklistItems', 'checklistItem')
+      .addSelect(['checklistItem.checklistItemId', 'checklistItem.content'])
+      .where('mainQuiz.mainQuizId = :id', { id: mainQuizId })
+      .getOne();
+  }
 }

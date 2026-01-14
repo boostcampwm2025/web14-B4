@@ -45,4 +45,13 @@ export class SolvedQuizRepository {
       relations: ['mainQuiz', 'user'],
     });
   }
+
+  async getSpeechTextById(solvedQuizId: number): Promise<string | null> {
+    const result = await this.repository.findOne({
+      where: { solvedQuizId },
+      select: ['speechText'],
+    });
+
+    return result?.speechText ?? null;
+  }
 }

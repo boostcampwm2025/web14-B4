@@ -1,12 +1,54 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { UsersService } from './../users/users.service';
+import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { GoogleGenAI } from '@google/genai';
+import { CreateAIFeedbackRequestDto } from './dto/feedback-request.dto';
+import { MainQuiz } from 'src/datasources/entities/tb-main-quiz.entity';
+import { SpeechesService } from '../speeches/speeches.service';
 
 @Injectable()
 export class FeedbackService {
   private genAI: GoogleGenAI;
 
-  constructor() {
+  constructor(
+    private mainQuizRepostory: MainQuizRepository,
+    private speechesService: SpeechesService,
+    private usersService: UsersService,
+  ) {
     this.genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  }
+
+  async generateAIFeedback(
+    userId: number,
+    requestDto: CreateAIFeedbackRequestDto,
+  ) {
+    // 퀴즈 정보 조회(퀴즈 및 체크리스트, 핵심키워드 정보 포함)
+    const mainQuizDetail = await this.validateQuiz(requestDto.mainQuizId);
+
+    // 나의 답변 가져오기
+    const answer = await this.speechesService.getSolvedQuizInfo(
+      requestDto.solvedQuizId,
+    );
+
+    // 유저가 선택한 체크리스트 목록 가져오기
+    const userChecklistProgress = await this.usersService.getUserChecklistItems(
+      userId,
+      requestDto.mainQuizId,
+      requestDto.solvedQuizId,
+    );
+
+    // AI 프롬프트 구성
+    // AI API 호출
+    // 피드백 저장
+    const result = {
+      data: { mainQuizDetail, answer, userChecklistProgress },
+      result: '피드백 내용이 여기에 저장됩니다.',
+    };
+    return result;
   }
 
   async analyzeAnswer(quizTitle: string, userAnswer: string) {
@@ -61,5 +103,16 @@ export class FeedbackService {
         '답변 분석 중 오류가 발생했습니다.',
       );
     }
+  }
+
+  private async validateQuiz(mainQuizId: number): Promise<MainQuiz> {
+    const mainQuiz =
+      await this.mainQuizRepostory.findByIdWithDetails(mainQuizId);
+
+    if (!mainQuiz) {
+      throw new NotFoundException('해당 퀴즈가 존재하지 않습니다.');
+    }
+
+    return mainQuiz;
   }
 }
