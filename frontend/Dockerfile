@@ -6,8 +6,6 @@ RUN npm ci
 FROM node:22-slim AS builder
 WORKDIR /app
 
-RUN apk add --no-cache python3 make g++ libc6-compat
-
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
