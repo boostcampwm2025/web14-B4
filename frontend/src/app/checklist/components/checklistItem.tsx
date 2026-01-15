@@ -31,11 +31,12 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = ({
       />
       <div className="w-5 h-5 relative shrink-0">
         <Image
-          src={checked ? '/images/checkbox-checked.png' : '/images/checkbox-unchecked.png'}
+          src={checked ? '/images/checkbox-checked.svg' : '/images/checkbox-unchecked.svg'}
           alt={checked ? '체크됨' : '체크안됨'}
           width={20}
           height={20}
           className="object-contain"
+          draggable={false}
         />
       </div>
       <span className="text-base font-medium">{content}</span>
