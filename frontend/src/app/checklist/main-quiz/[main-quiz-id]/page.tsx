@@ -12,6 +12,7 @@ import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
 import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
 import { fetchQuizChecklistItems, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import { toast } from 'react-toastify';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
