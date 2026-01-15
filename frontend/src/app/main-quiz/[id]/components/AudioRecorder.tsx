@@ -266,6 +266,9 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     try {
       const { solvedQuizId } = await postSpeechesStt(quizId, audioBlob);
       setSolvedQuizId(solvedQuizId);
+
+      stopCamera();
+
       router.push(`/checklist/main-quiz/${quizId}`);
     } catch (e) {
       let errorMessage = '제출에 실패했습니다.';
