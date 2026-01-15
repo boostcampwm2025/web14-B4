@@ -2,6 +2,9 @@ import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity'
 
 export class SaveChecklistProgressResponseDto {
   savedCount: number;
+export class SolvedQuizResponseDto {
+  mainQuizId: number;
+  solvedQuizId: number;
 }
 
 export class SaveImportanceResponseDto {

@@ -4,6 +4,7 @@ import { UserChecklistProgressRepository } from '../../datasources/repositories/
 import {
   SaveChecklistProgressDto,
   SaveImportanceRequestDto,
+  SaveSolvedQuizRequestDto
 } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
 import {
@@ -51,16 +52,28 @@ export class UsersService {
   }
 
   @Transactional()
-  async saveChecklistProgress(
-    userId: number,
-    dto: SaveChecklistProgressDto,
-  ): Promise<SaveChecklistProgressResponseDto> {
+  async saveSolvedQuiz(userId: number, dto: SaveSolvedQuizRequestDto) {
     // TODO userId 존재 여부 체크
 
     // mainQuiz와 체크리스트 아이템 존재 여부 확인
     const mainQuiz = await this.mainQuizRepository.findById(dto.mainQuizId);
 
     if (!mainQuiz) throw new NotFoundException(`해당 퀴즈를 찾을 수 없습니다.`);
+
+    const solvedQuiz = await this.solvedQuizRepository.getById(
+      dto.solvedQuizId,
+    );
+    if (!solvedQuiz)
+      throw new NotFoundException(
+        `현재 풀고 있는 퀴즈 정보를 찾을 수 없습니다.`,
+      );
+
+    // 나의 답변 및 이해도 저장
+    solvedQuiz.speechText = dto.speechText;
+    solvedQuiz.comprehensionLevel = dto.comprehensionLevel;
+
+    const savedSolvedQuiz =
+      await this.solvedQuizRepository.createSolvedQuiz(solvedQuiz);
 
     // 현재 메인 퀴즈의 체크리스트 목록 불러오기
     // 현재 dto로 넘어온 체크리스트 목록 id와 비교하여 모두 존재하는지 확인
@@ -74,14 +87,16 @@ export class UsersService {
       );
     }
 
-    // upsert 진행
-    await this.userChecklistProgressRepository.upsertProgresses(
+    await this.userChecklistProgressRepository.saveUserChecklistProgress(
       userId,
       dto.solvedQuizId,
       dto.checklistItems,
     );
 
-    return { savedCount: dto.checklistItems.length };
+    return {
+      mainQuizId: savedSolvedQuiz.mainQuiz.mainQuizId,
+      solvedQuizId: savedSolvedQuiz.solvedQuizId,
+    };
   }
 
   async saveImportance(
