@@ -4,20 +4,28 @@ export interface IncludedKeyword {
 }
 
 export interface AiResult {
-  includedKwyWords: IncludedKeyword[];
-  feedback: string;
+  includedKeywords: IncludedKeyword[];
+  keywordsFeedback: string;
+  complementsFeedback: {
+    title: string;
+    content: string;
+  }[];
   followUpQuestions: string[];
 }
 
-export interface MainQuizDetail {
+export interface SolvedQuizDetail {
   mainQuizId: number;
+  quizCategory: string;
+  title: string;
   content: string;
+  keywords: { keyword: string }[];
+  userChecklistProgress: {
+    checklistCount: number;
+    checkedCount: number;
+  };
 }
 
 export interface GetAIFeedbackResponseDto {
-  data: {
-    mainQuizDetail: MainQuizDetail;
-    answer: string;
-  };
-  result: AiResult;
+  solvedQuizDetail: SolvedQuizDetail;
+  aiFeedbackResult: AiResult;
 }
