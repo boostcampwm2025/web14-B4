@@ -196,8 +196,9 @@ describe('SpeechesService', () => {
     const speechText: string = '수정된 음성 텍스트';
 
     it('음성 텍스트를 성공적으로 수정한다', async () => {
-      const mockUpdatedSolvedQuiz: UpdateSpeechTextResult = {
-        mainQuizId: 1,
+      // getById는 엔티티 형태를 반환하므로 mainQuiz가 중첩되어야 한다
+      const mockUpdatedSolvedQuiz = {
+        mainQuiz: { mainQuizId: 1 },
         solvedQuizId: 1,
         speechText: '수정된 음성 텍스트',
       };

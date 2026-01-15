@@ -14,18 +14,20 @@ export default async function MainQuizPage({ params }: PageProps) {
 
   return (
     <main>
-      <div className="flex justify-center m-5">
+      <div className="flex justify-center pt-10">
         <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
-          <span className="px-3 text-base font-medium">{quiz.category.name}</span>
+          <span className="px-3 text-base font-medium">{quiz.quizCategory.name}</span>
           <span className="px-3 text-base font-medium flex items-center gap-2">
             난이도
             <span className="px-2 py-1 text-base font-medium bg-white text-[var(--color-primary)] rounded-full">
-              {quiz.difficulty}
+              {quiz.difficultyLevel}
             </span>
           </span>
         </Chip>
       </div>
-      <h1 className="flex justify-center text-2xl font-semibold">{quiz.content}</h1>
+      <div className="flex justify-center pt-10">
+        <h1 className="flex justify-center text-2xl font-semibold">{quiz.content}</h1>
+      </div>
       <AudioRecorder quizId={quizId} />
     </main>
   );

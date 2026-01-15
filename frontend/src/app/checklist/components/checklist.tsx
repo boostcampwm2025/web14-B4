@@ -5,7 +5,7 @@ import { ChecklistProps } from '../types/checklist.types';
 
 export const Checklist: React.FC<ChecklistProps> = ({
   username,
-  selectedFeeling = 'normal',
+  selectedFeeling = 'NORMAL',
   options,
   onFeelingChange,
   onOptionChange,
@@ -24,22 +24,22 @@ export const Checklist: React.FC<ChecklistProps> = ({
 
       <div className="grid grid-cols-3 gap-4 mb-6">
         <FeelingButton
-          feeling="bad"
+          comprehensionLevel="LOW"
           label="답변을 못했어요"
-          selected={selectedFeeling === 'bad'}
-          onClick={() => onFeelingChange?.('bad')}
+          selected={selectedFeeling === 'LOW'}
+          onClick={() => onFeelingChange?.('LOW')}
         />
         <FeelingButton
-          feeling="normal"
+          comprehensionLevel="NORMAL"
           label="보통이에요"
-          selected={selectedFeeling === 'normal'}
-          onClick={() => onFeelingChange?.('normal')}
+          selected={selectedFeeling === 'NORMAL'}
+          onClick={() => onFeelingChange?.('NORMAL')}
         />
         <FeelingButton
-          feeling="good"
+          comprehensionLevel="HIGH"
           label="답변을 잘했어요"
-          selected={selectedFeeling === 'good'}
-          onClick={() => onFeelingChange?.('good')}
+          selected={selectedFeeling === 'HIGH'}
+          onClick={() => onFeelingChange?.('HIGH')}
         />
       </div>
 

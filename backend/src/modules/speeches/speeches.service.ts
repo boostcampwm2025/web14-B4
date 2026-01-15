@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   PayloadTooLargeException,
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
@@ -52,11 +53,11 @@ export class SpeechesService {
       );
     }
 
-    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz(
-      userId,
-      mainQuizId,
-      sttText,
-    );
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
+      user: { userId: userId },
+      mainQuiz: { mainQuizId: mainQuizId },
+      speechText: sttText,
+    });
 
     return {
       solvedQuizId: solvedQuiz.solvedQuizId,
@@ -80,16 +81,14 @@ export class SpeechesService {
       );
     }
 
-    const updateResult = await this.solvedQuizRepository.updateSpeechText(
+    const success = await this.solvedQuizRepository.updateSpeechText(
       solvedQuizId,
       speechText,
     );
-
-    if (updateResult.affected === 0) {
+    if (!success)
       throw new InternalServerErrorException(
-        'SolvedQuizId가 존재하지 않습니다.',
+        'speech Text update에 실패하였습니다.',
       );
-    }
 
     const updatedSolvedQuiz =
       await this.solvedQuizRepository.getById(solvedQuizId);
@@ -101,7 +100,7 @@ export class SpeechesService {
     }
 
     return {
-      mainQuizId: updatedSolvedQuiz.mainQuizId,
+      mainQuizId: updatedSolvedQuiz.mainQuiz.mainQuizId,
       solvedQuizId: updatedSolvedQuiz.solvedQuizId,
       speechText: updatedSolvedQuiz.speechText,
     };
@@ -129,6 +128,22 @@ export class SpeechesService {
       speechText: solvedQuiz.speechText,
       createdAt: solvedQuiz.createdAt,
     }));
+  }
+
+  /**
+   * 푼 퀴즈 id 정보로 사용자가 답변을 조회한다.
+   * @param solvedQuizId : 푼 퀴즈 id
+   * @returns : 음성 텍스트 목록
+   */
+  async getSolvedQuizInfo(solvedQuizId: number) {
+    const solvedQuiz =
+      await this.solvedQuizRepository.getSpeechTextById(solvedQuizId);
+
+    if (!solvedQuiz) {
+      throw new NotFoundException('존재하지 않는 퀴즈 입니다.');
+    }
+
+    return solvedQuiz;
   }
 
   /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */

@@ -17,13 +17,17 @@ export class ChecklistItem {
   })
   checklistItemId: number;
 
-  @Column({ name: 'main_quiz_id' })
-  mainQuizId: number;
+  @ManyToOne(() => MainQuiz, { nullable: false })
+  @JoinColumn({ name: 'main_quiz_id' })
+  mainQuiz: MainQuiz;
 
-  @Column({ name: 'content', length: 255, nullable: true })
+  @OneToMany(() => UserChecklistProgress, (progress) => progress.checklistItem)
+  userProgress: UserChecklistProgress[];
+
+  @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })
   content: string;
 
-  @Column({ name: 'sort_order', nullable: true })
+  @Column({ name: 'sort_order', type: 'bigint', nullable: true })
   sortOrder: number;
 
   @Column({
@@ -39,11 +43,4 @@ export class ChecklistItem {
     default: () => 'CURRENT_TIMESTAMP',
   })
   updatedAt: Date;
-
-  @ManyToOne(() => MainQuiz, (quiz) => quiz.checklistItems)
-  @JoinColumn({ name: 'main_quiz_id' })
-  mainQuiz: MainQuiz;
-
-  @OneToMany(() => UserChecklistProgress, (progress) => progress.checklistItem)
-  userProgress: UserChecklistProgress[];
 }
