@@ -33,19 +33,23 @@ export const useQuizStore = create<QuizStore>()(
           set({ isAnalyzing: true });
           try {
             const submitResult = await submitSolvedQuiz(payload);
+            set({ solvedQuizId: submitResult.solvedQuizId });
             const response = await getAIFeedBack(submitResult);
             set({ feedbackResult: response });
             return true;
           } catch (error) {
-            return false;
-          } finally {
             set({ isAnalyzing: false });
+            return false;
           }
         },
       },
     }),
     {
       name: 'quiz-storage', // localStorage 키
+      partialize: (state) => ({
+        solvedQuizId: state.solvedQuizId,
+        feedbackResult: state.feedbackResult,
+      }),
     },
   ),
 );

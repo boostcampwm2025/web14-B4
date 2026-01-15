@@ -151,13 +151,10 @@ export default function ResultPage() {
 
       const success = await requestAiFeedback(requestBody);
 
-      if (!success) {
-        try {
-          router.push('/feedback/main-quiz/${mainQuizId}/solved-quiz/${solvedQuizId}');
-        } catch (error) {
-          console.error('제출 실패:', error);
-          alert('제출에 실패했습니다.');
-        }
+      if (success) {
+        router.push(`/feedback/main-quiz/${mainQuizId}/solved-quiz/${solvedQuizId}`);
+      } else {
+        alert('제출 및 AI 분석에 실패했습니다.');
       }
     }
   };
