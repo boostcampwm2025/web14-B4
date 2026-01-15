@@ -52,10 +52,8 @@ export class MainQuizRepository extends Repository<MainQuiz> {
     const qb = this.createQueryBuilder('mq')
       .leftJoin('mq.quizCategory', 'qc')
       .select('qc.name', 'name')
-      .addSelect('qc.quizCategoryId', 'id')
       .addSelect('COUNT(mq.mainQuizId)', 'count')
-      .groupBy('qc.quizCategoryId')
-      .addGroupBy('qc.name');
+      .groupBy('qc.name');
 
     if (difficulty) {
       qb.andWhere('mq.difficultyLevel = :difficulty', { difficulty });
