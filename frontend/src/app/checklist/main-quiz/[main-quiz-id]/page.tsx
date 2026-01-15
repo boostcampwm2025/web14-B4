@@ -10,9 +10,8 @@ import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
 import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
 import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
-import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
+import { fetchQuizChecklistItems, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
-import { toast } from 'react-toastify';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
