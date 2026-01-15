@@ -29,8 +29,8 @@ export class QuizzesController {
   }
 
   @Get('categories')
-  getCategories() {
-    const result = this.quizService.getCategoriesWithCount();
+  getCategories(@Query('difficulty') difficulty?: DifficultyLevel) {
+    const result = this.quizService.getCategoriesWithCount(difficulty);
     return result;
   }
 

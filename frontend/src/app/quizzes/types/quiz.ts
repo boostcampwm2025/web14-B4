@@ -1,3 +1,9 @@
+export const DIFFICULTY_MAP = {
+  상: true,
+  중: true,
+  하: true,
+} as const;
+
 export type Difficulty = '상' | '중' | '하';
 
 export interface QuizCategory {
