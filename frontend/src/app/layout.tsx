@@ -9,7 +9,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body>
+      <body className="bg-[var(--color-bg-default)]">
         <ConditionalHeader />
         <main>{children}</main>
         <ToastContainer />
