@@ -9,9 +9,9 @@ import MySpeechText from './MySpeechText';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 import { ChecklistItem } from '@/app/checklist/types/checklist.types';
 import { Checklist } from './checklist';
-import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import Loader from '@/components/Loader';
 
 interface ChecklistSessionProps {
   mainQuizId: number;
@@ -25,7 +25,11 @@ export default function ChecklistSession({
   initialChecklistItems,
 }: ChecklistSessionProps) {
   const router = useRouter();
-  const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
+  const {
+    solvedQuizId,
+    isAnalyzing,
+    actions: { requestAiFeedback },
+  } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
@@ -92,19 +96,24 @@ export default function ChecklistSession({
         checklistItems: checklistItems,
       };
 
-      try {
-        const result = await submitSolvedQuiz(requestBody);
-        await getAIFeedBack(result);
-        router.push('/result');
-      } catch (error) {
-        console.error('제출 실패:', error);
-        alert('제출에 실패했습니다.');
+      const success = await requestAiFeedback(requestBody);
+
+      if (success) {
+        router.push(`/feedback/main-quiz/${mainQuizId}/solved-quiz/${solvedQuizId}`);
+      } else {
+        alert('제출 및 AI 분석에 실패했습니다.');
       }
     }
   };
 
   return (
     <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
+      {isAnalyzing && (
+        <Loader
+          message="CS 뽁뽁 생성 중..."
+          subMessage="AI 분석이 진행 중입니다. 잠시만 기다려주세요."
+        />
+      )}
       {/* 메인 콘텐츠 - 좌우 배치 */}
       <div className="grid grid-cols-2 gap-6 mb-8">
         {/* 왼쪽: 나의 답변 */}
