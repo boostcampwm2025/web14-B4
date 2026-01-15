@@ -6,10 +6,15 @@ import {
   DifficultyLevel,
 } from '../../datasources/entities/tb-main-quiz.entity';
 import { FindOptionsWhere } from 'typeorm';
+import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
+import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyword.repository';
 
 @Injectable()
 export class QuizzesService {
-  constructor(private readonly quizRepository: MainQuizRepository) {}
+  constructor(
+    private readonly quizRepository: MainQuizRepository,
+    private readonly quizKeywordRepository: QuizKeywordRepository,
+  ) {}
 
   async getQuizzes(
     category?: string,
@@ -48,6 +53,14 @@ export class QuizzesService {
   async findOne(id: number): Promise<MainQuiz | undefined> {
     const quiz = await this.quizRepository.findById(id);
     return quiz || undefined;
+  }
+
+  async getKeywordsByQuiz(mainQuizId: number): Promise<QuizKeyword[]> {
+    const keywords =
+      await this.quizKeywordRepository.findByMainQuizId(mainQuizId);
+    if (!keywords) throw new NotFoundException(`해당 퀴즈를 찾을 수 없습니다.`);
+
+    return keywords;
   }
 
   async getQuizChecklist(mainQuizId: number) {

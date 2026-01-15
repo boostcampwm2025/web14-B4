@@ -81,16 +81,14 @@ export class SpeechesService {
       );
     }
 
-    const updateResult = await this.solvedQuizRepository.updateSpeechText(
+    const success = await this.solvedQuizRepository.updateSpeechText(
       solvedQuizId,
       speechText,
     );
-
-    if (updateResult.affected === 0) {
+    if (!success)
       throw new InternalServerErrorException(
-        'SolvedQuizId가 존재하지 않습니다.',
+        'speech Text update에 실패하였습니다.',
       );
-    }
 
     const updatedSolvedQuiz =
       await this.solvedQuizRepository.getById(solvedQuizId);

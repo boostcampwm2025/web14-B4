@@ -16,7 +16,7 @@ export enum Provider {
 
 @Entity('tb_user')
 export class User {
-  @PrimaryGeneratedColumn('increment', { type: 'bigint' })
+  @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'user_id' })
   userId: number;
 
   @Column({ name: 'password', type: 'varchar', length: 255, nullable: true })

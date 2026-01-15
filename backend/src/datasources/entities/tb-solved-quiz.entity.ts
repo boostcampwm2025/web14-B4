@@ -57,7 +57,7 @@ export class SolvedQuiz {
   importance?: Importance;
 
   @Column('jsonb', { name: 'ai_feedback', nullable: true })
-  ai_feedback: unknown;
+  aiFeedback: unknown;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
