@@ -46,14 +46,16 @@ export class MainQuizRepository extends Repository<MainQuiz> {
       .getOne();
   }
 
-  async getCategoriesWithCount(
+  getCategoriesWithCount(
     difficulty?: DifficultyLevel,
   ): Promise<CategoryCountResult[]> {
     const qb = this.createQueryBuilder('mq')
       .leftJoin('mq.quizCategory', 'qc')
-      .select('qc.name', 'name')
+      .select('qc.quizCategoryId', 'id')
+      .addSelect('qc.name', 'name')
       .addSelect('COUNT(mq.mainQuizId)', 'count')
-      .groupBy('qc.name');
+      .groupBy('qc.quizCategoryId')
+      .addGroupBy('qc.name');
 
     if (difficulty) {
       qb.andWhere('mq.difficultyLevel = :difficulty', { difficulty });
