@@ -14,8 +14,8 @@ const IMAGE_PATHS = {
     gray: '/images/bad-gray.svg',
   },
   NORMAL: {
-    blue: '/images/NORMAL-blue.svg',
-    gray: '/images/NORMAL-gray.svg',
+    blue: '/images/normal-blue.svg',
+    gray: '/images/normal-gray.svg',
   },
   HIGH: {
     blue: '/images/good-blue.svg',
