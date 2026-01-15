@@ -1,5 +1,6 @@
 import { getAIFeedBack } from '@/services/feedbackApi';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
+import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 
 type Props = {
@@ -37,6 +38,10 @@ export default async function FeedbackPage({ params }: Props) {
         userName={USER_NAME}
         checklistCount={solvedQuizDetail.userChecklistProgress.checklistCount}
         checkedCount={solvedQuizDetail.userChecklistProgress.checkedCount}
+      />
+      <FeedbackKeywords
+        keywords={mergedKeywords}
+        defaultFeedback={aiFeedbackResult.keywordsFeedback}
       />
       <ImportanceCheck
         userName={USER_NAME}
