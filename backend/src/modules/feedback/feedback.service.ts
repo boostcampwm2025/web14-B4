@@ -36,8 +36,14 @@ export class FeedbackService {
 
   async generateAIFeedback(requestDto: CreateAIFeedbackRequestDto) {
     // 데이터 조회
-    const { mainQuizId, quizCategory, title, content, keywords } =
-      await this.getMainQuiz(requestDto.mainQuizId);
+    const {
+      mainQuizId,
+      quizCategory,
+      title,
+      content,
+      keywords,
+      difficultyLevel,
+    } = await this.getMainQuiz(requestDto.mainQuizId);
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
@@ -61,6 +67,7 @@ export class FeedbackService {
         title,
         content,
         keywords,
+        difficultyLevel,
         userChecklistProgress: this.toChecklistResponse(checklistInSolvedQuiz),
       },
       aiFeedbackResult: aiFeedback,

@@ -1,11 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
-import * as React from 'react';
 import { Button } from '@/components/Button';
 import type { Importance } from '@/types/solvedQuiz.types.ts';
 import { postImportance } from '@/services/usersApi';
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 type Option = {
   value: Importance;
@@ -17,7 +18,7 @@ const OPTIONS: Option[] = [
   {
     value: 'LOW',
     label: '이미 알고 있었거나\n흥미 분야가 아니에요',
-    src: '/images/bad-blue.svg',
+    src: '/images/low-blue.svg',
   },
   {
     value: 'NORMAL',
@@ -27,20 +28,20 @@ const OPTIONS: Option[] = [
   {
     value: 'HIGH',
     label: '더 공부해보고 싶어요',
-    src: '/images/good-blue.svg',
+    src: '/images/high-blue.svg',
   },
 ];
 
 type Props = {
-  userName?: string;
+  userName: string;
   mainQuizId: number;
   solvedQuizId: number;
 };
 
-export default function ImportanceCheck({ userName = '철수', mainQuizId, solvedQuizId }: Props) {
+export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId }: Props) {
   const router = useRouter();
-  const [selected, setSelected] = React.useState<Importance | null>(null);
-  const [isSaving, setIsSaving] = React.useState(false);
+  const [selected, setSelected] = useState<Importance | null>('NORMAL');
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleRetry = () => {
     if (isSaving) {
@@ -55,6 +56,11 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
       return;
     }
 
+    const ok = window.confirm('말하기 연습을 종료하고 퀴즈 목록으로 이동합니다.');
+    if (!ok) {
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -64,7 +70,10 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
         importance: selected,
       });
 
+      toast.success('말하기 연습을 종료하고 퀴즈 목록으로 이동합니다.');
       router.push('/quizzes');
+    } catch (e) {
+      toast.error('중요도 저장에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setIsSaving(false);
     }
@@ -72,8 +81,8 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
 
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-        <h2 className="text-xl font-bold text-[var(--color-primary)]">
+      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+        <h2 className="text-lg font-bold text-[var(--color-accent-navy)]">
           🤓 {userName}님에게 얼마나 중요한 지식인가요?
         </h2>
 

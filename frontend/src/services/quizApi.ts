@@ -1,5 +1,5 @@
 import { QuizChecklistResponseDto } from '@/app/checklist/types/checklist.types';
-import { Quiz, CategoryCountsResponseDto } from '@/app/quizzes/types/quiz';
+import { Quiz, CategoryCountsResponseDto, DIFFICULTY_MAP } from '@/app/quizzes/types/quiz';
 import { apiFetch } from '@/services/http/apiFetch';
 
 export interface ChecklistSubmitResponseDto {
@@ -10,7 +10,9 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
   const params = new URLSearchParams();
 
   if (category) params.append('category', category);
-  if (difficulty) params.append('difficulty', difficulty);
+  if (!!difficulty && difficulty in DIFFICULTY_MAP) {
+    params.append('difficulty', difficulty);
+  }
 
   const query = params.toString();
 
@@ -23,9 +25,16 @@ export async function fetchQuizzes(category?: string, difficulty?: string): Prom
   return data;
 }
 
-export async function fetchCategoryCounts(): Promise<CategoryCountsResponseDto> {
+export async function fetchCategoryCounts(difficulty?: string): Promise<CategoryCountsResponseDto> {
+  const params = new URLSearchParams();
+
+  if (!!difficulty && difficulty in DIFFICULTY_MAP) {
+    params.append('difficulty', difficulty);
+  }
+
+  const query = params.toString();
   const data = await apiFetch<CategoryCountsResponseDto>(
-    '/quizzes/categories',
+    `/quizzes/categories${query ? `?${query}` : ''}`,
     { method: 'GET', cache: 'no-store' },
     { message: '카테고리 정보 응답 데이터가 없습니다.' },
   );

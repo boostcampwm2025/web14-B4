@@ -4,20 +4,32 @@ export interface IncludedKeyword {
 }
 
 export interface AiResult {
-  includedKwyWords: IncludedKeyword[];
-  feedback: string;
+  includedKeywords: IncludedKeyword[];
+  keywordsFeedback: string;
+  complementsFeedback: {
+    title: string;
+    content: string;
+  }[];
   followUpQuestions: string[];
 }
 
-export interface MainQuizDetail {
+export interface SolvedQuizDetail {
   mainQuizId: number;
+  quizCategory: {
+    quizCategoryId: number;
+    name: string;
+  };
+  title: string;
   content: string;
+  difficultyLevel: '상' | '중' | '하';
+  keywords: { keyword: string }[];
+  userChecklistProgress: {
+    checklistCount: number;
+    checkedCount: number;
+  };
 }
 
 export interface GetAIFeedbackResponseDto {
-  data: {
-    mainQuizDetail: MainQuizDetail;
-    answer: string;
-  };
-  result: AiResult;
+  solvedQuizDetail: SolvedQuizDetail;
+  aiFeedbackResult: AiResult;
 }

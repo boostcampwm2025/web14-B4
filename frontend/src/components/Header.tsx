@@ -4,12 +4,20 @@ import Image from 'next/image';
 export default function Header() {
   return (
     <header className="flex justify-between items-center px-10 py-3 bg-white border-b border-[var(--color-gray-light)]">
-      <Link href="/" className="flex items-center">
-        <Image src="/logo.svg" alt="CS 뽁뽁 로고" width={40} height={40} />
+      <Link
+        href="/"
+        className="flex items-center"
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <Image src="/logo.svg" alt="CS 뽁뽁 로고" width={40} height={40} draggable={false} />
       </Link>
       <Link
         href="/signup"
         className="px-4 py-2 rounded-full border border-dashed border-[var(--color-primary)] text-[var(--color-primary)] text-sm font-semibold hover:bg-blue-50 transition-colors"
+        draggable={false}
+        onDragStart={(e) => e.preventDefault()}
       >
         회원가입
       </Link>
