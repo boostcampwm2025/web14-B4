@@ -21,6 +21,8 @@ RUN adduser --system --uid 1001 nestjs
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 
+RUN mkdir -p /app/logs && chown -R nestjs:nodejs /app/logs
+
 USER nestjs
 EXPOSE 8080
 CMD ["node", "dist/main"]
