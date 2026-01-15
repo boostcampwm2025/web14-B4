@@ -3,14 +3,18 @@ import {
   IsArray,
   ValidateNested,
   IsBoolean,
+  IsInt,
+  IsEnum,
   IsString,
   IsNotEmpty,
-  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ComprehensionLevel } from 'src/datasources/entities/tb-solved-quiz.entity';
+import {
+  Importance,
+  ComprehensionLevel,
+} from '../../../datasources/entities/tb-solved-quiz.entity';
 
-export default class SaveSolvedQuizRequestDto {
+export class SaveSolvedQuizRequestDto {
   @IsNumber()
   @Type(() => Number)
   @IsNotEmpty()
@@ -43,4 +47,17 @@ export class ChecklistProgressItemDto {
   @IsBoolean()
   @IsNotEmpty()
   isChecked: boolean;
+}
+
+export class SaveImportanceRequestDto {
+  @IsInt()
+  @Type(() => Number)
+  mainQuizId: number;
+
+  @IsInt()
+  @Type(() => Number)
+  solvedQuizId: number;
+
+  @IsEnum(Importance, { message: '중요도 값이 올바르지 않습니다.' })
+  importance: Importance;
 }

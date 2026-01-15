@@ -1,7 +1,13 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
-import SaveSolvedQuizRequestDto from './dto/users-request.dto';
-import { SolvedQuizResponseDto } from './dto/users-response.dto';
+import {
+  SaveImportanceRequestDto,
+  SaveSolvedQuizRequestDto,
+} from './dto/users-request.dto';
+import {
+  SaveImportanceResponseDto,
+  SolvedQuizResponseDto,
+} from './dto/users-response.dto';
 
 const TEST_USER_ID = 1;
 
@@ -15,6 +21,14 @@ export class UsersController {
   ): Promise<SolvedQuizResponseDto> {
     // TODO 로그인 된 userId를 받아 주입하도록 함.
     const result = await this.usersService.saveSolvedQuiz(TEST_USER_ID, dto);
+    return result;
+  }
+
+  @Post('importance')
+  async saveImportance(
+    @Body() dto: SaveImportanceRequestDto,
+  ): Promise<SaveImportanceResponseDto> {
+    const result = await this.usersService.saveImportance(dto);
     return result;
   }
 }
