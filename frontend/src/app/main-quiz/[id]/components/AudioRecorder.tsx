@@ -247,6 +247,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     setMessage(null);
     stopRecording();
     stopVideoRecording();
+    stopCamera();
   };
 
   const handleRetry = () => {
