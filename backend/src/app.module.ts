@@ -9,7 +9,8 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { DataSource } from 'typeorm';
 import { UsersModule } from './modules/users/users.module';
 import { WinstonModule } from 'nest-winston';
-import { winstonConfig } from './common/config/winston.config';
+import { buildWinstonConfig } from './common/config/winston.config';
+import { getLoggerSettings } from './common/config/logger.config';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ApiResponseInterceptor } from './common/interceptors/api-response.interceptor';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
@@ -21,7 +22,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
     ConfigModule.forRoot({
       isGlobal: true, // 전역 사용
     }),
-    WinstonModule.forRoot(winstonConfig),
+    WinstonModule.forRoot(buildWinstonConfig(getLoggerSettings())),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
