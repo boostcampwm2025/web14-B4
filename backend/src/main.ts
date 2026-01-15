@@ -3,12 +3,14 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { initializeTransactionalContext } from 'typeorm-transactional';
 import { WinstonModule } from 'nest-winston';
-import { winstonConfig } from './common/config/winston.config';
+import { buildWinstonConfig } from './common/config/winston.config';
+import { getLoggerSettings } from './common/config/logger.config';
 
 async function bootstrap() {
   initializeTransactionalContext();
+  const loggerSettings = getLoggerSettings();
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger(winstonConfig),
+    logger: WinstonModule.createLogger(buildWinstonConfig(loggerSettings)),
   });
   app.useGlobalPipes(
     new ValidationPipe({
