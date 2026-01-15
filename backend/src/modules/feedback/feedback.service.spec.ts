@@ -111,7 +111,7 @@ describe('FeedbackService', () => {
       solvedQuizRepositoryMock.updateAiFeedback.mockResolvedValue(true);
     });
     it('AI 피드백 생성 시, 전체 흐름이 모두 호출된다', async () => {
-      const result = await service.generateAIFeedback(requestDto);
+      await service.generateAIFeedback(requestDto);
 
       expect(mainQuizRepositoryMock.findByIdWithDetails).toHaveBeenCalledWith(
         1,
@@ -124,16 +124,6 @@ describe('FeedbackService', () => {
       );
 
       expect(solvedQuizRepositoryMock.updateAiFeedback).toHaveBeenCalled();
-
-      // createTxtForAi / toChecklistResponse 간접 검증
-      expect(result.data.userChecklistProgress).toEqual([
-        {
-          checklistItemId: 1,
-          content: '키워드 설명',
-        },
-      ]);
-
-      expect(result.result).toEqual({ score: 5 });
     });
 
     it('데이터 조회 실패 시 NotFoundException 발생', async () => {

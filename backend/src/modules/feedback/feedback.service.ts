@@ -36,7 +36,8 @@ export class FeedbackService {
 
   async generateAIFeedback(requestDto: CreateAIFeedbackRequestDto) {
     // 데이터 조회
-    const mainQuizDetail = await this.getMainQuiz(requestDto.mainQuizId);
+    const { mainQuizId, quizCategory, title, content, keywords } =
+      await this.getMainQuiz(requestDto.mainQuizId);
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
@@ -45,21 +46,24 @@ export class FeedbackService {
 
     // ai 피드백
     const userPromptText = this.createTxtForAi(
-      mainQuizDetail.content,
+      content,
       userAnswer,
-      mainQuizDetail.keywords,
+      keywords,
       checklistInSolvedQuiz,
     );
     const aiFeedback = await this.analyzeAnswer(userPromptText);
     await this.updateAiFeedback(requestDto.solvedQuizId, aiFeedback);
 
     const result = {
-      data: {
-        mainQuizDetail,
-        answer: userAnswer,
+      solvedQuizDetail: {
+        mainQuizId,
+        quizCategory,
+        title,
+        content,
+        keywords,
         userChecklistProgress: this.toChecklistResponse(checklistInSolvedQuiz),
       },
-      result: aiFeedback,
+      aiFeedbackResult: aiFeedback,
     };
     return result;
   }
@@ -135,7 +139,7 @@ export class FeedbackService {
   ): string {
     const keywordsText = keywords.map((v) => v.keyword).join(', ');
 
-    const txt = `
+    const userPrompt = `
     [퀴즈]
     ${quizContent}
     [사용자 답변]
@@ -146,15 +150,20 @@ export class FeedbackService {
     ${keywordsText}
     `;
 
-    return txt;
+    return userPrompt;
   }
 
   private toChecklistResponse(checklistInSolvedQuiz: UserChecklistProgress[]) {
-    return checklistInSolvedQuiz
-      .filter((item) => item.isChecked === true)
-      .map((item) => ({
-        checklistItemId: item.checklistItem.checklistItemId,
-        content: item.checklistItem.content,
-      }));
+    const total = checklistInSolvedQuiz.length;
+    const checkedCount = checklistInSolvedQuiz.filter(
+      (item) => item.isChecked === true,
+    ).length;
+
+    const userChecklistProgress = {
+      checklistCount: total,
+      checkedCount,
+    };
+
+    return userChecklistProgress;
   }
 }
