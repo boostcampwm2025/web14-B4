@@ -1,14 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
-  SaveChecklistProgressDto,
   SaveImportanceRequestDto,
   SaveSolvedQuizRequestDto,
 } from './dto/users-request.dto';
 import {
-  SaveChecklistProgressResponseDto,
   SaveImportanceResponseDto,
-  SolvedQuizResponseDto
+  SolvedQuizResponseDto,
 } from './dto/users-response.dto';
 
 const TEST_USER_ID = 1;

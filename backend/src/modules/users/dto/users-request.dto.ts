@@ -5,17 +5,16 @@ import {
   IsBoolean,
   IsInt,
   IsEnum,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity';
   IsString,
   IsNotEmpty,
-  IsEnum,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { ComprehensionLevel } from 'src/datasources/entities/tb-solved-quiz.entity';
+import {
+  Importance,
+  ComprehensionLevel,
+} from '../../../datasources/entities/tb-solved-quiz.entity';
 
-export default class SaveSolvedQuizRequestDto {
+export class SaveSolvedQuizRequestDto {
   @IsNumber()
   @Type(() => Number)
   @IsNotEmpty()

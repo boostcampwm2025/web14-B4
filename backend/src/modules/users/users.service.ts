@@ -2,15 +2,11 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
 import { UserChecklistProgressRepository } from '../../datasources/repositories/tb-user-checklist-progress.repository';
 import {
-  SaveChecklistProgressDto,
   SaveImportanceRequestDto,
-  SaveSolvedQuizRequestDto
+  SaveSolvedQuizRequestDto,
 } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
-import {
-  SaveChecklistProgressResponseDto,
-  SaveImportanceResponseDto,
-} from './dto/users-response.dto';
+import { SaveImportanceResponseDto } from './dto/users-response.dto';
 import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
