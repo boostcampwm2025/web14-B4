@@ -10,6 +10,8 @@ import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 import { ChecklistItem } from '@/app/checklist/types/checklist.types';
 import { Checklist } from './checklist';
 import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
+import { useEffect } from 'react';
+import { toast } from 'react-toastify';
 
 interface ChecklistSessionProps {
   mainQuizId: number;
@@ -29,6 +31,20 @@ export default function ChecklistSession({
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
   const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>(initialChecklistItems);
+
+  useEffect(() => {
+    if (!solvedQuizId || solvedQuizId <= 0) {
+      toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
+        position: 'top-center',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        theme: 'light',
+      });
+      router.push(`/quizzes`);
+    }
+  }, [solvedQuizId, router]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
     setOptions((prev) =>
