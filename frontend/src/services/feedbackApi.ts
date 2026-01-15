@@ -1,8 +1,6 @@
-import {
-  GetAIFeedbackResponseDto,
-  SolvedQuizResponseDto,
-} from '@/app/checklist/types/checklist.types';
+import { SolvedQuizResponseDto } from '@/app/checklist/types/checklist.types';
 import { apiFetch } from './http/apiFetch';
+import { GetAIFeedbackResponseDto } from '@/app/feedback/types/feedback';
 
 export interface SolvedQuizSubmitRequestDto {
   mainQuizId: number;
