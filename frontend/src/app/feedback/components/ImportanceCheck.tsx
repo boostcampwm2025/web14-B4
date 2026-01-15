@@ -18,7 +18,7 @@ const OPTIONS: Option[] = [
   {
     value: 'LOW',
     label: '이미 알고 있었거나\n흥미 분야가 아니에요',
-    src: '/images/bad-blue.svg',
+    src: '/images/low-blue.svg',
   },
   {
     value: 'NORMAL',
@@ -28,7 +28,7 @@ const OPTIONS: Option[] = [
   {
     value: 'HIGH',
     label: '더 공부해보고 싶어요',
-    src: '/images/good-blue.svg',
+    src: '/images/high-blue.svg',
   },
 ];
 
