@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
 import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import { toast } from 'react-toastify';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -44,6 +45,21 @@ export default function ResultPage() {
     };
     fetchSpeechData();
   }, []);
+
+  // solved quiz 가 없는 경우, quizzes 페이지로 리다이렉트
+  useEffect(() => {
+    if (!solvedQuizId || solvedQuizId <= 0) {
+      toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
+        position: 'top-center',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        theme: 'light',
+      });
+      router.push(`/quizzes`);
+    }
+  });
 
   // API에서 체크리스트 아이템 가져오기
   useEffect(() => {
@@ -109,10 +125,6 @@ export default function ResultPage() {
     } else {
       e.preventDefault(); // 네비게이션 취소
     }
-  };
-
-  const handleNewConversion = () => {
-    handleUpdateSpeech();
   };
 
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
