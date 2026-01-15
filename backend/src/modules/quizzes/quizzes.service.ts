@@ -32,15 +32,23 @@ export class QuizzesService {
     });
   }
 
-  async getCategoriesWithCount() {
-    const result = await this.quizRepository.getCategoriesWithCount();
-    const totalCount = await this.quizRepository.count();
+  async getCategoriesWithCount(difficulty?: DifficultyLevel) {
+    const where: FindOptionsWhere<MainQuiz> = {};
+
+    if (difficulty) where.difficultyLevel = difficulty;
+
+    const result = await this.quizRepository.getCategoriesWithCount(difficulty);
 
     const categories = result.map((row) => ({
       id: Number(row.id),
       name: row.name,
       count: Number(row.count ?? 0),
     }));
+
+    const totalCount = result.reduce(
+      (total, category) => total + Number(category.count),
+      0,
+    );
 
     return { totalCount, categories };
   }
