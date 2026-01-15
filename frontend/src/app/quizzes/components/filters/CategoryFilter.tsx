@@ -1,3 +1,4 @@
+import { CategoryCountsResponseDto } from '../../types/quiz';
 import { FilterLink } from './FilterLink';
 
 interface Category {
@@ -7,8 +8,7 @@ interface Category {
 }
 
 interface CategoryFilterProps {
-  categories: Category[];
-  totalCount: number;
+  categoriesData?: CategoryCountsResponseDto;
   /** 현재 선택된 카테고리 */
   category?: string;
   /** 현재 선택된 난이도 (쿼리 유지용) */
@@ -16,11 +16,12 @@ interface CategoryFilterProps {
 }
 
 export default function CategoryFilter({
-  categories,
-  totalCount,
+  categoriesData,
   category,
   difficulty,
 }: CategoryFilterProps) {
+  const currentParams = { category, difficulty };
+
   const isActive = (target: string) => (target === '전체' ? !category : category === target);
 
   const getButtonStyle = (target: string) =>
@@ -30,8 +31,6 @@ export default function CategoryFilter({
 
   const getCountStyle = (target: string) =>
     isActive(target) ? 'bg-white text-black' : 'bg-[var(--color-gray-light)] text-black';
-
-  const currentParams = { category, difficulty };
 
   return (
     <div className="flex flex-col">
@@ -51,12 +50,12 @@ export default function CategoryFilter({
               '전체',
             )}`}
           >
-            {totalCount}
+            {categoriesData?.totalCount}
           </span>
         </FilterLink>
 
         {/* 개별 카테고리 */}
-        {categories.map((cat) => (
+        {categoriesData?.categories.map((cat) => (
           <FilterLink
             key={cat.id}
             param="category"

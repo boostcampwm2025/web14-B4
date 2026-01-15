@@ -1,24 +1,42 @@
+'use client';
+
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
 import DifficultyFilter from './components/filters/DifficultyFilter';
 import CategoryFilter from './components/filters/CategoryFilter';
 import QuizGrid from './components/card/QuizGrid';
 import QuizHeader from './components/header/QuizHeader';
+import { useEffect, useState } from 'react';
+import { CategoryCountsResponseDto, Quiz } from './types/quiz';
+import { useSearchParams } from 'next/navigation';
 
-interface PageProps {
-  searchParams: Promise<{
-    category?: string;
-    difficulty?: string;
-  }>;
-}
+export default function QuizPage() {
+  const searchParams = useSearchParams();
+  const category = searchParams.get('category') ?? undefined;
+  const difficulty = searchParams.get('difficulty') ?? undefined;
 
-export default async function QuizPage(props: PageProps) {
-  const searchParams = await props.searchParams;
-  const { category, difficulty } = searchParams;
-  const [quizzes, categoryData] = await Promise.all([
-    fetchQuizzes(category, difficulty),
-    fetchCategoryCounts(),
-  ]);
-  const { totalCount, categories } = categoryData;
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [categories, setCategories] = useState<CategoryCountsResponseDto>();
+
+  useEffect(() => {
+    let cancelled = false;
+    const fetchData = async () => {
+      const [quizResult, categoryData] = await Promise.all([
+        fetchQuizzes(category, difficulty),
+        fetchCategoryCounts(difficulty),
+      ]);
+
+      if (cancelled) return;
+
+      setQuizzes(quizResult);
+      setCategories(categoryData);
+    };
+
+    fetchData();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [category, difficulty]);
 
   return (
     <main className="mx-auto p-10 bg-[var(--color-bg-default)]">
@@ -26,12 +44,7 @@ export default async function QuizPage(props: PageProps) {
 
       <div className="flex justify-between items-center">
         <DifficultyFilter difficulty={difficulty} category={category} />
-        <CategoryFilter
-          categories={categories}
-          totalCount={totalCount}
-          category={category}
-          difficulty={difficulty}
-        />
+        <CategoryFilter categoriesData={categories} category={category} difficulty={difficulty} />
       </div>
 
       <QuizGrid quizzes={quizzes} />
