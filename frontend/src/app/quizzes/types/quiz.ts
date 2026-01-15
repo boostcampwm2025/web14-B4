@@ -1,20 +1,22 @@
 export type Difficulty = '상' | '중' | '하';
 
 export interface QuizCategory {
-  id: number;
+  quizCategoryId: number;
   name: string;
 }
 
 export interface Quiz {
-  id: number;
+  mainQuizId: number;
   title: string;
   content: string;
   hint: string | null;
-  difficulty: Difficulty;
-  category: QuizCategory;
+  difficultyLevel: Difficulty;
+  quizCategory: QuizCategory;
 }
 
 export interface QuizCategoryWithCount extends QuizCategory {
+  id: number;
+  name: string;
   count: number;
 }
 export interface CategoryCountsResponseDto {

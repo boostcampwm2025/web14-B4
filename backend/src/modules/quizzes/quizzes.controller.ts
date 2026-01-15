@@ -21,7 +21,7 @@ export class QuizzesController {
     @Query('category') category?: string,
     @Query('difficulty') difficulty?: DifficultyLevel,
   ) {
-    const result: MainQuiz[] = await this.quizService.findAll(
+    const result: MainQuiz[] = await this.quizService.getQuizzes(
       category,
       difficulty,
     );
