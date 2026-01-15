@@ -51,7 +51,9 @@ export function useMicrophoneManager() {
 
       if (e?.name === 'NotAllowedError' || e?.name === 'SecurityError') {
         setStatus('denied');
-        setMessage('마이크 권한이 필요합니다. 브라우저 설정에서 마이크를 허용해주세요.');
+        setMessage(
+          '마이크 권한이 필요합니다. 브라우저 설정에서 마이크를 허용해주세요. 새로고침 후, 마이크 권한 동의를 추가해주세요.',
+        );
         return;
       }
 
@@ -62,7 +64,9 @@ export function useMicrophoneManager() {
 
   const denyPermission = () => {
     setStatus('denied');
-    setMessage('마이크 권한이 필요합니다. 동의 후 마이크를 허용해주세요.');
+    setMessage(
+      '마이크 권한이 필요합니다. 동의 후 마이크를 허용해주세요. 새로고침 후, 마이크 권한 동의를 추가해주세요.',
+    );
   };
 
   const micOptions: MicOption[] = [

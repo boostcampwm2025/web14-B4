@@ -8,13 +8,11 @@ import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
-import {
-  ChecklistItem,
-  ChecklistItemDto,
-  QuizChecklistResponseDto,
-} from '../../types/checklist.types';
-import { fetchQuizChecklistItems, submitChecklist } from '@/services/quizApi';
+import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
+import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
+import { fetchQuizChecklistItems, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import { toast } from 'react-toastify';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
   solvedQuizId: -1,
@@ -29,9 +27,10 @@ export default function ResultPage() {
   const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
   const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
-  const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
+  const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [quizContent, setQuizContent] = useState<string>('퀴즈 내용을 불러오는 중...');
 
   // 음성 녹음 텍스트 불러오기
   useEffect(() => {
@@ -48,20 +47,44 @@ export default function ResultPage() {
     fetchSpeechData();
   }, []);
 
+  // solved quiz 가 없는 경우, quizzes 페이지로 리다이렉트
+  useEffect(() => {
+    if (!solvedQuizId || solvedQuizId <= 0) {
+      toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
+        position: 'top-center',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        theme: 'light',
+      });
+      router.push(`/quizzes`);
+    }
+  });
+
   // API에서 체크리스트 아이템 가져오기
   useEffect(() => {
-    const loadChecklistItems = async () => {
+    const loadData = async () => {
       try {
         setLoading(true);
-        const data = await fetchQuizChecklistItems(mainQuizId);
+        const [quizData, checklistData] = await Promise.all([
+          fetchQuiz(mainQuizId),
+          fetchQuizChecklistItems(mainQuizId),
+        ]);
 
-        if (data && data.checklistItems) {
+        if (quizData) {
+          setQuizContent(quizData.content);
+        }
+
+        if (checklistData && checklistData.checklistItems) {
           // API 응답을 ChecklistItem 형식으로 변환
-          const items: ChecklistItem[] = data.checklistItems.map((item: ChecklistItemDto) => ({
-            id: item.checklistItemId,
-            content: item.content,
-            checked: false, // 초기값은 모두 체크 해제
-          }));
+          const items: ChecklistItem[] = checklistData.checklistItems.map(
+            (item: ChecklistItemDto) => ({
+              id: item.checklistItemId,
+              content: item.content,
+              checked: false, // 초기값은 모두 체크 해제
+            }),
+          );
           setOptions(items);
         }
       } catch (error) {
@@ -72,7 +95,7 @@ export default function ResultPage() {
       }
     };
 
-    loadChecklistItems();
+    loadData();
   }, [mainQuizId]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
@@ -105,10 +128,6 @@ export default function ResultPage() {
     }
   };
 
-  const handleNewConversion = () => {
-    handleUpdateSpeech();
-  };
-
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -122,11 +141,14 @@ export default function ResultPage() {
       const requestBody = {
         mainQuizId: Number(mainQuizId),
         solvedQuizId: Number(solvedQuizId),
+        speechText: speechItem.speechText,
+        comprehensionLevel: selectedFeeling,
         checklistItems: checklistItems,
       };
 
       try {
-        await submitChecklist(requestBody);
+        const result = await submitSolvedQuiz(requestBody);
+        await getAIFeedBack(result);
         // 성공 시 페이지 이동 등
         router.push('/result');
       } catch (error) {
@@ -142,9 +164,7 @@ export default function ResultPage() {
         <div className="max-w-[1600px] mx-auto">
           {/* 헤더 */}
           <div className="text-center mb-12">
-            <h3 className="text-3xl font-bold text-gray-800 mb-2 animate-fadeIn">
-              스택(Stack)과 큐(Queue)는 각각 어떤 구조이며, 언제 사용하나요?
-            </h3>
+            <h3 className="text-3xl font-bold text-gray-800 mb-2 animate-fadeIn">{quizContent}</h3>
           </div>
 
           {/* 메인 콘텐츠 - 좌우 배치 */}

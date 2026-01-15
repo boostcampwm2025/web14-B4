@@ -29,7 +29,7 @@ export class UserChecklistProgressRepository {
     await this.repository.delete(id);
   }
 
-  async upsertProgresses(
+  async saveUserChecklistProgress(
     userId: number,
     solvedQuizId: number,
     checklistItems: {
@@ -39,18 +39,17 @@ export class UserChecklistProgressRepository {
   ): Promise<void> {
     if (checklistItems.length === 0) return;
 
-    const rows = checklistItems.map((item) => ({
-      user: { userId },
-      checklistItem: { checklistItemId: item.checklistItemId },
-      solvedQuiz: { solvedQuizId },
-      isChecked: item.isChecked,
-      checkedAt: item.isChecked ? new Date() : null,
-    }));
+    const entities = checklistItems.map((item) =>
+      this.repository.create({
+        user: { userId },
+        checklistItem: { checklistItemId: item.checklistItemId },
+        solvedQuiz: { solvedQuizId },
+        isChecked: item.isChecked,
+        checkedAt: item.isChecked ? new Date() : null,
+      }),
+    );
 
-    await this.repository.upsert(rows, {
-      conflictPaths: ['user', 'checklistItem', 'solvedQuiz'],
-      skipUpdateIfNoValuesChanged: true,
-    });
+    await this.repository.save(entities);
   }
 
   // solved quiz의 체크리스트를 가져온다

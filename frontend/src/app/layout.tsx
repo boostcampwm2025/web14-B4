@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify';
 import './globals.css';
 import ConditionalHeader from '@/components/ConditionalHeader';
 
@@ -11,6 +12,7 @@ export default function RootLayout({
       <body>
         <ConditionalHeader />
         <main>{children}</main>
+        <ToastContainer />
       </body>
     </html>
   );

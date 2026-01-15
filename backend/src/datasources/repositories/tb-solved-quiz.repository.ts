@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DeepPartial, Repository } from 'typeorm';
-import { SolvedQuiz } from '../entities/tb-solved-quiz.entity';
+import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
+import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -68,5 +69,12 @@ export class SolvedQuizRepository {
 
     if (!result.affected || result.affected <= 0) return false;
     return true;
+  }
+
+  async updateImportance(
+    solvedQuizId: number,
+    importance: Importance,
+  ): Promise<UpdateResult> {
+    return await this.repository.update(solvedQuizId, { importance });
   }
 }
