@@ -10,7 +10,7 @@ export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const base =
-  'inline-flex items-center justify-center whitespace-nowrap font-semibold transition-colors ' +
+  'inline-flex items-center justify-center whitespace-nowrap font-semibold transition-colors hover:cursor-pointer ' +
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 ' +
   'disabled:cursor-not-allowed disabled:opacity-50';
 

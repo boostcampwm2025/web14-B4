@@ -1,16 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AiFeedbackResponse } from '@/app/feedback/types/feedback';
-import { fetchAiFeedback } from '@/services/feedbackApi';
+import { GetAIFeedbackResponseDto } from '@/app/feedback/types/feedback';
+import {
+  SolvedQuizSubmitRequestDto,
+  submitSolvedQuiz,
+  getAIFeedBack,
+} from '@/services/feedbackApi';
 
 interface QuizStore {
   solvedQuizId: number | null;
   setSolvedQuizId: (id: number) => void;
   clearSolvedQuizId: () => void;
   isAnalyzing: boolean;
-  feedbackResult: AiFeedbackResponse | null;
+  feedbackResult: GetAIFeedbackResponseDto | null;
   actions: {
-    requestAiFeedback: (mainQuizId: number, solvedQuizId: number) => Promise<boolean>;
+    requestAiFeedback: (payload: SolvedQuizSubmitRequestDto) => Promise<boolean>;
   };
 }
 
@@ -25,10 +29,11 @@ export const useQuizStore = create<QuizStore>()(
       feedbackResult: null,
 
       actions: {
-        requestAiFeedback: async (mainQuizId, solvedQuizId) => {
+        requestAiFeedback: async (payload) => {
           set({ isAnalyzing: true });
           try {
-            const response = await fetchAiFeedback(mainQuizId, solvedQuizId);
+            const submitResult = await submitSolvedQuiz(payload);
+            const response = await getAIFeedBack(submitResult);
             set({ feedbackResult: response });
             return true;
           } catch (error) {

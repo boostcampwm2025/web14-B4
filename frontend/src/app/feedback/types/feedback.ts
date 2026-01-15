@@ -14,7 +14,7 @@ export interface MainQuizDetail {
   content: string;
 }
 
-export interface AiFeedbackResponse {
+export interface GetAIFeedbackResponseDto {
   data: {
     mainQuizDetail: MainQuizDetail;
     answer: string;

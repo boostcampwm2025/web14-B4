@@ -7,13 +7,10 @@ import { getSpeechesByQuizId, updateSpeechText } from '@/services/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
-import {
-  ChecklistItem,
-  ChecklistItemDto,
-  QuizChecklistResponseDto,
-} from '../../types/checklist.types';
-import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
+import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
+import { fetchQuizChecklistItems, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
+import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 
 const DEFAULT_SPEECH_ITEM: SpeechItemDto = {
@@ -33,7 +30,7 @@ export default function ResultPage() {
   } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
-  const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
+  const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [quizContent, setQuizContent] = useState<string>('퀴즈 내용을 불러오는 중...');
@@ -52,6 +49,21 @@ export default function ResultPage() {
     };
     fetchSpeechData();
   }, []);
+
+  // solved quiz 가 없는 경우, quizzes 페이지로 리다이렉트
+  useEffect(() => {
+    if (!solvedQuizId || solvedQuizId <= 0) {
+      toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
+        position: 'top-center',
+        autoClose: 2500,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        theme: 'light',
+      });
+      router.push(`/quizzes`);
+    }
+  });
 
   // API에서 체크리스트 아이템 가져오기
   useEffect(() => {
@@ -119,10 +131,6 @@ export default function ResultPage() {
     }
   };
 
-  const handleNewConversion = () => {
-    handleUpdateSpeech();
-  };
-
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
@@ -136,21 +144,20 @@ export default function ResultPage() {
       const requestBody = {
         mainQuizId: Number(mainQuizId),
         solvedQuizId: Number(solvedQuizId),
+        speechText: speechItem.speechText,
+        comprehensionLevel: selectedFeeling,
         checklistItems: checklistItems,
       };
 
-      try {
-        await submitChecklist(requestBody);
-        const success = await requestAiFeedback(Number(mainQuizId), Number(solvedQuizId));
+      const success = await requestAiFeedback(requestBody);
 
-        if (success) {
-          router.push(`/feedback/${solvedQuizId}`);
-        } else {
-          alert('AI 분석 중 오류가 발생했습니다.');
+      if (!success) {
+        try {
+          router.push('/feedback/main-quiz/${mainQuizId}/solved-quiz/${solvedQuizId}');
+        } catch (error) {
+          console.error('제출 실패:', error);
+          alert('제출에 실패했습니다.');
         }
-      } catch (error) {
-        console.error('제출 실패:', error);
-        alert('제출에 실패했습니다.');
       }
     }
   };

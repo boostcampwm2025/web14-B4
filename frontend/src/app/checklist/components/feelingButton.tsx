@@ -2,14 +2,14 @@ import React from 'react';
 import Image from 'next/image';
 
 interface FeelingButtonProps {
-  feeling: 'bad' | 'normal' | 'good';
+  comprehensionLevel: 'HIGH' | 'NORMAL' | 'LOW';
   label: string;
   selected: boolean;
   onClick: () => void;
 }
 
 export const FeelingButton: React.FC<FeelingButtonProps> = ({
-  feeling,
+  comprehensionLevel,
   label,
   selected,
   onClick,
@@ -17,7 +17,7 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
   // 선택 여부에 따라 다른 이미지 사용
   const getImagePath = () => {
     const prefix = selected ? 'blue' : 'gray';
-    return `/images/${feeling}-${prefix}.png`;
+    return `/images/${comprehensionLevel}-${prefix}.png`;
   };
 
   return (
@@ -25,7 +25,7 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
       <input
         type="radio"
         name="feeling"
-        value={feeling}
+        value={comprehensionLevel}
         checked={selected}
         onChange={onClick}
         className="hidden"

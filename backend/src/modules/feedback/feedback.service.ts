@@ -15,7 +15,7 @@ export class FeedbackService {
   private genAI: GoogleGenAI;
 
   constructor(
-    private mainQuizRepostory: MainQuizRepository,
+    private mainQuizRepository: MainQuizRepository,
     private speechesService: SpeechesService,
     private usersService: UsersService,
   ) {
@@ -107,7 +107,7 @@ export class FeedbackService {
 
   private async validateQuiz(mainQuizId: number): Promise<MainQuiz> {
     const mainQuiz =
-      await this.mainQuizRepostory.findByIdWithDetails(mainQuizId);
+      await this.mainQuizRepository.findByIdWithDetails(mainQuizId);
 
     if (!mainQuiz) {
       throw new NotFoundException('해당 퀴즈가 존재하지 않습니다.');
