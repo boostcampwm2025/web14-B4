@@ -64,13 +64,13 @@ export const winstonConfig: LoggerOptions = {
     new transports.Console({
       format: consoleFormat,
     }),
-    new transports.DailyRotateFile({
-      dirname: 'logs',
-      filename: 'backend_%DATE%.log',
-      datePattern: 'YYYYMMDD',
-      maxSize: '20m',
-      maxFiles: '20d',
-      format: fileFormat,
-    }),
+    // new transports.DailyRotateFile({
+    //   dirname: 'logs',
+    //   filename: 'backend_%DATE%.log',
+    //   datePattern: 'YYYYMMDD',
+    //   maxSize: '20m',
+    //   maxFiles: '20d',
+    //   format: fileFormat,
+    // }),
   ],
 };
