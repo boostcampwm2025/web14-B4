@@ -42,7 +42,14 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
         className="hidden"
       />
       <div className="w-[94px] h-[93px] relative">
-        <Image src={imagePath} alt={label} width={94} height={93} className="object-contain" />
+        <Image
+          src={imagePath}
+          alt={label}
+          width={94}
+          height={93}
+          className="object-contain"
+          draggable={false}
+        />
       </div>
       <span className="text-base font-medium text-gray-700">{label}</span>
     </label>
