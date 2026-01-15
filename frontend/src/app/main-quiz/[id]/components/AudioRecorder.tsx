@@ -365,11 +365,11 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
               <div className="text-sm font-medium text-gray-800">카메라</div>
               <select
                 className="w-full rounded-xl border border-gray-200 bg-white px-3 py-4 pr-10 text-sm appearance-none cursor-pointer"
-                value={selectedMicId}
-                onChange={(e) => setSelectedMicId(e.target.value)}
+                value={selectedVideoId}
+                onChange={(e) => setSelectedVideoId(e.target.value)}
                 disabled={recordStatus === 'recording' || isSubmitting}
               >
-                {micOptions.map((opt, idx) => (
+                {videoOptions.map((opt, idx) => (
                   <option key={`${opt.value}-${idx}`} value={opt.value}>
                     {opt.label}
                   </option>
