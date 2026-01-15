@@ -9,7 +9,8 @@ import MySpeechText from '../../components/MySpeechText';
 import { SpeechItemDto } from '../../types/speeches.types';
 import { useRouter } from 'next/navigation';
 import { ChecklistItem, ChecklistItemDto } from '../../types/checklist.types';
-import { fetchQuizChecklistItems, submitChecklist, fetchQuiz } from '@/services/quizApi';
+import { getAIFeedBack, submitSolvedQuiz } from '@/services/feedbackApi';
+import { fetchQuizChecklistItems, fetchQuiz } from '@/services/quizApi';
 import { Checklist } from '../../components/checklist';
 import { toast } from 'react-toastify';
 
@@ -26,7 +27,7 @@ export default function ResultPage() {
   const solvedQuizId = useQuizStore((state) => state.solvedQuizId);
   const { clearSolvedQuizId } = useQuizStore();
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(DEFAULT_SPEECH_ITEM);
-  const [selectedFeeling, setSelectedFeeling] = useState<'bad' | 'normal' | 'good'>('normal');
+  const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [quizContent, setQuizContent] = useState<string>('퀴즈 내용을 불러오는 중...');
@@ -140,11 +141,14 @@ export default function ResultPage() {
       const requestBody = {
         mainQuizId: Number(mainQuizId),
         solvedQuizId: Number(solvedQuizId),
+        speechText: speechItem.speechText,
+        comprehensionLevel: selectedFeeling,
         checklistItems: checklistItems,
       };
 
       try {
-        await submitChecklist(requestBody);
+        const result = await submitSolvedQuiz(requestBody);
+        await getAIFeedBack(result);
         // 성공 시 페이지 이동 등
         router.push('/result');
       } catch (error) {

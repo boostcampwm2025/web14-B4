@@ -1,3 +1,4 @@
-export class SaveChecklistProgressResponseDto {
-  savedCount: number;
+export class SolvedQuizResponseDto {
+  mainQuizId: number;
+  solvedQuizId: number;
 }
