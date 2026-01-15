@@ -1,6 +1,12 @@
-import { format, transports, type LoggerOptions } from 'winston';
+import {
+  format,
+  transports,
+  type LoggerOptions,
+  type transport,
+} from 'winston';
 import type { TransformableInfo } from 'logform';
 import 'winston-daily-rotate-file';
+import type { LoggerSettings } from './logger.config';
 
 function safeStringify(value: unknown): string {
   const seen = new WeakSet<object>();
@@ -58,19 +64,28 @@ const fileFormat = format.combine(
   format.printf(formatLog),
 );
 
-export const winstonConfig: LoggerOptions = {
-  level: 'debug',
-  transports: [
+export function buildWinstonConfig(settings: LoggerSettings): LoggerOptions {
+  const activeTransports: transport[] = [
     new transports.Console({
       format: consoleFormat,
     }),
-    new transports.DailyRotateFile({
-      dirname: 'logs',
-      filename: 'backend_%DATE%.log',
-      datePattern: 'YYYYMMDD',
-      maxSize: '20m',
-      maxFiles: '20d',
-      format: fileFormat,
-    }),
-  ],
-};
+  ];
+
+  if (settings.fileEnabled) {
+    activeTransports.push(
+      new transports.DailyRotateFile({
+        dirname: settings.dir,
+        filename: 'backend_%DATE%.log',
+        datePattern: 'YYYYMMDD',
+        maxSize: '20m',
+        maxFiles: '20d',
+        format: fileFormat,
+      }),
+    );
+  }
+
+  return {
+    level: settings.level,
+    transports: activeTransports,
+  };
+}
