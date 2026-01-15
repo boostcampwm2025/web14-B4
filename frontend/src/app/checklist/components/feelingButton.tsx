@@ -10,16 +10,16 @@ interface FeelingButtonProps {
 
 const IMAGE_PATHS = {
   LOW: {
-    blue: '/images/bad-blue.svg',
-    gray: '/images/bad-gray.svg',
+    blue: '/images/low-blue.svg',
+    gray: '/images/low-gray.svg',
   },
   NORMAL: {
     blue: '/images/normal-blue.svg',
     gray: '/images/normal-gray.svg',
   },
   HIGH: {
-    blue: '/images/good-blue.svg',
-    gray: '/images/good-gray.svg',
+    blue: '/images/high-blue.svg',
+    gray: '/images/high-gray.svg',
   },
 };
 
