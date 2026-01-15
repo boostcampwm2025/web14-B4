@@ -30,8 +30,3 @@ export interface SolvedQuizResponseDto {
   mainQuizId: number;
   solvedQuizId: number;
 }
-
-// TODO AI 피드백 결과에 따른 타입으로 수정 필요 !
-export interface GetAIFeedbackResponseDto {
-  result: JSON;
-}

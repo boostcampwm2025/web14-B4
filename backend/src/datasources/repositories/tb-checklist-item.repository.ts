@@ -19,11 +19,12 @@ export class ChecklistItemRepository {
     });
   }
 
+  // 사용자가 체크한 체크리스트를 조회
   getUserChecklistItems(
     userId: number,
     mainQuizId: number,
     solvedQuizId: number,
-  ) {
+  ): Promise<ChecklistItem[] | null> {
     return this.repository
       .createQueryBuilder('checklistItem')
       .select(['checklistItem.checklistItemId', 'checklistItem.content'])

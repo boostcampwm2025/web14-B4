@@ -51,4 +51,17 @@ export class UserChecklistProgressRepository {
 
     await this.repository.save(entities);
   }
+
+  // solved quiz의 체크리스트를 가져온다
+  async getChecklistProgressBySolved(
+    solvedQuizId: number,
+  ): Promise<UserChecklistProgress[] | null> {
+    return this.repository
+      .createQueryBuilder('userChecklistProgress')
+      .leftJoinAndSelect('userChecklistProgress.checklistItem', 'checklistItem')
+      .leftJoin('userChecklistProgress.solvedQuiz', 'solvedQuiz')
+      .where('solvedQuiz.solvedQuizId = :solvedQuizId', { solvedQuizId })
+      .orderBy('checklistItem.sortOrder', 'ASC')
+      .getMany();
+  }
 }

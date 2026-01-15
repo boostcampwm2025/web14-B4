@@ -8,6 +8,7 @@ import {
 import { Transactional } from 'typeorm-transactional';
 import { SaveImportanceResponseDto } from './dto/users-response.dto';
 import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
+import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
@@ -40,7 +41,7 @@ export class UsersService {
         mainQuizId,
         solvedQuizId,
       );
-    if (userChecklist.length === 0) {
+    if (userChecklist?.length === 0) {
       throw new NotFoundException('체크리스트 내역이 존재하지 않습니다.');
     }
 
@@ -131,5 +132,20 @@ export class UsersService {
     }
 
     return new SaveImportanceResponseDto({ solvedQuizId, importance });
+  }
+
+  /* 푼 문제의 체크리스트와 사용자의 체크 여부를 조회 */
+  async getUserChecklistProgress(
+    solvedQuiz: number,
+  ): Promise<UserChecklistProgress[]> {
+    const userChecklistProgress =
+      await this.userChecklistProgressRepository.getChecklistProgressBySolved(
+        solvedQuiz,
+      );
+    if (!userChecklistProgress || userChecklistProgress?.length == 0)
+      throw new NotFoundException(
+        '해당 solved quiz의 체크리스트가 존재하지 않습니다.',
+      );
+    return userChecklistProgress;
   }
 }
