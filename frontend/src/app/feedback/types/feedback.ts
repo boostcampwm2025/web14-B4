@@ -15,9 +15,13 @@ export interface AiResult {
 
 export interface SolvedQuizDetail {
   mainQuizId: number;
-  quizCategory: string;
+  quizCategory: {
+    quizCategoryId: number;
+    name: string;
+  };
   title: string;
   content: string;
+  difficultyLevel: '상' | '중' | '하';
   keywords: { keyword: string }[];
   userChecklistProgress: {
     checklistCount: number;

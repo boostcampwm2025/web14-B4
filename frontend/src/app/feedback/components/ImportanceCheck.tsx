@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import * as React from 'react';
 import { Button } from '@/components/Button';
@@ -32,12 +33,12 @@ const OPTIONS: Option[] = [
 ];
 
 type Props = {
-  userName?: string;
+  userName: string;
   mainQuizId: number;
   solvedQuizId: number;
 };
 
-export default function ImportanceCheck({ userName = '철수', mainQuizId, solvedQuizId }: Props) {
+export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId }: Props) {
   const router = useRouter();
   const [selected, setSelected] = React.useState<Importance | null>(null);
   const [isSaving, setIsSaving] = React.useState(false);
@@ -72,7 +73,7 @@ export default function ImportanceCheck({ userName = '철수', mainQuizId, solve
 
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
         <h2 className="text-xl font-bold text-[var(--color-primary)]">
           🤓 {userName}님에게 얼마나 중요한 지식인가요?
         </h2>
