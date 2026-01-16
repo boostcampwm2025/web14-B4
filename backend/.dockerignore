@@ -1,0 +1,24 @@
+# Versioning and metadata
+.git
+.gitignore
+.dockerignore
+
+# Build dependencies
+dist
+build
+node_modules
+coverage
+
+# Environment (contains sensitive data)
+.env
+*.spec.ts
+*.test.ts
+test/
+
+# Files not required for production
+.editorconfig
+Dockerfile
+README.md
+.eslintrc.js
+nodemon.json
+.vscode

@@ -1,10 +1,7 @@
 {
   "private": true,
-  "workspaces": [
-    "backend",
-    "frontend"
-  ],
   "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
     "dev": "concurrently \"npm --prefix backend run start:dev\" \"npm --prefix frontend run dev\"",
     "build": "npm --prefix frontend run build && npm --prefix backend run build",
     "start": "npm --prefix backend run start",
@@ -19,7 +16,6 @@
     "@commitlint/cli": "^20.3.0",
     "@commitlint/config-conventional": "^20.3.0",
     "concurrently": "^9.2.1",
-    "eslint-config-prettier": "^10.1.8",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.7.4"
