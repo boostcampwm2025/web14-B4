@@ -105,7 +105,8 @@ export class FeedbackService {
       }
 
       return JSON.parse(textResponse) as Record<string, unknown>;
-    } catch {
+    } catch (error) {
+      console.error('🚨 AI 분석 실패 원인:', error);
       throw new InternalServerErrorException(
         '답변 분석 중 오류가 발생했습니다.',
       );

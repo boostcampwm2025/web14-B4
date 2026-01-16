@@ -12,20 +12,19 @@ type Props = {
 export default function FeedbackHeader({
   content,
   category,
-  difficultyLevel,
   userName,
   checklistCount,
   checkedCount,
 }: Props) {
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] bg-white">
+      <div className="mx-auto w-full max-w-[980px]">
         <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
           <span className="px-3 text-sm font-medium">{category}</span>
           <span className="px-3 text-sm font-medium flex items-center gap-2">
             난이도
             <span className="px-2 py-0.5 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
-              {difficultyLevel}
+              중
             </span>
           </span>
         </Chip>
