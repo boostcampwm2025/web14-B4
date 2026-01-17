@@ -4,7 +4,7 @@ import { GetAIFeedbackResponseDto } from '@/app/feedback/types/feedback';
 import {
   SolvedQuizSubmitRequestDto,
   submitSolvedQuiz,
-  getAIFeedBack,
+  generateAIFeedBack,
 } from '@/services/feedbackApi';
 
 interface QuizStore {
@@ -34,7 +34,7 @@ export const useQuizStore = create<QuizStore>()(
           try {
             const submitResult = await submitSolvedQuiz(payload);
             set({ solvedQuizId: submitResult.solvedQuizId });
-            const response = await getAIFeedBack(submitResult);
+            const response = await generateAIFeedBack(submitResult);
             set({ feedbackResult: response });
             return true;
           } catch (error) {

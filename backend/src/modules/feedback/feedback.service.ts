@@ -137,6 +137,35 @@ export class FeedbackService {
       );
   }
 
+  async getAIFeedback(solvedQuizId: number) {
+    const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
+
+    if (!solvedQuiz) {
+      throw new NotFoundException('해당 기록을 찾을 수 없습니다. ');
+    }
+
+    if (!solvedQuiz.aiFeedback) {
+      throw new NotFoundException('AI 피드백이 아직 생성되지 않았습니다.');
+    }
+    const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
+    const checklistInSolvedQuiz =
+      await this.usersService.getUserChecklistProgress(solvedQuizId);
+
+    const result = {
+      solvedQuizDetail: {
+        mainQuizId: mainQuiz.mainQuizId,
+        quizCategory: mainQuiz.quizCategory,
+        title: mainQuiz.title,
+        content: mainQuiz.content,
+        keywords: mainQuiz.keywords,
+        difficultyLevel: mainQuiz.difficultyLevel,
+        userChecklistProgress: this.toChecklistResponse(checklistInSolvedQuiz),
+      },
+      aiFeedbackResult: solvedQuiz.aiFeedback,
+    };
+    return result;
+  }
+
   // ai user prompt 텍스트 생성 함수
   private createTxtForAi(
     quizContent: string,
