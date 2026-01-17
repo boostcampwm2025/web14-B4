@@ -18,7 +18,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
 
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
         <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
           <span>🔠</span> 핵심 키워드
         </h2>
