@@ -15,10 +15,10 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
           있습니다.
         </p>
 
-        <ul className="space-y-2 mb-6">
+        <ul>
           {items.map((item, idx) => (
             <li key={idx} className="text-sm">
-              <span className="font-semibold block mb-1">{item.title}</span>
+              <span className="font-semibold block mt-5 mb-1">{item.title}</span>
               <div className="border-l-4 border-[var(--color-accent-sky)] pl-4">
                 <span className="text-[var(--color-gray-dark))] text-xs">{item.content}</span>
               </div>
