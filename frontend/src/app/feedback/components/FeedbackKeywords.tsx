@@ -22,14 +22,14 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
         <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
           <span>🔠</span> 핵심 키워드
         </h2>
-        <div className="flex flex-col md:flex-row gap-6">
+        <div className="flex flex-col items-center md:flex-row gap-6">
           <div className="flex-1 flex justify-center flex-wrap gap-3 content-start">
             {keywords.map((keyword, idx) => (
               <button
                 key={idx}
                 onMouseEnter={() => setHoveredKeyword(keyword.description)}
                 onMouseLeave={() => setHoveredKeyword(null)}
-                className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 border
+                className={`px-4 py-2 rounded-full text-md font-semibold transition-all duration-200 border
                   ${
                     keyword.isIncluded
                       ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
