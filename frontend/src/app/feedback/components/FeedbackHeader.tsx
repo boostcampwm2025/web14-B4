@@ -25,7 +25,7 @@ export default function FeedbackHeader({
             <span className="px-3 text-sm font-medium">{category}</span>
             <span className="px-3 text-sm font-medium flex items-center gap-2">
               난이도
-              <span className="px-2 py-0.5 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
+              <span className="px-2 py-1 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
                 {difficultyLevel}
               </span>
             </span>
