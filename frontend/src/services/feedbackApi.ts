@@ -34,7 +34,7 @@ export async function submitSolvedQuiz(req: SolvedQuizSubmitRequestDto) {
   return data;
 }
 
-export async function getAIFeedBack(req: getAIFeedBackRequestDto) {
+export async function generateAIFeedBack(req: getAIFeedBackRequestDto) {
   const data = await apiFetch<GetAIFeedbackResponseDto>(
     '/feedback',
     {
@@ -46,6 +46,5 @@ export async function getAIFeedBack(req: getAIFeedBackRequestDto) {
     },
     { message: 'AI 피드백 생성을 실패했습니다.' },
   );
-
   return data;
 }
