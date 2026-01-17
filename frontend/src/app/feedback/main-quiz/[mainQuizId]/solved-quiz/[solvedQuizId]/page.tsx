@@ -1,8 +1,9 @@
-import { getAIFeedBack } from '@/services/feedbackApi';
+import { fetchAIFeedbackResult } from '@/services/feedbackApi';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
-import FeedbackKeywords from '@/app/feedback/components/FeedbackKeywords';
-import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
+import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
+import FeedbackComplements from '@/app/feedback/components/FeedbackComplements';
+import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 
 type Props = {
   params: Promise<{
@@ -13,16 +14,11 @@ type Props = {
 
 export default async function FeedbackPage({ params }: Props) {
   const { mainQuizId, solvedQuizId } = await params;
-  const numericMainQuizId = Number(mainQuizId);
-  const numericSolvedQuizId = Number(solvedQuizId);
-
-  const { solvedQuizDetail, aiFeedbackResult } = await getAIFeedBack({
-    mainQuizId: numericMainQuizId,
-    solvedQuizId: numericSolvedQuizId,
-  });
+  const { solvedQuizDetail, aiFeedbackResult } = await fetchAIFeedbackResult(Number(solvedQuizId));
 
   const mergedKeywords = solvedQuizDetail.keywords.map((k) => ({
     text: k.keyword,
+    description: k.description,
     isIncluded: aiFeedbackResult.includedKeywords.some(
       (ik) => ik.keyword === k.keyword && ik.isIncluded,
     ),
@@ -44,6 +40,7 @@ export default async function FeedbackPage({ params }: Props) {
         keywords={mergedKeywords}
         defaultFeedback={aiFeedbackResult.keywordsFeedback}
       />
+      <FeedbackComplements items={aiFeedbackResult.complementsFeedback} />
       <FeedbackQuestions questions={aiFeedbackResult.followUpQuestions} />
       <ImportanceCheck
         userName={USER_NAME}

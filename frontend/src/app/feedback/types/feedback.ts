@@ -22,7 +22,10 @@ export interface SolvedQuizDetail {
   title: string;
   content: string;
   difficultyLevel: '상' | '중' | '하';
-  keywords: { keyword: string }[];
+  keywords: {
+    keyword: string;
+    description: string;
+  }[];
   userChecklistProgress: {
     checklistCount: number;
     checkedCount: number;
