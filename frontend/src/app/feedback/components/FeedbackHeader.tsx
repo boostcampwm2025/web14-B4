@@ -20,15 +20,17 @@ export default function FeedbackHeader({
   return (
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px]">
-        <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
-          <span className="px-3 text-sm font-medium">{category}</span>
-          <span className="px-3 text-sm font-medium flex items-center gap-2">
-            난이도
-            <span className="px-2 py-0.5 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
-              {difficultyLevel}
+        <div className="flex justify-center mb-4">
+          <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
+            <span className="px-3 text-sm font-medium">{category}</span>
+            <span className="px-3 text-sm font-medium flex items-center gap-2">
+              난이도
+              <span className="px-2 py-0.5 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
+                {difficultyLevel}
+              </span>
             </span>
-          </span>
-        </Chip>
+          </Chip>
+        </div>
         <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap">
           {content}
         </h1>
