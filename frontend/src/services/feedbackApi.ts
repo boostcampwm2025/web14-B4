@@ -48,3 +48,14 @@ export async function generateAIFeedBack(req: getAIFeedBackRequestDto) {
   );
   return data;
 }
+
+export async function fetchAIFeedbackResult(solvedQuizId: number) {
+  const data = await apiFetch<GetAIFeedbackResponseDto>(
+    `/feedback/${solvedQuizId}`,
+    {
+      method: 'GET',
+    },
+    { message: 'AI 피드백 조회를 실패했습니다.' },
+  );
+  return data;
+}
