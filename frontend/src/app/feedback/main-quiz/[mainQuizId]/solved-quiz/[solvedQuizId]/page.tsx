@@ -18,6 +18,7 @@ export default async function FeedbackPage({ params }: Props) {
 
   const mergedKeywords = solvedQuizDetail.keywords.map((k) => ({
     text: k.keyword,
+    description: k.description,
     isIncluded: aiFeedbackResult.includedKeywords.some(
       (ik) => ik.keyword === k.keyword && ik.isIncluded,
     ),

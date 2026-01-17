@@ -5,6 +5,7 @@ import { useState } from 'react';
 type Keyword = {
   text: string;
   isIncluded: boolean;
+  description: string;
 };
 
 type Props = {
@@ -26,7 +27,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
             {keywords.map((keyword, idx) => (
               <button
                 key={idx}
-                onMouseEnter={() => setHoveredKeyword(keyword.text)}
+                onMouseEnter={() => setHoveredKeyword(keyword.description)}
                 onMouseLeave={() => setHoveredKeyword(null)}
                 className={`px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 border
                   ${
@@ -43,7 +44,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
 
           <div className="flex-1 border-t md:border-t-0 md:border-l-4 border-[var(--color-accent-sky)] pt-4 md:pt-0 md:pl-6">
             <p className="text-sm text-gray-700 leading-relaxed animate-fadeIn whitespace-pre-wrap">
-              {hoveredKeyword ? `키워드: ${hoveredKeyword}` : defaultFeedback}
+              {hoveredKeyword ? hoveredKeyword : defaultFeedback}
             </p>
           </div>
         </div>
