@@ -46,7 +46,7 @@ export default async function FeedbackPage({ params }: Props) {
         keywords={mergedKeywords}
         defaultFeedback={aiFeedbackResult.keywordsFeedback}
       />
-      <FeedbackComplements items={aiFeedbackResult.complementsFeedback} />
+      <FeedbackComplements items={aiFeedbackResult.complementsFeedback} />{' '}
       <FeedbackQuestions questions={aiFeedbackResult.followUpQuestions} />
       <ImportanceCheck
         userName={USER_NAME}

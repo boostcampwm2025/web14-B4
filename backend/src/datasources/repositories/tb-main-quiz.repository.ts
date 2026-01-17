@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { MainQuiz } from '../entities/tb-main-quiz.entity';
+import { DifficultyLevel, MainQuiz } from '../entities/tb-main-quiz.entity';
 
 export interface CategoryCountResult {
   id: string;
@@ -46,14 +46,21 @@ export class MainQuizRepository extends Repository<MainQuiz> {
       .getOne();
   }
 
-  async getCategoriesWithCount(): Promise<CategoryCountResult[]> {
-    return this.createQueryBuilder('mq')
+  getCategoriesWithCount(
+    difficulty?: DifficultyLevel,
+  ): Promise<CategoryCountResult[]> {
+    const qb = this.createQueryBuilder('mq')
       .leftJoin('mq.quizCategory', 'qc')
-      .select('qc.name', 'name')
-      .addSelect('qc.quizCategoryId', 'id')
+      .select('qc.quizCategoryId', 'id')
+      .addSelect('qc.name', 'name')
       .addSelect('COUNT(mq.mainQuizId)', 'count')
       .groupBy('qc.quizCategoryId')
-      .addGroupBy('qc.name')
-      .getRawMany<CategoryCountResult>();
+      .addGroupBy('qc.name');
+
+    if (difficulty) {
+      qb.andWhere('mq.difficultyLevel = :difficulty', { difficulty });
+    }
+
+    return qb.getRawMany<CategoryCountResult>();
   }
 }

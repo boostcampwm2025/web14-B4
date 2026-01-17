@@ -70,7 +70,7 @@ export class UsersService {
     solvedQuiz.comprehensionLevel = dto.comprehensionLevel;
 
     const savedSolvedQuiz =
-      await this.solvedQuizRepository.createSolvedQuiz(solvedQuiz);
+      await this.solvedQuizRepository.updateSolvedQuiz(solvedQuiz);
 
     // 현재 메인 퀴즈의 체크리스트 목록 불러오기
     // 현재 dto로 넘어온 체크리스트 목록 id와 비교하여 모두 존재하는지 확인

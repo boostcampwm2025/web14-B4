@@ -17,6 +17,17 @@ export class SolvedQuizRepository {
     return await this.repository.save(solvedQuiz);
   }
 
+  async updateSolvedQuiz(solvedQuiz: SolvedQuiz): Promise<SolvedQuiz> {
+    await this.repository.update(
+      { solvedQuizId: solvedQuiz.solvedQuizId },
+      {
+        speechText: solvedQuiz.speechText,
+        comprehensionLevel: solvedQuiz.comprehensionLevel,
+      },
+    );
+    return solvedQuiz;
+  }
+
   // 최신 순으로 조회
   async getByQuizAndUser(
     mainQuizId: number,
