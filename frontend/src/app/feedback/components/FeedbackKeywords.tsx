@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
-  const [hoveredKeyword, setHoveredKeyword] = useState<string | null>(null);
+  const [hoveredKeyword, setHoveredKeyword] = useState<Keyword | null>(null);
 
   return (
     <section className="w-full">
@@ -27,9 +27,9 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
             {keywords.map((keyword, idx) => (
               <button
                 key={idx}
-                onMouseEnter={() => setHoveredKeyword(keyword.description)}
+                onMouseEnter={() => setHoveredKeyword(keyword)}
                 onMouseLeave={() => setHoveredKeyword(null)}
-                className={`px-4 py-2 rounded-full text-md font-semibold transition-all duration-200 border
+                className={`px-3 py-2 rounded-full text-md font-semibold transition-all duration-200 border
                   ${
                     keyword.isIncluded
                       ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
@@ -42,10 +42,18 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
             ))}
           </div>
 
-          <div className="flex-1 border-t md:border-t-0 md:border-l-4 border-[var(--color-accent-sky)] pt-4 md:pt-0 md:pl-6">
-            <p className="text-sm text-gray-700 leading-relaxed animate-fadeIn whitespace-pre-wrap">
-              {hoveredKeyword ? hoveredKeyword : defaultFeedback}
-            </p>
+          <div className="flex-1 flex pl-6">
+            <div className="shrink-0 w-[3px] bg-[var(--color-accent-sky)] mr-4 h-[140px]" />
+            <div className="text-sm text-[var(--color-gray-dark)] leading-relaxed whitespace-pre-wrap">
+              {hoveredKeyword ? (
+                <>
+                  <div className="font-bold mb-1">{hoveredKeyword.text}(이)란?</div>
+                  {hoveredKeyword.description}
+                </>
+              ) : (
+                defaultFeedback
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -10,7 +10,7 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
         <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
           <span>🌱</span> 다음 학습에서 보완해볼 포인트
         </h2>
-        <p className="text-sm text-gray-800 mb-4 font-medium">
+        <p className="text-sm text-[var(--color-gray-dark))] mb-4 font-medium">
           이 내용들을 함께 설명할 수 있다면, 단순한 구조 설명을 넘어 “왜”를 이해했다고 볼 수
           있습니다.
         </p>
