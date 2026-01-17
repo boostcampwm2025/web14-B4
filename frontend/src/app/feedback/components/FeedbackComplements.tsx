@@ -8,7 +8,7 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
         <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
-          <span>🤓</span> 다음 학습에서 보완해볼 포인트
+          <span>🌱</span> 다음 학습에서 보완해볼 포인트
         </h2>
         <p className="text-sm text-gray-800 mb-4 font-medium">
           이 내용들을 함께 설명할 수 있다면, 단순한 구조 설명을 넘어 “왜”를 이해했다고 볼 수
