@@ -22,7 +22,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
         <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
           <span>🔠</span> 핵심 키워드
         </h2>
-        <div className="flex flex-col items-center md:flex-row gap-6">
+        <div className="flex flex-col items-center md:flex-row">
           <div className="flex-1 flex justify-center flex-wrap gap-3 content-start">
             {keywords.map((keyword, idx) => (
               <button
@@ -42,12 +42,12 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
             ))}
           </div>
 
-          <div className="flex-1 flex pl-6">
-            <div className="shrink-0 w-[3px] bg-[var(--color-accent-sky)] mr-4 h-[140px]" />
+          <div className="flex-1 flex space-between pl-3">
+            <div className="shrink-0 w-[3px] bg-[var(--color-accent-sky)] mr-4 h-[140px] rounded-full" />
             <div className="text-sm text-[var(--color-gray-dark)] leading-relaxed whitespace-pre-wrap">
               {hoveredKeyword ? (
                 <>
-                  <div className="font-bold mb-1">{hoveredKeyword.text}(이)란?</div>
+                  <div className="text-base font-bold">{hoveredKeyword.text}(이)란?</div>
                   {hoveredKeyword.description}
                 </>
               ) : (
