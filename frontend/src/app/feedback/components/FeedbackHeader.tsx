@@ -19,7 +19,7 @@ export default function FeedbackHeader({
 }: Props) {
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] bg-white">
+      <div className="mx-auto w-full max-w-[980px]">
         <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
           <span className="px-3 text-sm font-medium">{category}</span>
           <span className="px-3 text-sm font-medium flex items-center gap-2">
