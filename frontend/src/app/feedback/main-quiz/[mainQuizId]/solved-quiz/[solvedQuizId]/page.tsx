@@ -2,6 +2,7 @@ import { fetchAIFeedbackResult } from '@/services/feedbackApi';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
+import FeedbackComplements from '@/app/feedback/components/FeedbackComplements';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 
 type Props = {
@@ -38,6 +39,7 @@ export default async function FeedbackPage({ params }: Props) {
         keywords={mergedKeywords}
         defaultFeedback={aiFeedbackResult.keywordsFeedback}
       />
+      <FeedbackComplements items={aiFeedbackResult.complementsFeedback} />
       <FeedbackQuestions questions={aiFeedbackResult.followUpQuestions} />
       <ImportanceCheck
         userName={USER_NAME}
