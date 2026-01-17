@@ -18,8 +18,9 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
         <ul>
           {items.map((item, idx) => (
             <li key={idx} className="text-sm">
-              <span className="font-semibold block mt-5 mb-1">{item.title}</span>
-              <div className="border-l-4 border-[var(--color-accent-sky)] pl-4">
+              <span className="font-semibold block mt-5 mb-2">{item.title}</span>
+              <div className="flex">
+                <div className="w-[3px] bg-[var(--color-accent-sky)] rounded-full mr-3" />
                 <span className="text-[var(--color-gray-dark))] text-xs">{item.content}</span>
               </div>
             </li>
