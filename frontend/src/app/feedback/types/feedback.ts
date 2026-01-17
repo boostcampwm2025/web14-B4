@@ -21,11 +21,8 @@ export interface SolvedQuizDetail {
   };
   title: string;
   content: string;
-  difficultyLevel: 'HARD' | 'MEDIUM' | 'EASY';
-  keywords: {
-    keyword: string;
-    description?: string;
-  }[];
+  difficultyLevel: '상' | '중' | '하';
+  keywords: { keyword: string }[];
   userChecklistProgress: {
     checklistCount: number;
     checkedCount: number;
