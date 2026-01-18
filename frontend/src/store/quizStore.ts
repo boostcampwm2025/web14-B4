@@ -35,7 +35,6 @@ export const useQuizStore = create<QuizStore>()(
             const submitResult = await submitSolvedQuiz(payload);
             set({ solvedQuizId: submitResult.solvedQuizId });
             const response = await generateAIFeedBack(submitResult);
-            set({ feedbackResult: response });
             return true;
           } catch (error) {
             set({ isAnalyzing: false });
