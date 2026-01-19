@@ -16,6 +16,7 @@ import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 import RecordedVideo from './record/RecordedVideo';
 import { useRecorderTimer } from '@/hooks/mainQuiz/useRecorderTimer';
+import RecorderTimer from './RecorderTimer';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -400,6 +401,8 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
               onChange={setSelectedMicId}
               disabled={recordStatus === 'recording' || isSubmitting}
             />
+
+            <RecorderTimer seconds={timer.seconds} maxSeconds={timer.maxSeconds} />
 
             {/* 메시지 */}
             {(permissionMessage || videoPermissionMessage || message) && (
