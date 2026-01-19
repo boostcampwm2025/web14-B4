@@ -14,7 +14,7 @@ import PermissionConsentModal from './permission/PermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
-import RecordedVideoList from './record/RecordedBideoList';
+import RecordedVideoList from './record/RecordedVideoList';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -32,15 +32,17 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
   const [isCameraConsentOpen, setIsCameraConsentOpen] = useState(true);
+
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
+
   const [message, setMessage] = useState<string | null>(null);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const videoRef = useRef<HTMLVideoElement>(null); // Q: mediaRecorderRef랑 뭔 차이?
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // Q:  videoRef랑 무슨 차이?
+  const videoChunksRef = useRef<Blob[]>([]);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
+  const [isVideoRecording, setIsVideoRecording] = useState(false); // 불필요한 상태값
   const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
@@ -72,6 +74,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     denyPermission: denyVideoPermission,
   } = useVideoManager();
 
+  // 여기 권한 부분을 별도로 뺄 수 있어보임
   const handleConsentAgree = async () => {
     setIsConsentOpen(false);
     await requestPermission();
@@ -93,7 +96,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
   };
 
   // 선택한 카메라로 스트림 시작
-  const startCamera = async (deviceId?: string) => {
+  const setCameraStream = async (deviceId?: string) => {
     if (videoStatus !== 'granted') {
       setError('카메라 권한이 필요합니다.');
       return;
@@ -144,7 +147,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     }
 
     try {
-      chunksRef.current = [];
+      videoChunksRef.current = [];
 
       const config = getRecorderConfig();
 
@@ -155,20 +158,20 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
+          videoChunksRef.current.push(event.data);
         }
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: config.mimeType || 'video/webm' });
+        const blob = new Blob(videoChunksRef.current, { type: config.mimeType || 'video/webm' });
         const url = URL.createObjectURL(blob);
         setRecordedVideos((prev) => [...prev, url]);
-        chunksRef.current = [];
+        videoChunksRef.current = [];
       };
 
       mediaRecorder.start();
       mediaRecorderRef.current = mediaRecorder;
-      setIsRecording(true);
+      setIsVideoRecording(true);
     } catch (err) {
       console.error('녹화 시작 오류:', err);
       setError('녹화를 시작할 수 없습니다.');
@@ -177,20 +180,20 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
   // 녹화 종료
   const stopVideoRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && isVideoRecording) {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current = null;
-      setIsRecording(false);
+      setIsVideoRecording(false);
     }
   };
 
   // 비디오 녹화 초기화
   const resetVideoRecording = () => {
     // 1. 진행 중인 녹화 중지
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && isVideoRecording) {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current = null;
-      setIsRecording(false);
+      setIsVideoRecording(false);
     }
 
     // 2. 녹화된 비디오 목록 초기화
@@ -200,7 +203,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     });
 
     setRecordedVideos([]);
-    chunksRef.current = [];
+    videoChunksRef.current = [];
   };
 
   // 디바이스 변경 시 카메라 재시작
@@ -208,7 +211,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     if (videoStatus === 'granted') {
       const deviceId = getSelectedVideoDeviceId();
       const timer = setTimeout(() => {
-        startCamera(deviceId);
+        setCameraStream(deviceId);
       }, 0);
 
       return () => clearTimeout(timer);
@@ -337,7 +340,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
           <div className="space-y-6 lg:col-span-3">
             <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
               <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto" />
-              {isRecording && (
+              {isVideoRecording && (
                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full">
                   <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
                   <span className="text-sm font-medium">녹화 중</span>
