@@ -19,7 +19,7 @@ export default async function FeedbackPage({ params }: Props) {
   try {
     data = await fetchAIFeedbackResult(Number(solvedQuizId));
   } catch (error) {
-    redirect('/quizzes');
+    redirect('/quizzes?error=not_found');
   }
   const { solvedQuizDetail, aiFeedbackResult } = data;
 
