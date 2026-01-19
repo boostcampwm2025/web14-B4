@@ -6,26 +6,18 @@ import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
 import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
 import { postSpeechesStt } from '@/services/speechesApi';
 import { ApiError } from '@/services/http/errors';
-import { Button } from '@/components/Button';
 import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
 import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
 import PermissionConsentModal from './permission/PermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
-import RecordActionButtons from './permission/RecordActionButtons';
+import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 
 interface AudioRecorderProps {
   quizId: number;
 }
-
-type ActionButton = {
-  label: string;
-  variant: 'primary' | 'secondary';
-  onClick?: () => void;
-  disabled?: boolean;
-};
 
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
