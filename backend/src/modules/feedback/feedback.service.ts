@@ -16,6 +16,8 @@ import {
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
 @Injectable()
 export class FeedbackService {
@@ -47,6 +49,11 @@ export class FeedbackService {
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
+
+    if (!userAnswer || userAnswer.trim().length < 50) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
