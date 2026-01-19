@@ -3,7 +3,7 @@ import { getSpeechesByQuizId } from '@/services/speechesApi';
 import { Chip } from '@/components/Chip';
 import dynamic from 'next/dynamic';
 
-const ChecklistSession = dynamic(() => import('../../components/checklistSession'), { ssr: true });
+const ChecklistSession = dynamic(() => import('../../components/ChecklistSession'), { ssr: true });
 
 export default async function ResultPage({
   params,
