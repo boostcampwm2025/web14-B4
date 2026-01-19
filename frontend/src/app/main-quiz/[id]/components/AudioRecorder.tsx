@@ -11,6 +11,7 @@ import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
 import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
+import PermissionConsentModal from './permission/PermissionConsentModal';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -295,54 +296,28 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       )}
 
       {/* 마이크 권한 안내 팝업창 */}
-      {isConsentOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm space-y-4">
-            <div className="space-y-2">
-              <div className="text-base font-semibold text-gray-900">마이크 권한 안내</div>
-              <p className="text-sm text-gray-700">
-                말하기 답변을 녹음하여 STT 변환 후 피드백을 제공하려면 마이크 권한이 필요합니다.
-              </p>
-              <p className="text-sm text-gray-700">
-                거부하면 말하기 연습 기능을 사용할 수 없습니다.
-              </p>
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" size="fixed" onClick={handleConsentDeny}>
-                거부
-              </Button>
-              <Button variant="primary" size="fixed" onClick={handleConsentAgree}>
-                동의
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PermissionConsentModal
+        isOpen={isConsentOpen}
+        title="마이크 권한 안내"
+        descriptions={[
+          '말하기 답변을 녹음하여 STT 변환 후 피드백을 제공하려면 마이크 권한이 필요합니다.',
+          '거부하면 말하기 연습 기능을 사용할 수 없습니다.',
+        ]}
+        onDeny={handleConsentDeny}
+        onAgree={handleConsentAgree}
+      />
 
       {/* 카메라 권한 안내 팝업창 */}
-      {isCameraConsentOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm space-y-4">
-            <div className="space-y-2">
-              <div className="text-base font-semibold text-gray-900">카메라 권한 안내</div>
-              <p className="text-sm text-gray-700">
-                말하기 답변을 녹음하며 모습을 촬영하기 위해서는 카메라 권한이 필요합니다.
-              </p>
-              <p className="text-sm text-gray-700">거부하면 녹화 기능을 사용할 수 없습니다.</p>
-            </div>
-
-            <div className="flex justify-end gap-2">
-              <Button variant="secondary" size="fixed" onClick={handleCameraConsentDeny}>
-                거부
-              </Button>
-              <Button variant="primary" size="fixed" onClick={handleCameraConsentAgree}>
-                동의
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <PermissionConsentModal
+        isOpen={isCameraConsentOpen}
+        title="카메라 권한 안내"
+        descriptions={[
+          '말하기 답변을 녹음하며 모습을 촬영하기 위해서는 카메라 권한이 필요합니다.',
+          '거부하면 녹화 기능을 사용할 수 없습니다.',
+        ]}
+        onDeny={handleCameraConsentDeny}
+        onAgree={handleCameraConsentAgree}
+      />
 
       {/* 메인 컨텐츠: 좌우 레이아웃 */}
       <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
