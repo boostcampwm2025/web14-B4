@@ -13,10 +13,19 @@ import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
 import PermissionConsentModal from './permission/PermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
+import RecordActionButtons from './permission/RecordActionButtons';
+import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 
 interface AudioRecorderProps {
   quizId: number;
 }
+
+type ActionButton = {
+  label: string;
+  variant: 'primary' | 'secondary';
+  onClick?: () => void;
+  disabled?: boolean;
+};
 
 export type RecordStatus =
   | 'idle' // 초기 진입 (권한 확인 중 포함)
@@ -284,6 +293,15 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     }
   };
 
+  const actionButtons = useRecordActionButtons({
+    recordStatus,
+    canRecord,
+    onStart: handleStart,
+    onStop: handleStop,
+    onRetry: handleRetry,
+    onSubmit: handleSubmit,
+  });
+
   const isSubmitting = recordStatus === 'submitting';
 
   return (
@@ -372,65 +390,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
             )}
 
             {/* 버튼 영역 */}
-            <div className="flex flex-wrap justify-end gap-3 pt-2">
-              {recordStatus === 'idle' && (
-                <>
-                  <Button
-                    variant="primary"
-                    size="fixed"
-                    onClick={handleStart}
-                    disabled={!canRecord}
-                  >
-                    말하기
-                  </Button>
-                  <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
-                    나가기
-                  </Button>
-                </>
-              )}
-
-              {/* 녹음중 */}
-              {recordStatus === 'recording' && (
-                <>
-                  <Button variant="primary" size="fixed" onClick={handleStop}>
-                    말하기 종료
-                  </Button>
-                  <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
-                    나가기
-                  </Button>
-                </>
-              )}
-
-              {/* 녹음 완료 */}
-              {recordStatus === 'recorded' && (
-                <>
-                  <Button variant="secondary" size="fixed" onClick={handleRetry}>
-                    다시하기
-                  </Button>
-                  <Button variant="primary" size="fixed" onClick={handleSubmit}>
-                    제출
-                  </Button>
-                  <Button variant="secondary" size="fixed" onClick={() => router.push('/')}>
-                    나가기
-                  </Button>
-                </>
-              )}
-
-              {/* 제출 중 */}
-              {recordStatus === 'submitting' && (
-                <>
-                  <Button variant="secondary" size="fixed" disabled>
-                    다시하기
-                  </Button>
-                  <Button variant="primary" size="fixed" disabled>
-                    제출중...
-                  </Button>
-                  <Button variant="secondary" size="fixed" disabled>
-                    나가기
-                  </Button>
-                </>
-              )}
-            </div>
+            <RecordActionButtons buttons={actionButtons} />
           </div>
         </div>
       </div>
