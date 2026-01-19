@@ -1,0 +1,24 @@
+### 변수 설정 (필요시 ID값 변경)
+@mainQuizId = 1
+@solvedQuizId = 1
+@host = http://localhost:8080/api
+
+### 1단계: 답변을 강제로 짧게 수정 (50자 미만)
+# DB에 저장된 텍스트를 검사하는 로직이므로 DB 데이터를 짧은 답변으로 바꿔야 한다. 
+PATCH {{host}}/speeches/{{mainQuizId}}
+Content-Type: application/json
+
+{
+  "solvedQuizId": {{solvedQuizId}},
+  "speechText": "이것은 50자가 안 되는 아주 짧은 답변입니다."
+}
+
+### 2단계: AI 피드백 요청하기 (에러 발생 예상)
+# 짧은 답변이 저장된 상태에서 피드백을 요청한다. 
+POST {{host}}/feedback
+Content-Type: application/json
+
+{
+  "mainQuizId": {{mainQuizId}},
+  "solvedQuizId": {{solvedQuizId}}
+}
