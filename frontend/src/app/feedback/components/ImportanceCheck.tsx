@@ -81,12 +81,12 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId }: 
 
   return (
     <section className="w-full">
-      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-10 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-        <h2 className="text-xl font-bold text-[var(--color-primary)]">
+      <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
+        <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
           🤓 {userName}님에게 얼마나 중요한 지식인가요?
         </h2>
 
-        <div className="mt-10 flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-center sm:gap-16">
+        <div className="mt-5 flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-center sm:gap-16">
           {OPTIONS.map((opt) => {
             const isSelected = selected === opt.value;
 
@@ -95,7 +95,7 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId }: 
                 key={opt.value}
                 type="button"
                 className={[
-                  'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl p-4',
+                  'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl',
                   'hover:scale-110',
                 ].join(' ')}
                 onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
