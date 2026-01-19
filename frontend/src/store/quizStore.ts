@@ -1,10 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { GetAIFeedbackResponseDto } from '@/app/feedback/types/feedback';
 import {
   SolvedQuizSubmitRequestDto,
   submitSolvedQuiz,
-  getAIFeedBack,
+  generateAIFeedBack,
 } from '@/services/feedbackApi';
 
 interface QuizStore {
@@ -12,7 +11,6 @@ interface QuizStore {
   setSolvedQuizId: (id: number) => void;
   clearSolvedQuizId: () => void;
   isAnalyzing: boolean;
-  feedbackResult: GetAIFeedbackResponseDto | null;
   actions: {
     requestAiFeedback: (payload: SolvedQuizSubmitRequestDto) => Promise<boolean>;
   };
@@ -26,7 +24,6 @@ export const useQuizStore = create<QuizStore>()(
       clearSolvedQuizId: () => set({ solvedQuizId: null }),
 
       isAnalyzing: false,
-      feedbackResult: null,
 
       actions: {
         requestAiFeedback: async (payload) => {
@@ -34,8 +31,7 @@ export const useQuizStore = create<QuizStore>()(
           try {
             const submitResult = await submitSolvedQuiz(payload);
             set({ solvedQuizId: submitResult.solvedQuizId });
-            const response = await getAIFeedBack(submitResult);
-            set({ feedbackResult: response });
+            await generateAIFeedBack(submitResult);
             return true;
           } catch (error) {
             set({ isAnalyzing: false });
@@ -48,7 +44,6 @@ export const useQuizStore = create<QuizStore>()(
       name: 'quiz-storage', // localStorage 키
       partialize: (state) => ({
         solvedQuizId: state.solvedQuizId,
-        feedbackResult: state.feedbackResult,
       }),
     },
   ),

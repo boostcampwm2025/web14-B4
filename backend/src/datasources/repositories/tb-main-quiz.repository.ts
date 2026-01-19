@@ -37,6 +37,7 @@ export class MainQuizRepository extends Repository<MainQuiz> {
         'mainQuiz.title',
         'mainQuiz.content',
         'mainQuiz.hint',
+        'mainQuiz.difficultyLevel',
       ])
       .leftJoinAndSelect('mainQuiz.quizCategory', 'quizCategory')
       .leftJoinAndSelect('mainQuiz.keywords', 'keywords')
