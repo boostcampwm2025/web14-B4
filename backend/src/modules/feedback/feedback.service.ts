@@ -142,6 +142,15 @@ export class FeedbackService {
         if (message.toLowerCase().includes('safety')) {
           throw new BusinessException(ERROR_MESSAGES.AI_SAFETY_BLOCK);
         }
+
+        // API 키 형식 오류
+        if (
+          message.toLowerCase().includes('api key') ||
+          message.toLowerCase().includes('invalid')
+        ) {
+          throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
+        }
+
         // 지역 미지원(Location) 또는 기타 파라미터 오류
         throw new BusinessException(ERROR_MESSAGES.AI_INVALID_REQUEST);
       }
