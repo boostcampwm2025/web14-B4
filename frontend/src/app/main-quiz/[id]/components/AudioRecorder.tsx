@@ -14,6 +14,7 @@ import PermissionConsentModal from './permission/PermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
+import RecordedVideoList from './record/RecordedBideoList';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -388,33 +389,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       </div>
 
       {/* 녹화된 비디오 목록 - 하단에 중앙 배치 */}
-      {recordedVideos.length > 0 && (
-        <div className="mt-6 flex flex-col items-center">
-          <h2 className="text-lg font-semibold mb-3 text-gray-800">녹화된 영상</h2>
-          <div className="w-full max-w-md">
-            <div className="space-y-3">
-              {recordedVideos.map((url, index) => (
-                <div key={index} className="border rounded-lg p-3 bg-gray-50">
-                  <p className="text-xs text-gray-600 mb-2">녹화 {index + 1}</p>
-                  <video
-                    src={url}
-                    controls
-                    className="w-full rounded-lg mb-2"
-                    style={{ maxHeight: '250px' }}
-                  />
-                  <a
-                    href={url}
-                    download={`recording-${index + 1}.webm`}
-                    className="inline-block w-full text-center px-3 py-1.5 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-xs"
-                  >
-                    다운로드
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      <RecordedVideoList videos={recordedVideos} />
     </div>
   );
 }
