@@ -1,0 +1,407 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
+import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
+import { postSpeechesStt } from '@/services/speechesApi';
+import { ApiError } from '@/services/http/errors';
+import { useQuizStore } from '@/store/quizStore';
+import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
+import { getRecorderConfig } from '@/utils/recorder';
+import Loader from '@/components/Loader';
+import PermissionConsentModal from './permission/PermissionConsentModal';
+import MediaDeviceSelect from './MediaDeviceSelect';
+import RecordActionButtons from './buttons/RecordActionButtons';
+import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
+import RecordedVideo from './record/RecordedVideo';
+
+interface AudioRecorderProps {
+  quizId: number;
+}
+
+export type RecordStatus =
+  | 'idle' // 초기 진입 (권한 확인 중 포함)
+  | 'recording' // 녹음 중
+  | 'recorded' // 녹음 완료
+  | 'submitting'; // 제출 중
+
+export default function Recorder({ quizId }: AudioRecorderProps) {
+  const router = useRouter();
+  const { setSolvedQuizId } = useQuizStore();
+
+  const [isConsentOpen, setIsConsentOpen] = useState(true);
+  const [isCameraConsentOpen, setIsCameraConsentOpen] = useState(true);
+
+  const [recordStatus, setStatus] = useState<RecordStatus>('idle');
+
+  const [message, setMessage] = useState<string | null>(null);
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const videoChunksRef = useRef<Blob[]>([]);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
+
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isVideoRecording, setIsVideoRecording] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
+    onRecorded: () => {
+      setStatus('recorded');
+    },
+  });
+
+  const {
+    micStatus,
+    message: permissionMessage,
+    micOptions,
+    selectedMicId,
+    setSelectedMicId,
+    getSelectedDeviceId,
+    requestPermission,
+    denyPermission,
+  } = useMicrophoneManager();
+
+  const {
+    videoStatus,
+    message: videoPermissionMessage,
+    videoOptions,
+    selectedVideoId,
+    setSelectedVideoId,
+    getSelectedDeviceId: getSelectedVideoDeviceId,
+    requestPermission: requestVideoPermission,
+    denyPermission: denyVideoPermission,
+  } = useVideoManager();
+
+  // 여기 권한 부분을 별도로 뺄 수 있어보임
+  const handleConsentAgree = async () => {
+    setIsConsentOpen(false);
+    await requestPermission();
+  };
+
+  const handleConsentDeny = () => {
+    setIsConsentOpen(false);
+    denyPermission();
+  };
+
+  const handleCameraConsentAgree = async () => {
+    setIsCameraConsentOpen(false);
+    await requestVideoPermission();
+  };
+
+  const handleCameraConsentDeny = () => {
+    setIsCameraConsentOpen(false);
+    denyVideoPermission();
+  };
+
+  // 선택한 카메라로 스트림 시작
+  const setCameraStream = async (deviceId?: string) => {
+    if (videoStatus !== 'granted') {
+      setError('카메라 권한이 필요합니다.');
+      return;
+    }
+
+    try {
+      // 기존 스트림 정리
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          deviceId: deviceId ? { exact: deviceId } : undefined,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        },
+        audio: true,
+      });
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = newStream;
+        setStream(newStream);
+        setError('');
+      }
+    } catch (err) {
+      console.error('카메라 시작 오류:', err);
+      setError('카메라를 시작할 수 없습니다.');
+    }
+  };
+
+  // 카메라 중지
+  const stopCamera = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  // 녹화 시작
+  const startVideoRecording = () => {
+    if (!stream) {
+      setError('먼저 카메라를 시작해주세요.');
+      return;
+    }
+
+    try {
+      videoChunksRef.current = [];
+
+      const config = getRecorderConfig();
+
+      const mediaRecorder = new MediaRecorder(
+        stream,
+        config.mimeType ? { mimeType: config.mimeType } : {},
+      );
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          videoChunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const blob = new Blob(videoChunksRef.current, {
+          type: config.mimeType || 'video/webm',
+        });
+
+        // 기존 URL 정리
+        if (recordedVideoUrl) {
+          URL.revokeObjectURL(recordedVideoUrl);
+        }
+
+        const url = URL.createObjectURL(blob);
+        setRecordedVideoUrl(url);
+        videoChunksRef.current = [];
+      };
+
+      mediaRecorder.start();
+      mediaRecorderRef.current = mediaRecorder;
+      setIsVideoRecording(true);
+    } catch (err) {
+      console.error('녹화 시작 오류:', err);
+      setError('녹화를 시작할 수 없습니다.');
+    }
+  };
+
+  // 녹화 종료
+  const stopVideoRecording = () => {
+    if (mediaRecorderRef.current && isVideoRecording) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current = null;
+      setIsVideoRecording(false);
+    }
+  };
+
+  // 비디오 녹화 초기화
+  const resetVideoRecording = () => {
+    if (mediaRecorderRef.current && isVideoRecording) {
+      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current = null;
+      setIsVideoRecording(false);
+    }
+
+    if (recordedVideoUrl) {
+      URL.revokeObjectURL(recordedVideoUrl);
+    }
+
+    setRecordedVideoUrl(null);
+    videoChunksRef.current = [];
+  };
+
+  // 디바이스 변경 시 카메라 재시작
+  useEffect(() => {
+    if (videoStatus === 'granted') {
+      const deviceId = getSelectedVideoDeviceId();
+      const timer = setTimeout(() => {
+        setCameraStream(deviceId);
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, [selectedVideoId, videoStatus]);
+
+  // unmount 시, 비디오 메모리 정리
+  useEffect(() => {
+    return () => {
+      stopRecording();
+      stopCamera();
+
+      if (recordedVideoUrl) {
+        URL.revokeObjectURL(recordedVideoUrl);
+      }
+    };
+  }, []);
+
+  // 녹음 가능한 상태 체크
+  const canRecord = recordStatus === 'idle' && micStatus === 'granted';
+
+  const handleStart = async () => {
+    setMessage(null);
+
+    if (micStatus !== 'granted') {
+      await requestPermission();
+      return;
+    }
+
+    try {
+      await startRecording({
+        deviceId: getSelectedDeviceId(),
+      });
+
+      startVideoRecording();
+      setStatus('recording');
+      setMessage('녹음중...');
+    } catch {
+      setMessage('녹음을 시작할 수 없습니다.');
+    }
+  };
+
+  const handleStop = () => {
+    setMessage(null);
+    stopRecording();
+    stopVideoRecording();
+    stopCamera();
+  };
+
+  const handleRetry = () => {
+    resetRecording();
+    resetVideoRecording();
+    setStatus('idle');
+    setMessage(null);
+  };
+
+  const handleSubmit = async () => {
+    if (!audioBlob) {
+      return;
+    }
+
+    setStatus('submitting');
+
+    try {
+      const { solvedQuizId } = await postSpeechesStt(quizId, audioBlob);
+      setSolvedQuizId(solvedQuizId);
+
+      stopCamera();
+
+      router.push(`/checklist/main-quiz/${quizId}`);
+    } catch (e) {
+      let errorMessage = '제출에 실패했습니다.';
+
+      if (e instanceof ApiError) {
+        errorMessage = e.message;
+      }
+      setMessage(errorMessage);
+      setStatus('recorded');
+    }
+  };
+
+  const actionButtons = useRecordActionButtons({
+    recordStatus,
+    canRecord,
+    onStart: handleStart,
+    onStop: handleStop,
+    onRetry: handleRetry,
+    onSubmit: handleSubmit,
+  });
+
+  const isSubmitting = recordStatus === 'submitting';
+
+  return (
+    <div>
+      {/* 제출 중 로딩 모달 */}
+      {isSubmitting && (
+        <Loader
+          message="음성 답변 처리 중..."
+          subMessage="STT 변환이 진행 중입니다. 잠시만 기다려주세요."
+        />
+      )}
+
+      {/* 마이크 권한 안내 팝업창 */}
+      <PermissionConsentModal
+        isOpen={isConsentOpen}
+        title="마이크 권한 안내"
+        descriptions={[
+          '말하기 답변을 녹음하여 STT 변환 후 피드백을 제공하려면 마이크 권한이 필요합니다.',
+          '거부하면 말하기 연습 기능을 사용할 수 없습니다.',
+        ]}
+        onDeny={handleConsentDeny}
+        onAgree={handleConsentAgree}
+      />
+
+      {/* 카메라 권한 안내 팝업창 */}
+      <PermissionConsentModal
+        isOpen={isCameraConsentOpen}
+        title="카메라 권한 안내"
+        descriptions={[
+          '말하기 답변을 녹음하며 모습을 촬영하기 위해서는 카메라 권한이 필요합니다.',
+          '거부하면 녹화 기능을 사용할 수 없습니다.',
+        ]}
+        onDeny={handleCameraConsentDeny}
+        onAgree={handleCameraConsentAgree}
+      />
+
+      {/* 메인 컨텐츠: 좌우 레이아웃 */}
+      <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          <div className="space-y-6 lg:col-span-3">
+            <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
+              <video ref={videoRef} autoPlay playsInline muted className="w-full h-auto" />
+              {isVideoRecording && (
+                <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full">
+                  <div className="w-3 h-3 bg-white rounded-full animate-pulse" />
+                  <span className="text-sm font-medium">녹화 중</span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="space-y-3 lg:col-span-2">
+            {/* 카메라 선택 */}
+            <MediaDeviceSelect
+              label="카메라"
+              value={selectedVideoId}
+              options={videoOptions}
+              onChange={setSelectedVideoId}
+              disabled={recordStatus === 'recording' || isSubmitting}
+            />
+
+            {/* 마이크 선택 */}
+            <MediaDeviceSelect
+              label="마이크"
+              value={selectedMicId}
+              options={micOptions}
+              onChange={setSelectedMicId}
+              disabled={recordStatus === 'recording' || isSubmitting}
+            />
+
+            {/* 메시지 */}
+            {(permissionMessage || videoPermissionMessage || message) && (
+              <div>
+                <div className="rounded-xl text-sm text-red-600">
+                  {permissionMessage || message}
+                </div>
+                <div className="rounded-xl p-3 text-sm text-red-600">{videoPermissionMessage}</div>
+              </div>
+            )}
+
+            {/* 오디오 미리보기 */}
+            {audioUrl && (
+              <div className="rounded-xl p-3">
+                <audio controls src={audioUrl} className="w-full" />
+              </div>
+            )}
+
+            {/* 버튼 영역 */}
+            <RecordActionButtons buttons={actionButtons} />
+          </div>
+        </div>
+      </div>
+
+      {/* 녹화된 비디오 목록 - 하단에 중앙 배치 */}
+      <RecordedVideo videoUrl={recordedVideoUrl} />
+    </div>
+  );
+}
