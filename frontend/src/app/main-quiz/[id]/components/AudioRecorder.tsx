@@ -12,6 +12,7 @@ import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
 import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
 import PermissionConsentModal from './permission/PermissionConsentModal';
+import MediaDeviceSelect from './MediaDeviceSelect';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -336,70 +337,22 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
           <div className="space-y-3 lg:col-span-2">
             {/* 카메라 선택 */}
-            <div className="relative space-y-2">
-              <div className="text-sm font-medium text-gray-800">카메라</div>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-4 pr-10 text-sm appearance-none cursor-pointer"
-                value={selectedVideoId}
-                onChange={(e) => setSelectedVideoId(e.target.value)}
-                disabled={recordStatus === 'recording' || isSubmitting}
-              >
-                {videoOptions.map((opt, idx) => (
-                  <option key={`${opt.value}-${idx}`} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {/* 커스텀 화살표 */}
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none translate-y-[10px]">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <MediaDeviceSelect
+              label="카메라"
+              value={selectedVideoId}
+              options={videoOptions}
+              onChange={setSelectedVideoId}
+              disabled={recordStatus === 'recording' || isSubmitting}
+            />
 
             {/* 마이크 선택 */}
-            <div className="relative space-y-2">
-              <div className="text-sm font-medium text-gray-800">마이크</div>
-              <select
-                className="w-full rounded-xl border border-gray-200 bg-white px-3 py-4 appearance-none cursor-pointer text-sm"
-                value={selectedMicId}
-                onChange={(e) => setSelectedMicId(e.target.value)}
-                disabled={recordStatus === 'recording' || isSubmitting}
-              >
-                {micOptions.map((opt, idx) => (
-                  <option key={`${opt.value}-${idx}`} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              {/* 커스텀 화살표 */}
-              <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none translate-y-[10px]">
-                <svg
-                  className="w-5 h-5 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </div>
-            </div>
+            <MediaDeviceSelect
+              label="마이크"
+              value={selectedMicId}
+              options={micOptions}
+              onChange={setSelectedMicId}
+              disabled={recordStatus === 'recording' || isSubmitting}
+            />
 
             {/* 메시지 */}
             {(permissionMessage || videoPermissionMessage || message) && (
