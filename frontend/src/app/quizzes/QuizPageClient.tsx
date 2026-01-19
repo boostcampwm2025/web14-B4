@@ -1,4 +1,3 @@
-// app/quizzes/QuizPageClient.tsx
 'use client';
 
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
