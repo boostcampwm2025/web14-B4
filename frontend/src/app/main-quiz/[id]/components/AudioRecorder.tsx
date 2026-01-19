@@ -14,7 +14,7 @@ import PermissionConsentModal from './permission/PermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
-import RecordedVideoList from './record/RecordedVideoList';
+import RecordedVideo from './record/RecordedVideo';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -40,10 +40,10 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
   const videoRef = useRef<HTMLVideoElement>(null); // Q: mediaRecorderRef랑 뭔 차이?
   const mediaRecorderRef = useRef<MediaRecorder | null>(null); // Q:  videoRef랑 무슨 차이?
   const videoChunksRef = useRef<Blob[]>([]);
+  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isVideoRecording, setIsVideoRecording] = useState(false); // 불필요한 상태값
-  const [recordedVideos, setRecordedVideos] = useState<string[]>([]);
   const [error, setError] = useState<string>('');
 
   const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
@@ -163,9 +163,17 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(videoChunksRef.current, { type: config.mimeType || 'video/webm' });
+        const blob = new Blob(videoChunksRef.current, {
+          type: config.mimeType || 'video/webm',
+        });
+
+        // 기존 URL 정리
+        if (recordedVideoUrl) {
+          URL.revokeObjectURL(recordedVideoUrl);
+        }
+
         const url = URL.createObjectURL(blob);
-        setRecordedVideos((prev) => [...prev, url]);
+        setRecordedVideoUrl(url);
         videoChunksRef.current = [];
       };
 
@@ -189,20 +197,17 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
   // 비디오 녹화 초기화
   const resetVideoRecording = () => {
-    // 1. 진행 중인 녹화 중지
     if (mediaRecorderRef.current && isVideoRecording) {
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current = null;
       setIsVideoRecording(false);
     }
 
-    // 2. 녹화된 비디오 목록 초기화
-    // 기존 URL 메모리 해제
-    recordedVideos.forEach((url) => {
-      URL.revokeObjectURL(url);
-    });
+    if (recordedVideoUrl) {
+      URL.revokeObjectURL(recordedVideoUrl);
+    }
 
-    setRecordedVideos([]);
+    setRecordedVideoUrl(null);
     videoChunksRef.current = [];
   };
 
@@ -218,11 +223,15 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
     }
   }, [selectedVideoId, videoStatus]);
 
-  // 컴포넌트 언마운트 시 정리
+  // unmount 시, 비디오 메모리 정리
   useEffect(() => {
     return () => {
       stopRecording();
       stopCamera();
+
+      if (recordedVideoUrl) {
+        URL.revokeObjectURL(recordedVideoUrl);
+      }
     };
   }, []);
 
@@ -392,7 +401,7 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
       </div>
 
       {/* 녹화된 비디오 목록 - 하단에 중앙 배치 */}
-      <RecordedVideoList videos={recordedVideos} />
+      <RecordedVideo videoUrl={recordedVideoUrl} />
     </div>
   );
 }
