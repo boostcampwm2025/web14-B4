@@ -15,6 +15,7 @@ import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 import RecordedVideo from './record/RecordedVideo';
+import { useRecorderTimer } from '@/hooks/mainQuiz/useRecorderTimer';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -34,6 +35,7 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
   const [isCameraConsentOpen, setIsCameraConsentOpen] = useState(true);
 
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
+  const timer = useRecorderTimer();
 
   const [message, setMessage] = useState<string | null>(null);
 
@@ -250,8 +252,9 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
       await startRecording({
         deviceId: getSelectedDeviceId(),
       });
-
       startVideoRecording();
+
+      timer.startTimer();
       setStatus('recording');
       setMessage('녹음중...');
     } catch {
@@ -264,17 +267,27 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
     stopRecording();
     stopVideoRecording();
     stopCamera();
+    timer.stopTimer();
   };
 
   const handleRetry = () => {
     resetRecording();
     resetVideoRecording();
+    timer.resetTimer();
     setStatus('idle');
     setMessage(null);
   };
 
   const handleSubmit = async () => {
     if (!audioBlob) {
+      return;
+    }
+
+    if (timer.isOver) {
+      const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
+      alert(errMsg);
+      setError(errMsg);
+      handleRetry();
       return;
     }
 
@@ -308,6 +321,17 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
   });
 
   const isSubmitting = recordStatus === 'submitting';
+
+  useEffect(() => {
+    if (timer.isOver && recordStatus === 'recording') {
+      // setState 호출을 다음 렌더링 사이클로 지연
+      const timeoutId = setTimeout(() => {
+        handleStop();
+      }, 0);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [timer.isOver, recordStatus, handleStop]);
 
   return (
     <div>
