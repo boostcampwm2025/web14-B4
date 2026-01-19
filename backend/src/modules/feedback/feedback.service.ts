@@ -127,13 +127,11 @@ export class FeedbackService {
 
       // 토큰 할당량 초과 (429)
       if (status === 429) {
-        const isDailyLimit =
-          message.includes('Daily') || message.includes('quota');
-        throw new BusinessException(
-          isDailyLimit
-            ? ERROR_MESSAGES.AI_DAILY_QUOTA_EXCEEDED
-            : ERROR_MESSAGES.AI_RATE_LIMIT_EXCEEDED,
-        );
+        if (message.toLowerCase().includes('daily')) {
+          throw new BusinessException(ERROR_MESSAGES.AI_DAILY_QUOTA_EXCEEDED);
+        }
+
+        throw new BusinessException(ERROR_MESSAGES.AI_RATE_LIMIT_EXCEEDED);
       }
 
       // 잘못된 요청 및 지역 제한 (400)
@@ -144,10 +142,7 @@ export class FeedbackService {
         }
 
         // API 키 형식 오류
-        if (
-          message.toLowerCase().includes('api key') ||
-          message.toLowerCase().includes('invalid')
-        ) {
+        if (message.toLowerCase().includes('api key')) {
           throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
         }
 
