@@ -16,6 +16,8 @@ import {
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
 @Injectable()
 export class FeedbackService {
@@ -141,11 +143,11 @@ export class FeedbackService {
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!solvedQuiz) {
-      throw new NotFoundException('해당 기록을 찾을 수 없습니다. ');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
 
     if (!solvedQuiz.aiFeedback) {
-      throw new NotFoundException('AI 피드백이 아직 생성되지 않았습니다.');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
     const checklistInSolvedQuiz =
