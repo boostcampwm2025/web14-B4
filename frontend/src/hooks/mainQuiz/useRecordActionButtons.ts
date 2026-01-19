@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { RecordStatus } from '@/app/main-quiz/[id]/components/AudioRecorder';
+import { RecordStatus } from '@/app/main-quiz/[id]/components/Recorder';
 
 export type ActionButton = {
   label: string;

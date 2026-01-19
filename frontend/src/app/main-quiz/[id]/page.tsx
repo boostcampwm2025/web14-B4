@@ -1,4 +1,4 @@
-import AudioRecorder from '@/app/main-quiz/[id]/components/AudioRecorder';
+import Recorder from '@/app/main-quiz/[id]/components/Recorder';
 import { fetchQuiz } from '@/services/quizApi';
 import { Chip } from '@/components/Chip';
 
@@ -28,7 +28,7 @@ export default async function MainQuizPage({ params }: PageProps) {
       <div className="flex justify-center pt-10">
         <h1 className="flex justify-center text-2xl font-semibold">{quiz.content}</h1>
       </div>
-      <AudioRecorder quizId={quizId} />
+      <Recorder quizId={quizId} />
     </main>
   );
 }

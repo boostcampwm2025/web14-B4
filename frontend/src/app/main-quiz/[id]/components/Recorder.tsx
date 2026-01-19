@@ -26,7 +26,7 @@ export type RecordStatus =
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
 
-export default function AudioRecorder({ quizId }: AudioRecorderProps) {
+export default function Recorder({ quizId }: AudioRecorderProps) {
   const router = useRouter();
   const { setSolvedQuizId } = useQuizStore();
 
@@ -37,13 +37,13 @@ export default function AudioRecorder({ quizId }: AudioRecorderProps) {
 
   const [message, setMessage] = useState<string | null>(null);
 
-  const videoRef = useRef<HTMLVideoElement>(null); // Q: mediaRecorderRef랑 뭔 차이?
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // Q:  videoRef랑 무슨 차이?
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const videoChunksRef = useRef<Blob[]>([]);
   const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
 
   const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isVideoRecording, setIsVideoRecording] = useState(false); // 불필요한 상태값
+  const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
 
   const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
