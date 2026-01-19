@@ -12,6 +12,8 @@ import { Checklist } from './checklist';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
+import { Chip } from '@/components/Chip';
+import { Button } from '@/components/Button';
 
 interface ChecklistSessionProps {
   mainQuizId: number;
@@ -68,7 +70,7 @@ export default function ChecklistSession({
     }
   };
 
-  const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleResetAndNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
       clearSolvedQuizId();
@@ -114,6 +116,11 @@ export default function ChecklistSession({
           subMessage="AI 분석이 진행 중입니다. 잠시만 기다려주세요."
         />
       )}
+      <div className="flex justify-start px-2 mb-4">
+        <div className="inline-block bg-[var(--color-primary)] text-white text-2xl font-medium px-8 py-2 rounded-full mt-1">
+          셀프체크
+        </div>
+      </div>
       {/* 메인 콘텐츠 - 좌우 배치 */}
       <div className="grid grid-cols-2 gap-6 mb-8">
         {/* 왼쪽: 나의 답변 */}
@@ -134,21 +141,14 @@ export default function ChecklistSession({
       </div>
 
       {/* 네비게이션 버튼 */}
-      <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-4xl mx-auto">
-        <Link
-          href="/practice"
-          onClick={handleResetAndNavigate}
-          className="flex-1 py-3 md:py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition text-center flex items-center justify-center gap-2 text-sm md:text-base"
-        >
-          다시풀기
-        </Link>
-        <button
-          onClick={handleSubmit}
-          className="flex-1 py-3 md:py-4 text-white rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 text-sm md:text-base"
-          style={{ backgroundColor: '#4278FF' }}
-        >
+      <div className="mx-auto mt-8 flex w-full items-center justify-between">
+        <Button variant="secondary" size="fixed" onClick={handleResetAndNavigate}>
+          다시 풀기
+        </Button>
+
+        <Button variant="primary" size="fixed" onClick={handleSubmit}>
           다음
-        </button>
+        </Button>
       </div>
     </div>
   );
