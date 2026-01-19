@@ -56,18 +56,6 @@ export default function ChecklistSession({
     );
   };
 
-  const handleUpdateSpeech = async () => {
-    try {
-      if (!speechItem) return;
-      await updateSpeechText(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
-      alert('음성 답변이 저장되었습니다!');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '음성 답변 저장에 실패했습니다.';
-      alert(message);
-      console.error('Failed to update speech:', error);
-    }
-  };
-
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
