@@ -6,12 +6,14 @@ import ProgressBar from './ProgressBar';
 import { useState } from 'react';
 import ArrowButtons from '../arrowBtn/ArrowButtons';
 import CommonPopup from '@/components/Popup';
+import { useRouter } from 'next/navigation';
 
 interface ContainerProps {
   multipleQuizzesInfo: MultipleChoiceResponseDto;
 }
 
 export default function MultipleQuizContainer({ multipleQuizzesInfo }: ContainerProps) {
+  const router = useRouter();
   const [quizIndex, setQuizIndex] = useState(0);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
@@ -30,7 +32,7 @@ export default function MultipleQuizContainer({ multipleQuizzesInfo }: Container
   };
 
   const handleConfirm = () => {
-    console.log('이동 확정');
+    router.push(`/main-quiz/${multipleQuizzesInfo.mainQuizId}`);
     setIsPopupOpen(false);
   };
 
