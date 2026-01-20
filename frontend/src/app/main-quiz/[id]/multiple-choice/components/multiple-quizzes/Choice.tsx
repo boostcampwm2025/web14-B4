@@ -18,7 +18,7 @@ export default function Choice({ text = '선택지 내용' }: ChoiceProps) {
     <button
       type="button"
       onClick={() => setSelected((prev) => !prev)}
-      className={`'relative text-left text-base cursor-pointer w-150 h-16 px-5 rounded-4xl border-2 transition-all duration-200 ease-in-out ${selected ? selectedClass : defaultClass}`}
+      className={`'relative text-left text-base cursor-pointer w-150 h-16 px-5 rounded-4xl border-3 transition-all duration-200 ease-in-out ${selected ? selectedClass : defaultClass}`}
     >
       {text}
     </button>

@@ -10,7 +10,7 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
   const progress = `${current}/${total}`;
 
   return (
-    <div className="flex items-center gap-[15px] mb-[30px]">
+    <div className="flex items-center gap-4 mb-2">
       {/* bar */}
       <div className="flex-1 h-2 bg-gray-200 rounded-[10px] overflow-hidden">
         <div
