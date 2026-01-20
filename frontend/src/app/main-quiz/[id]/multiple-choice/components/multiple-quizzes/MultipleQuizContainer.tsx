@@ -5,14 +5,21 @@ import MultipleChoiceQuiz from './MultipleChoiceQuiz';
 import ProgressBar from './ProgressBar';
 
 interface ContainerProps {
-  multipleChoices: MultipleChoiceResponseDto;
+  multipleQuizzesInfo: MultipleChoiceResponseDto;
+  quizNumber: number;
 }
 
-export default function MultipleQuizContainer({ multipleChoices }: ContainerProps) {
+export default function MultipleQuizContainer({
+  multipleQuizzesInfo,
+  quizNumber: quizIndex,
+}: ContainerProps) {
   return (
     <div className="w-full flex flex-col">
-      <ProgressBar current={3} total={multipleChoices.totalCount} />
-      <MultipleChoiceQuiz />
+      <ProgressBar current={quizIndex} total={multipleQuizzesInfo.totalCount} />
+      <MultipleChoiceQuiz
+        multipleChoiceQuizzes={multipleQuizzesInfo.multipleChoices}
+        quizNumber={quizIndex}
+      />
     </div>
   );
 }
