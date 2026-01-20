@@ -26,18 +26,19 @@ export class ChecklistItemDto {
   content: string;
 }
 
-export class GetMultipleChoicesResponseDto {
+export class MultipleChoicesResponseDto {
   mainQuizId: number;
-  multipleChoices: MultipleChoiceResponseDto[];
+  totalCount: number;
+  multipleChoices: MultipleChoiceDto[];
 }
 
-export class MultipleChoiceResponseDto {
+export class MultipleChoiceDto {
   multipleChoiceId: number;
-  content: string | null;
-  options: MultipleChoiceOptionResponseDto[];
+  content: string;
+  options: MultipleChoiceOptionDto[];
 }
 
-export class MultipleChoiceOptionResponseDto {
+export class MultipleChoiceOptionDto {
   multipleQuizOptionId: number;
   option: string;
   isCorrect: boolean;
