@@ -5,6 +5,7 @@ import MultipleChoiceQuiz from './MultipleChoiceQuiz';
 import ProgressBar from './ProgressBar';
 import { useState } from 'react';
 import ArrowButtons from '../arrowBtn/ArrowButtons';
+import CommonPopup from '@/components/Popup';
 
 interface ContainerProps {
   multipleQuizzesInfo: MultipleChoiceResponseDto;
@@ -12,6 +13,7 @@ interface ContainerProps {
 
 export default function MultipleQuizContainer({ multipleQuizzesInfo }: ContainerProps) {
   const [quizIndex, setQuizIndex] = useState(0);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const maxIndex = multipleQuizzesInfo.multipleChoices.length - 1;
 
@@ -20,26 +22,45 @@ export default function MultipleQuizContainer({ multipleQuizzesInfo }: Container
   };
 
   const handleNext = () => {
-    setQuizIndex((prev) => Math.min(prev + 1, maxIndex));
+    if (quizIndex === maxIndex) {
+      setIsPopupOpen(true);
+      return;
+    }
+    setQuizIndex((prev) => prev + 1);
+  };
+
+  const handleConfirm = () => {
+    console.log('이동 확정');
+    setIsPopupOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsPopupOpen(false);
   };
 
   return (
-    <>
-      <div className="relative w-full flex flex-col">
-        <ProgressBar current={quizIndex} total={multipleQuizzesInfo.totalCount} />
+    <div className="relative w-full flex flex-col">
+      <ProgressBar current={quizIndex} total={multipleQuizzesInfo.totalCount} />
 
-        <MultipleChoiceQuiz
-          multipleChoiceQuizzes={multipleQuizzesInfo.multipleChoices}
-          quizNumber={quizIndex}
-        />
+      <MultipleChoiceQuiz
+        multipleChoiceQuizzes={multipleQuizzesInfo.multipleChoices}
+        quizNumber={quizIndex}
+      />
 
-        <ArrowButtons
-          onPrev={handlePrev}
-          onNext={handleNext}
-          disablePrev={quizIndex === 0}
-          disableNext={quizIndex === maxIndex}
-        />
-      </div>
-    </>
+      <ArrowButtons
+        onPrev={handlePrev}
+        onNext={handleNext}
+        disablePrev={quizIndex === 0}
+        disableNext={false}
+      />
+
+      <CommonPopup
+        isOpen={isPopupOpen}
+        title="메인 퀴즈로 이동하시겠습니까?"
+        description="아직 준비되지 않았다면 객관식 퀴즈를 다시 풀어보세요!"
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
+    </div>
   );
 }

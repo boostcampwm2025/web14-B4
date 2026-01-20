@@ -22,7 +22,7 @@ export default function MultipleChoiceQuiz({
 
   return (
     <div className="w-full flex flex-col items-center justify-center py-2">
-      <h2 className="max-w-3/4 py-2 mb-3 text-2xl font-semibold leading-8">{content}</h2>
+      <h2 className="max-w-3/4 py-2 my-5 text-2xl font-semibold leading-8">{content}</h2>
 
       <div className="flex flex-col items-center gap-5 mt-6">
         {options.map((option) => (
