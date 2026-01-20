@@ -42,4 +42,42 @@ export const ERROR_MESSAGES = {
     status: 400,
     message: '해당 말하기 연습과 결과 기록이 일치하지 않습니다.',
   },
+
+  // 답변이 너무 짧은 경우 AI 피드백 생성 X
+  ANSWER_TOO_SHORT: {
+    errorCode: 'ANSWER_TOO_SHORT',
+    status: 400,
+    message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
+  },
+  // Gemini AI API 관련 오류
+  AI_DAILY_QUOTA_EXCEEDED: {
+    errorCode: 'AI_DAILY_QUOTA_EXCEEDED',
+    status: 429,
+    message: '오늘 사용 가능한 AI 요청 횟수를 모두 소모했습니다.',
+  },
+  AI_RATE_LIMIT_EXCEEDED: {
+    errorCode: 'AI_RATE_LIMIT_EXCEEDED',
+    status: 429,
+    message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+  },
+  AI_INVALID_REQUEST: {
+    errorCode: 'AI_INVALID_REQUEST',
+    status: 400,
+    message: '지원하지 않는 지역이거나 요청 파라미터가 잘못되었습니다.',
+  },
+  AI_KEY_INVALID: {
+    errorCode: 'AI_KEY_INVALID',
+    status: 403,
+    message: 'API 키가 유효하지 않거나 권한이 없습니다.',
+  },
+  AI_SAFETY_BLOCK: {
+    errorCode: 'AI_SAFETY_BLOCK',
+    status: 400,
+    message: '부적절한 내용이 포함되어 AI가 답변을 거부했습니다.',
+  },
+  AI_SERVER_ERROR: {
+    errorCode: 'AI_SERVER_ERROR',
+    status: 500,
+    message: 'AI 서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+  },
 };

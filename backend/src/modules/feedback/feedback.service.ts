@@ -19,6 +19,21 @@ import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-qui
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
+const MIN_USER_ANSWER_LENGTH = 50;
+
+interface GeminiErrorResponse {
+  response?: {
+    status?: number;
+    data?: {
+      error?: {
+        details?: Array<{ reason?: string }>;
+      };
+    };
+  };
+  status?: number;
+  message?: string;
+}
+
 @Injectable()
 export class FeedbackService {
   private genAI: GoogleGenAI;
@@ -49,6 +64,11 @@ export class FeedbackService {
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
+
+    if (!userAnswer || userAnswer.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
@@ -107,9 +127,48 @@ export class FeedbackService {
       }
 
       return JSON.parse(textResponse) as Record<string, unknown>;
-    } catch {
+    } catch (error: unknown) {
+      const err = error as GeminiErrorResponse;
+      const status = err.status ?? err.response?.status;
+      const message = err.message ?? '';
+
+      // 토큰 할당량 초과 (429)
+      if (status === 429) {
+        if (message.toLowerCase().includes('daily')) {
+          throw new BusinessException(ERROR_MESSAGES.AI_DAILY_QUOTA_EXCEEDED);
+        }
+
+        throw new BusinessException(ERROR_MESSAGES.AI_RATE_LIMIT_EXCEEDED);
+      }
+
+      // 잘못된 요청 및 지역 제한 (400)
+      if (status === 400) {
+        // 안전 필터 관련 메시지가 포함된 경우 별도 처리
+        if (message.toLowerCase().includes('safety')) {
+          throw new BusinessException(ERROR_MESSAGES.AI_SAFETY_BLOCK);
+        }
+
+        // API 키 형식 오류
+        if (message.toLowerCase().includes('api key')) {
+          throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
+        }
+
+        // 지역 미지원(Location) 또는 기타 파라미터 오류
+        throw new BusinessException(ERROR_MESSAGES.AI_INVALID_REQUEST);
+      }
+
+      // API 키 권한 문제 (403)
+      if (status === 403) {
+        throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
+      }
+
+      // 구글 서버 오류 (500, 503, 504)
+      if (status && status >= 500) {
+        throw new BusinessException(ERROR_MESSAGES.AI_SERVER_ERROR);
+      }
+
       throw new InternalServerErrorException(
-        '답변 분석 중 오류가 발생했습니다.',
+        '답변 분석 중 알 수 없는 오류가 발생했습니다.',
       );
     }
   }
