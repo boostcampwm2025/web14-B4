@@ -48,6 +48,7 @@ export const ERROR_MESSAGES = {
     errorCode: 'ANSWER_TOO_SHORT',
     status: 400,
     message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
+  },
   // Gemini AI API 관련 오류
   AI_DAILY_QUOTA_EXCEEDED: {
     errorCode: 'AI_DAILY_QUOTA_EXCEEDED',
