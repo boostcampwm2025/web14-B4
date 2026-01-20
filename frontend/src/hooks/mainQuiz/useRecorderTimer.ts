@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-const MAX_SECONDS = 180;
+const MAX_SECONDS = 60;
 
 export function useRecorderTimer() {
   const [seconds, setSeconds] = useState(0);
