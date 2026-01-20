@@ -27,6 +27,7 @@ export default function ChecklistSession({
   const {
     solvedQuizId,
     isAnalyzing,
+    _hasHydrated,
     actions: { requestAiFeedback },
   } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
@@ -36,6 +37,8 @@ export default function ChecklistSession({
   const [options, setOptions] = useState<ChecklistItem[]>(initialChecklistItems);
 
   useEffect(() => {
+    if (!_hasHydrated) return;
+
     if (!solvedQuizId || solvedQuizId <= 0) {
       toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
         position: 'top-center',
@@ -47,7 +50,7 @@ export default function ChecklistSession({
       });
       router.push(`/quizzes`);
     }
-  }, [solvedQuizId, router]);
+  }, [_hasHydrated, solvedQuizId, router]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
     setOptions((prev) =>

@@ -1,9 +1,7 @@
 import { fetchQuiz, fetchQuizChecklistItems } from '@/services/quizApi';
 import { getSpeechesByQuizId } from '@/services/speechesApi';
-import dynamic from 'next/dynamic';
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
-
-const ChecklistSession = dynamic(() => import('../../components/ChecklistSession'), { ssr: true });
+import ChecklistSession from '../../components/ChecklistSession';
 
 export default async function ResultPage({
   params,
