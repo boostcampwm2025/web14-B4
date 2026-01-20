@@ -81,6 +81,12 @@ export default function ChecklistSession({
   const handleSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
+    const currentText = speechItem.speechText || '';
+    if (currentText.trim().length < 50) {
+      alert('답변이 너무 짧습니다. 50자 이상 입력해주세요.');
+      return;
+    }
+
     const confirmed = window.confirm('답변을 제출하시겠습니까?');
     if (confirmed) {
       const checklistItems = options.map((option) => ({

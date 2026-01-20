@@ -19,6 +19,8 @@ import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-qui
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
+const MIN_USER_ANSWER_LENGTH = 50;
+
 interface GeminiErrorResponse {
   response?: {
     status?: number;
@@ -62,6 +64,11 @@ export class FeedbackService {
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
+
+    if (!userAnswer || userAnswer.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
@@ -192,14 +199,15 @@ export class FeedbackService {
   }
 
   async getAIFeedback(solvedQuizId: number) {
+    // TODO: 추후에 로그인/회원가입 기능 구현 시에 userID 인자로 받아서 본인 기록 맞는지 검증하는 로직 추가
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!solvedQuiz) {
-      throw new NotFoundException('해당 기록을 찾을 수 없습니다. ');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
 
     if (!solvedQuiz.aiFeedback) {
-      throw new NotFoundException('AI 피드백이 아직 생성되지 않았습니다.');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
     const checklistInSolvedQuiz =

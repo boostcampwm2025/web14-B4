@@ -1,4 +1,5 @@
 import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
+import { redirect } from 'next/navigation';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
@@ -13,8 +14,14 @@ type Props = {
 };
 
 export default async function FeedbackPage({ params }: Props) {
-  const { mainQuizId, solvedQuizId } = await params;
-  const { solvedQuizDetail, aiFeedbackResult } = await fetchAIFeedbackResult(Number(solvedQuizId));
+  const { solvedQuizId } = await params;
+  let data;
+  try {
+    data = await fetchAIFeedbackResult(Number(solvedQuizId));
+  } catch (error) {
+    redirect('/quizzes?error=not_found');
+  }
+  const { solvedQuizDetail, aiFeedbackResult } = data;
 
   const mergedKeywords = solvedQuizDetail.keywords.map((k) => ({
     text: k.keyword,
@@ -44,7 +51,7 @@ export default async function FeedbackPage({ params }: Props) {
       <FeedbackQuestions questions={aiFeedbackResult.followUpQuestions} />
       <ImportanceCheck
         userName={USER_NAME}
-        mainQuizId={Number(mainQuizId)}
+        mainQuizId={solvedQuizDetail.mainQuizId}
         solvedQuizId={Number(solvedQuizId)}
       />
     </main>
