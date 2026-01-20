@@ -12,14 +12,14 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
   return (
     <div className="flex items-center gap-4 mb-2">
       {/* bar */}
-      <div className="flex-1 h-2 bg-gray-200 rounded-[10px] overflow-hidden">
+      <div className="flex-1 h-2 bg-[var(--color-gray-light)] rounded-[10px] overflow-hidden">
         <div
-          className="h-full bg-blue-500 transition-all duration-300 ease-in-out"
+          className="h-full bg-[var(--color-primary)] transition-all duration-300 ease-in-out"
           style={{ width: `${percentage}%` }}
         />
       </div>
 
-      <span className="text-sm font-bold text-blue-500">{progress}</span>
+      <span className="text-sm font-bold text-[var(--color-primary)]">{progress}</span>
     </div>
   );
 }

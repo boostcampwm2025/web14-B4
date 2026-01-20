@@ -10,9 +10,9 @@ interface ArrowButtonsProps {
 }
 
 const baseClass =
-  'fixed top-1/2 -translate-y-1/2 z-50 rounded-full p-1 transition-all duration-200 cursor-pointer';
+  'absolute top-1/2 -translate-y-1/2 z-50 rounded-full p-1 transition-all duration-200 cursor-pointer';
 
-const hoverClass = 'hover:scale-110 hover:bg-blue-100 hover:shadow-md';
+const hoverClass = 'hover:scale-110 hover:bg-[var(--color-accent-sky)] hover:shadow-md';
 
 const disabledClass =
   'disabled:opacity-30 disabled:hover:scale-100 disabled:hover:bg-transparent disabled:cursor-default';

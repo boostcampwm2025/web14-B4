@@ -25,22 +25,21 @@ export default function MultipleQuizContainer({ multipleQuizzesInfo }: Container
 
   return (
     <>
-      <div className="w-full flex flex-col">
+      <div className="relative w-full flex flex-col">
         <ProgressBar current={quizIndex} total={multipleQuizzesInfo.totalCount} />
 
         <MultipleChoiceQuiz
           multipleChoiceQuizzes={multipleQuizzesInfo.multipleChoices}
           quizNumber={quizIndex}
         />
-      </div>
 
-      {/* 화면 기준 화살표 */}
-      <ArrowButtons
-        onPrev={handlePrev}
-        onNext={handleNext}
-        disablePrev={quizIndex === 0}
-        disableNext={quizIndex === maxIndex}
-      />
+        <ArrowButtons
+          onPrev={handlePrev}
+          onNext={handleNext}
+          disablePrev={quizIndex === 0}
+          disableNext={quizIndex === maxIndex}
+        />
+      </div>
     </>
   );
 }
