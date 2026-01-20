@@ -5,8 +5,7 @@ import QuizProgressBar from "./QuizProgressBar";
 
 export default function MultipleQuizCard() {
   return (
-    <div>
-      <h1>QuizCard</h1>
+    <div className="flex flex-col items-center justify-center">
       <QuizProgressBar/>
       <MultipleChoiceQuiz/>
     </div>
