@@ -1,12 +1,12 @@
 'use client';
 
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
-import DifficultyFilter from './components/filters/DifficultyFilter';
-import CategoryFilter from './components/filters/CategoryFilter';
-import QuizGrid from './components/card/QuizGrid';
-import QuizHeader from './components/header/QuizHeader';
+import DifficultyFilter from './filters/DifficultyFilter';
+import CategoryFilter from './filters/CategoryFilter';
+import QuizGrid from './card/QuizGrid';
+import QuizHeader from './header/QuizHeader';
 import { useEffect, useState } from 'react';
-import { CategoryCountsResponseDto, Quiz } from './types/quiz';
+import { CategoryCountsResponseDto, Quiz } from '../types/quiz';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
 
