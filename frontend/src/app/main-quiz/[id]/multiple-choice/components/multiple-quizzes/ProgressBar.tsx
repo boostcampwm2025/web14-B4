@@ -7,6 +7,7 @@ interface ProgressBarProps {
 
 export default function ProgressBar({ current, total }: ProgressBarProps) {
   const percentage = Math.min((current / total) * 100, 100);
+  const progress = `${current}/${total}`;
 
   return (
     <div className="flex items-center gap-[15px] mb-[30px]">
@@ -18,10 +19,7 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
         />
       </div>
 
-      {/* text */}
-      <span className="text-sm font-bold text-blue-500">
-        {current}/{total}
-      </span>
+      <span className="text-sm font-bold text-blue-500">{progress}</span>
     </div>
   );
 }
