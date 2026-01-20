@@ -6,7 +6,7 @@ import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from './MySpeechText';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 import { ChecklistItem } from '@/app/checklist/types/checklist.types';
-import { Checklist } from './checklist';
+import { Checklist } from './Checklist';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
