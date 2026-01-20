@@ -1,7 +1,7 @@
 import { fetchQuiz, fetchQuizChecklistItems } from '@/services/quizApi';
 import { getSpeechesByQuizId } from '@/services/speechesApi';
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
-import ChecklistSession from '../../components/ChecklistSession';
+import ChecklistSession from '../../components/checklistSession';
 
 export default async function ResultPage({
   params,
