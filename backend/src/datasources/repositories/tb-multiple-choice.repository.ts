@@ -15,7 +15,15 @@ export class MultipleChoiceRepository {
       where: {
         mainQuiz: { mainQuizId },
       },
-      relations: ['options'],
+      relations: {
+        options: true,
+      },
+      order: {
+        multipleChoiceId: 'ASC',
+        options: {
+          multipleQuizOptionId: 'ASC',
+        },
+      },
     });
   }
 }
