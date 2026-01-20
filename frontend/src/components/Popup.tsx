@@ -32,13 +32,13 @@ function CommonPopup({ isOpen, title, description, onConfirm, onCancel }: PopupP
             onClick={onCancel}
             className="flex-1 py-3 bg-[#F1F4F9] text-gray-600 rounded-[20px] font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
           >
-            네
+            아니오
           </button>
           <button
             onClick={onConfirm}
             className="flex-1 py-3 bg-[#4A7DFF] text-white rounded-[20px] font-semibold shadow-lg shadow-blue-100 hover:bg-[#3B6AE6] transition-all active:scale-95 cursor-pointer"
           >
-            아니오
+            네
           </button>
         </div>
       </div>
