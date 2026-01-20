@@ -1,6 +1,6 @@
 import React from 'react';
-import { FeelingButton } from './FeelingButton';
-import { ChecklistItem } from './ChecklistItem';
+import { FeelingButton } from './feelingButton';
+import { ChecklistItem } from './checklistItem';
 import { ChecklistProps } from '../types/checklist.types';
 
 export const Checklist: React.FC<ChecklistProps> = ({
