@@ -19,7 +19,7 @@ export default function RecorderTimer({ seconds, maxSeconds, isRecording }: Reco
         <div />
       )}
 
-      <div className="text-right font-semibold pr-1">
+      <div className="text-right pr-1">
         녹음 시간 {formatTime(seconds)} / {formatTime(maxSeconds)}
       </div>
     </div>
