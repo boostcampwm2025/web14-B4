@@ -19,6 +19,8 @@ import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-qui
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
+const MIN_USER_ANSWER_LENGTH = 50;
+
 interface GeminiErrorResponse {
   response?: {
     status?: number;
@@ -62,6 +64,11 @@ export class FeedbackService {
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
+
+    if (!userAnswer || userAnswer.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 

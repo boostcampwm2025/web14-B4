@@ -43,6 +43,12 @@ export const ERROR_MESSAGES = {
     message: '해당 말하기 연습과 결과 기록이 일치하지 않습니다.',
   },
 
+  // 답변이 너무 짧은 경우 AI 피드백 생성 X
+  ANSWER_TOO_SHORT: {
+    errorCode: 'ANSWER_TOO_SHORT',
+    status: 400,
+    message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
+  },
   // Gemini AI API 관련 오류
   AI_DAILY_QUOTA_EXCEEDED: {
     errorCode: 'AI_DAILY_QUOTA_EXCEEDED',
