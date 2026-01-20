@@ -1,4 +1,4 @@
-import { fetchAIFeedbackResult } from '@/services/feedbackApi';
+import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';

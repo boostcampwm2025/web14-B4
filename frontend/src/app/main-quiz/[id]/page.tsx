@@ -1,5 +1,5 @@
 import Recorder from '@/app/main-quiz/[id]/components/Recorder';
-import { fetchQuiz } from '@/services/quizApi';
+import { fetchQuiz } from '@/services/apis/quizApi';
 import { Chip } from '@/components/Chip';
 
 interface PageProps {

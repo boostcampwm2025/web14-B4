@@ -1,7 +1,7 @@
 // app/quizzes/QuizPageClient.tsx
 'use client';
 
-import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
+import { fetchQuizzes, fetchCategoryCounts } from '@/services/apis/quizApi';
 import DifficultyFilter from './components/filters/DifficultyFilter';
 import CategoryFilter from './components/filters/CategoryFilter';
 import QuizGrid from './components/card/QuizGrid';

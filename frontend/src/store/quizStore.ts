@@ -4,7 +4,7 @@ import {
   SolvedQuizSubmitRequestDto,
   submitSolvedQuiz,
   generateAIFeedBack,
-} from '@/services/feedbackApi';
+} from '@/services/apis/feedbackApi';
 
 interface QuizStore {
   solvedQuizId: number | null;

@@ -1,5 +1,5 @@
-import { fetchQuiz, fetchQuizChecklistItems } from '@/services/quizApi';
-import { getSpeechesByQuizId } from '@/services/speechesApi';
+import { fetchQuiz, fetchQuizChecklistItems } from '@/services/apis/quizApi';
+import { getSpeechesByQuizId } from '@/services/apis/speechesApi';
 import { Chip } from '@/components/Chip';
 import dynamic from 'next/dynamic';
 

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { updateSpeechText } from '@/services/speechesApi';
+import { updateSpeechText } from '@/services/apis/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from './MySpeechText';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
