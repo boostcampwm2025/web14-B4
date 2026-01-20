@@ -1,22 +1,32 @@
-// app/quizzes/QuizPageClient.tsx
 'use client';
 
 import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
-import DifficultyFilter from './components/filters/DifficultyFilter';
-import CategoryFilter from './components/filters/CategoryFilter';
-import QuizGrid from './components/card/QuizGrid';
-import QuizHeader from './components/header/QuizHeader';
+import DifficultyFilter from './filters/DifficultyFilter';
+import CategoryFilter from './filters/CategoryFilter';
+import QuizGrid from './card/QuizGrid';
+import QuizHeader from './header/QuizHeader';
 import { useEffect, useState } from 'react';
-import { CategoryCountsResponseDto, Quiz } from './types/quiz';
-import { useSearchParams } from 'next/navigation';
+import { CategoryCountsResponseDto, Quiz } from '../types/quiz';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function QuizPageClient() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const category = searchParams.get('category') ?? undefined;
   const difficulty = searchParams.get('difficulty') ?? undefined;
 
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [categories, setCategories] = useState<CategoryCountsResponseDto>();
+
+  useEffect(() => {
+    const errorType = searchParams.get('error');
+
+    if (errorType === 'not_found') {
+      toast.error('해당 퀴즈 기록이 존재하지 않습니다');
+      router.replace('/quizzes');
+    }
+  }, [searchParams, router]);
 
   useEffect(() => {
     let cancelled = false;

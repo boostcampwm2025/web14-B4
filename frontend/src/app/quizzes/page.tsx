@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import QuizPageClient from './QuizPageClient';
+import QuizPageClient from './components/QuizPageClient';
 
 export default function Page() {
   return (

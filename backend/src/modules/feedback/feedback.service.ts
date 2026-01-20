@@ -199,14 +199,15 @@ export class FeedbackService {
   }
 
   async getAIFeedback(solvedQuizId: number) {
+    // TODO: 추후에 로그인/회원가입 기능 구현 시에 userID 인자로 받아서 본인 기록 맞는지 검증하는 로직 추가
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!solvedQuiz) {
-      throw new NotFoundException('해당 기록을 찾을 수 없습니다. ');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
 
     if (!solvedQuiz.aiFeedback) {
-      throw new NotFoundException('AI 피드백이 아직 생성되지 않았습니다.');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
     const checklistInSolvedQuiz =
