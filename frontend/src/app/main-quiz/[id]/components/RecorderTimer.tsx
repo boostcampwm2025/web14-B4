@@ -11,8 +11,8 @@ const formatTime = (s: number) => {
 
 export default function RecorderTimer({ seconds, maxSeconds }: RecorderTimerProps) {
   return (
-    <div className="text-lg font-semibold">
-      {formatTime(seconds)} / {formatTime(maxSeconds)}
+    <div className="text-right font-semibold right-1 pr-1">
+      녹화 시간 {formatTime(seconds)} / {formatTime(maxSeconds)}
     </div>
   );
 }
