@@ -140,6 +140,7 @@ export class FeedbackService {
   }
 
   async getAIFeedback(solvedQuizId: number) {
+    // TODO: 추후에 로그인/회원가입 기능 구현 시에 userID 인자로 받아서 본인 기록 맞는지 검증하는 로직 추가
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!solvedQuiz) {
