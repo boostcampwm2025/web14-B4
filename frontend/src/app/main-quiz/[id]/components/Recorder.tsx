@@ -257,7 +257,6 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
 
       timer.startTimer();
       setStatus('recording');
-      setMessage('녹음중...');
     } catch {
       setMessage('녹음을 시작할 수 없습니다.');
     }
@@ -402,7 +401,12 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
               disabled={recordStatus === 'recording' || isSubmitting}
             />
 
-            <RecorderTimer seconds={timer.seconds} maxSeconds={timer.maxSeconds} />
+            {/* 녹음 시간 */}
+            <RecorderTimer
+              seconds={timer.seconds}
+              maxSeconds={timer.maxSeconds}
+              isRecording={recordStatus === 'recording'}
+            />
 
             {/* 메시지 */}
             {(permissionMessage || videoPermissionMessage || message) && (
