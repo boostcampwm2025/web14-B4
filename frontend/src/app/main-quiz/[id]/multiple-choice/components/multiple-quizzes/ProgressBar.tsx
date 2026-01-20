@@ -6,8 +6,8 @@ interface ProgressBarProps {
 }
 
 export default function ProgressBar({ current, total }: ProgressBarProps) {
-  const percentage = Math.min((current / total) * 100, 100);
-  const progress = `${current}/${total}`;
+  const percentage = Math.min((current + 1 / total) * 100, 100);
+  const progress = `${current + 1}/${total}`;
 
   return (
     <div className="flex items-center gap-4 mb-2">
