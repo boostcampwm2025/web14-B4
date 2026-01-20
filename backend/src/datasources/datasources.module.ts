@@ -25,6 +25,9 @@ import { SolvedQuizRepository } from './repositories/tb-solved-quiz.repository';
 import { UserChecklistProgressRepository } from './repositories/tb-user-checklist-progress.repository';
 import { UserRepository } from './repositories/tb-user.repository';
 
+// seeder
+import { MultipleChoiceQuizSeeder } from './seeds/multiple-choice-quiz.seeder';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -41,6 +44,7 @@ import { UserRepository } from './repositories/tb-user.repository';
     ]),
   ],
   providers: [
+    MultipleChoiceQuizSeeder,
     ChecklistItemRepository,
     FlashcardRepository,
     MainQuizRepository,
