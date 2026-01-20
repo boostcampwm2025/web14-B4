@@ -42,4 +42,5 @@ export class MultipleChoiceOptionDto {
   multipleQuizOptionId: number;
   option: string;
   isCorrect: boolean;
+  explanation: string | null;
 }
