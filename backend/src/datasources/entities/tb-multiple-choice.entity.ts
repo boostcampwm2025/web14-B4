@@ -21,8 +21,8 @@ export class MultipleChoice {
   @JoinColumn({ name: 'main_quiz_id' })
   mainQuiz: MainQuiz;
 
-  @Column({ name: 'content', type: 'varchar', length: 255, nullable: true })
-  content?: string;
+  @Column({ name: 'content', type: 'varchar', length: 255, nullable: false })
+  content: string;
 
   @OneToMany(() => MultipleChoiceOption, (option) => option.multipleChoice)
   options: MultipleChoiceOption[];
