@@ -26,7 +26,11 @@ export default function MultipleChoiceQuiz({
 
       <div className="flex flex-col items-center gap-5 mt-6">
         {options.map((option) => (
-          <Choice key={option.multipleQuizOptionId} text={option.option} />
+          <Choice
+            key={option.multipleQuizOptionId}
+            text={option.option}
+            isCorrect={option.isCorrect}
+          />
         ))}
       </div>
     </div>
