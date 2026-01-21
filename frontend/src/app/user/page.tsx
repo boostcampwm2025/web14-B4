@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import DonutChart from './components/charts/DonutChart';
 import HexagonChart from './components/charts/HexagonChart';
-import { ComprehensionTable } from './components/DynamicTabl2';
-import { DynamicTable } from './components/DynamicTable';
 import MyProfile, { mockUserData } from './components/MyProfile';
 import TabSwitch, { Tab } from './components/TabSwitch';
 import { BasicTable } from './components/tables/BasicTable';
