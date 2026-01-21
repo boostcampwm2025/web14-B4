@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import { NAVER_STATE_KEY } from '@/constants/auth';
+import { NAVER_STATE_KEY, NAVER_AUTH_BASE_URL } from '@/constants/auth';
 
 // UUID v4를 사용하여 State 값 생성
 export function generateRandomState(): string {
@@ -10,7 +10,7 @@ export function generateRandomState(): string {
 export function getNaverLoginUrl(): string {
   const clientId = process.env.NEXT_PUBLIC_NAVER_CLIENT_ID;
   const redirectUri = process.env.NEXT_PUBLIC_NAVER_REDIRECT_URI;
-  const baseUrl = NAVER_STATE_KEY;
+  const baseUrl = NAVER_AUTH_BASE_URL;
 
   if (!clientId || !redirectUri) {
     console.error('네이버 로그인 환경변수가 설정되지 않았습니다.');
