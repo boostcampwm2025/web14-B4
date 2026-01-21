@@ -40,7 +40,7 @@ export class SpeechesService {
   ) {}
 
   /**
-   * 음성 녹음을 텍스트로 변환하여 반환한다.
+   * 음성 녹음을 텍스트로 변환하여 반환한다. - CSR 방식 (60초 처리 제한)
    * @param audioFile : 음성 파일
    * @param mainQuizId : 메인 퀴즈 id
    * @param userId : 사용자 id
@@ -212,7 +212,7 @@ export class SpeechesService {
     }
   }
 
-  // CLOVA speech long sync 추가
+  // STT 변환: CLOVA speech 장문 처리 메서드 (로컬 파일인식 + sync 방식)
   async clovaSpeechLongStt(
     audioFile: Express.Multer.File,
     mainQuizId: number,
