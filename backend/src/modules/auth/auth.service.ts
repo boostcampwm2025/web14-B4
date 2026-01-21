@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +6,8 @@ import Redis from 'ioredis';
 import { NaverLoginDto } from './dto/naver-login';
 import { User, Provider } from 'src/datasources/entities/tb-user.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
 interface NaverTokenResponse {
   access_token: string;
@@ -57,13 +59,13 @@ export class AuthService {
 
     const tokenResponse = await fetch(`${tokenUrl}?${tokenParams}`);
     if (!tokenResponse.ok) {
-      throw new UnauthorizedException('네이버 토큰 발급 실패');
+      throw new BusinessException(ERROR_MESSAGES.NAVER_TOKEN_FAILED);
     }
 
     const tokenData = (await tokenResponse.json()) as NaverTokenResponse;
     const accessToken = tokenData.access_token;
     if (!accessToken)
-      throw new UnauthorizedException('네이버 접근 토큰이 없습니다.');
+      throw new BusinessException(ERROR_MESSAGES.NAVER_TOKEN_FAILED);
 
     const profileUrl = 'https://openapi.naver.com/v1/nid/me';
     const profileResponse = await fetch(profileUrl, {
@@ -74,7 +76,7 @@ export class AuthService {
     });
 
     if (!profileResponse.ok) {
-      throw new UnauthorizedException('네이버 프로필 조회 실패');
+      throw new BusinessException(ERROR_MESSAGES.NAVER_PROFILE_FAILED);
     }
 
     const profileJson = (await profileResponse.json()) as NaverProfileResponse;
@@ -129,9 +131,7 @@ export class AuthService {
       const redisRt = await this.redisClient.get(`RT:${uuid}`);
 
       if (!redisRt || redisRt !== refreshToken) {
-        throw new UnauthorizedException(
-          '유효하지 않은 리프레시 토큰입니다. 재로그인이 필요합니다.',
-        );
+        throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
       }
 
       const newPayload: JwtPayload = { uuid: uuid, sub: payload.sub };
@@ -154,7 +154,7 @@ export class AuthService {
         refreshToken: newRefreshToken,
       };
     } catch {
-      throw new UnauthorizedException('토큰이 만료되었거나 유효하지 않습니다.');
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
     }
   }
 }
