@@ -5,7 +5,7 @@ import MultipleChoiceQuiz from './MultipleChoiceQuiz';
 import ProgressBar from './ProgressBar';
 import { useState } from 'react';
 import ArrowButtons from '../arrowBtn/ArrowButtons';
-import CommonPopup from '@/components/Popup';
+import Popup from '@/components/Popup';
 import { useRouter } from 'next/navigation';
 
 interface ContainerProps {
@@ -56,7 +56,7 @@ export default function MultipleQuizContainer({ multipleQuizzesInfo }: Container
         disableNext={false}
       />
 
-      <CommonPopup
+      <Popup
         isOpen={isPopupOpen}
         title="메인 퀴즈로 이동하시겠습니까?"
         description="아직 준비되지 않았다면 객관식 퀴즈를 다시 풀어보세요!"

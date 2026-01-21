@@ -1,3 +1,5 @@
+import { Button } from '@/components/Button';
+
 interface PopupProps {
   isOpen: boolean;
   title: string;
@@ -8,7 +10,15 @@ interface PopupProps {
   onCancel: () => void;
 }
 
-function CommonPopup({ isOpen, title, description, onConfirm, onCancel }: PopupProps) {
+function Popup({
+  isOpen,
+  title,
+  description,
+  confirmText = '네',
+  cancelText = '아니오',
+  onConfirm,
+  onCancel,
+}: PopupProps) {
   if (!isOpen) return null;
 
   return (
@@ -28,22 +38,27 @@ function CommonPopup({ isOpen, title, description, onConfirm, onCancel }: PopupP
 
         {/* 버튼 영역 */}
         <div className="flex gap-5">
-          <button
+          <Button
+            variant="secondary"
+            size="cta"
+            className="flex-1 rounded-[20px]"
             onClick={onCancel}
-            className="flex-1 py-3 bg-[#F1F4F9] text-gray-600 rounded-[20px] font-semibold hover:bg-gray-200 transition-colors cursor-pointer"
           >
-            아니오
-          </button>
-          <button
+            {cancelText}
+          </Button>
+
+          <Button
+            variant="primary"
+            size="cta"
+            className="flex-1 rounded-[20px] shadow-lg shadow-blue-100 active:scale-95"
             onClick={onConfirm}
-            className="flex-1 py-3 bg-[#4A7DFF] text-white rounded-[20px] font-semibold shadow-lg shadow-blue-100 hover:bg-[#3B6AE6] transition-all active:scale-95 cursor-pointer"
           >
-            네
-          </button>
+            {confirmText}
+          </Button>
         </div>
       </div>
     </div>
   );
 }
 
-export default CommonPopup;
+export default Popup;
