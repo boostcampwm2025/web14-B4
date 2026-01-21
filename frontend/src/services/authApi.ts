@@ -1,18 +1,24 @@
 import { apiFetch } from './http/apiFetch';
 
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    uuid: number;
+    username: string;
+  };
+}
+
 export async function loginWithNaver(code: string, state: string | null) {
-  const response = await fetch('http://localhost:8080/api/auth/login/naver', {
+  const data = await apiFetch<LoginResponse>('/api/auth/login/naver', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code, state }),
+    skipAuth: true,
   });
 
-  if (!response.ok) {
-    throw new Error('Login failed');
-  }
-
-  const data = await response.json();
   localStorage.setItem('accessToken', data.accessToken);
+  localStorage.setItem('refreshToken', data.refreshToken);
+
   return data;
 }
 
@@ -23,7 +29,7 @@ export async function refreshAccessToken() {
     throw new Error('리프레시 토큰이 없습니다.');
   }
 
-  return await apiFetch<{ accessToken: string; refreshToken: string }>('/auth/refresh', {
+  return await apiFetch<{ accessToken: string; refreshToken: string }>('/api/auth/refresh', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken }),
