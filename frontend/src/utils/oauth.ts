@@ -24,3 +24,12 @@ export function getNaverLoginUrl(): string {
     redirectUri,
   )}&state=${state}`;
 }
+
+// State 검증 함수
+export function verifyState(urlState: string | null): boolean {
+  if (!urlState) return false;
+
+  const savedState = sessionStorage.getItem(NAVER_STATE_KEY);
+  sessionStorage.removeItem(NAVER_STATE_KEY);
+  return urlState === savedState;
+}
