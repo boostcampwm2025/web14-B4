@@ -26,9 +26,9 @@ const TEST_USER_ID = 1;
 export class SpeechesController {
   constructor(private readonly recordsService: SpeechesService) {}
 
-  @Post('stt')
+  @Post('stt-csr')
   @UseInterceptors(FileInterceptor('audio'))
-  async speechToText(
+  async csrSpeechToText(
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<SttResponseDto> {
@@ -36,7 +36,7 @@ export class SpeechesController {
       throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
-    const result = await this.recordsService.speechToText(
+    const result = await this.recordsService.csrSpeechToText(
       recordFile,
       mainQuizId,
       TEST_USER_ID,
