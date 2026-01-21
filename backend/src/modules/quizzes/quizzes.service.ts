@@ -5,6 +5,10 @@ import {
   MultipleChoicesResponseDto,
 } from './dto/quiz-response.dto';
 import {
+  QuizImportanceDataDto,
+  mapSolvedQuizzesToImportanceData,
+} from './dto/quiz-importance-response.dto';
+import {
   MainQuiz,
   DifficultyLevel,
 } from '../../datasources/entities/tb-main-quiz.entity';
@@ -14,6 +18,7 @@ import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyw
 import { MultipleChoiceRepository } from 'src/datasources/repositories/tb-multiple-choice.repository';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 
 @Injectable()
 export class QuizzesService {
@@ -21,6 +26,7 @@ export class QuizzesService {
     private readonly quizRepository: MainQuizRepository,
     private readonly quizKeywordRepository: QuizKeywordRepository,
     private readonly multipleChoiceRepository: MultipleChoiceRepository,
+    private readonly solvedQuizRepository: SolvedQuizRepository,
   ) {}
 
   async getQuizzes(
@@ -130,5 +136,16 @@ export class QuizzesService {
       totalCount: mapped.length,
       multipleChoices: mapped,
     };
+  }
+
+  async getSolvedWithImportance(
+    userId: number,
+  ): Promise<QuizImportanceDataDto> {
+    // userId로 해당 유저가 존재하는지 조회
+    // userId에 해당하는 solvedQuiz 조회
+    const solvedQuiz =
+      await this.solvedQuizRepository.getImportanceByUserId(userId);
+
+    return mapSolvedQuizzesToImportanceData(solvedQuiz);
   }
 }
