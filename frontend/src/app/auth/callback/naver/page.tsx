@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { loginWithNaver } from '@/services/authApi';
 
-export default function NaverCallbackPage() {
+function NaverLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestSent = useRef(false);
@@ -32,5 +32,19 @@ export default function NaverCallbackPage() {
     <div className="flex justify-center items-center h-screen">
       <Loader message="로그인 처리 중입니다..." />
     </div>
+  );
+}
+
+export default function NaverCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center h-screen">
+          <Loader message="로딩 중..." />
+        </div>
+      }
+    >
+      <NaverLoginContent />
+    </Suspense>
   );
 }
