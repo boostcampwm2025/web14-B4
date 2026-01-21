@@ -16,9 +16,9 @@ services:
         - app-network
   redis:
     image: redis:alpine
-    container_name: redis-d
+    container_name: redis-dev
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - app-network
   backend-dev:
