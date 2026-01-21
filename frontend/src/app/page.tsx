@@ -30,7 +30,7 @@ export default function Home() {
           priority
         />
       </div>
-      <div className="absolute bottom-[10%] right-[5%] md:bottom-[15%] md:right-[15%] z-20">
+      <div className="flex flex-col gap-5 absolute bottom-[10%] right-[5%] md:bottom-[15%] md:right-[15%] z-20">
         <Link href="/quizzes">
           <Button
             variant="secondary"
@@ -45,7 +45,13 @@ export default function Home() {
           onClick={handleNaverLogin}
           className="inline-block transition-transform hover:scale-105 p-0 bg-transparent"
         >
-          <Image src="/naver-login.svg" alt="네이버 아이디로 로그인" priority />
+          <Image
+            src="/naver-login.svg"
+            alt="네이버 아이디로 로그인"
+            width={210}
+            height={48}
+            priority
+          />
         </button>
       </div>
     </div>
