@@ -59,6 +59,9 @@ export class AuthService {
 
     const tokenResponse = await fetch(`${tokenUrl}?${tokenParams}`);
     if (!tokenResponse.ok) {
+      const errorData = (await tokenResponse.json()) as Record<string, unknown>;
+      console.error('Naver Token Error:', JSON.stringify(errorData));
+      // TODO logExternalApiError로 교체 예정
       throw new BusinessException(ERROR_MESSAGES.NAVER_TOKEN_FAILED);
     }
 
