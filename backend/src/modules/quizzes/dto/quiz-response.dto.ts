@@ -25,3 +25,22 @@ export class ChecklistItemDto {
   sortOrder: number;
   content: string;
 }
+
+export class MultipleChoicesResponseDto {
+  mainQuizId: number;
+  totalCount: number;
+  multipleChoices: MultipleChoiceDto[];
+}
+
+export class MultipleChoiceDto {
+  multipleChoiceId: number;
+  content: string;
+  options: MultipleChoiceOptionDto[];
+}
+
+export class MultipleChoiceOptionDto {
+  multipleQuizOptionId: number;
+  option: string;
+  isCorrect: boolean;
+  explanation: string | null;
+}

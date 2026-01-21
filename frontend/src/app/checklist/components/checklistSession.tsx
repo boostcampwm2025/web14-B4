@@ -1,17 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { updateSpeechText } from '@/services/apis/speechesApi';
 import { useQuizStore } from '@/store/quizStore';
 import MySpeechText from './MySpeechText';
 import { SpeechItemDto } from '@/app/checklist/types/speeches.types';
 import { ChecklistItem } from '@/app/checklist/types/checklist.types';
-import { Checklist } from './checklist';
+import { Checklist } from './Checklist';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
+import { Button } from '@/components/Button';
 
 interface ChecklistSessionProps {
   mainQuizId: number;
@@ -28,6 +27,7 @@ export default function ChecklistSession({
   const {
     solvedQuizId,
     isAnalyzing,
+    _hasHydrated,
     actions: { requestAiFeedback },
   } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
@@ -37,6 +37,8 @@ export default function ChecklistSession({
   const [options, setOptions] = useState<ChecklistItem[]>(initialChecklistItems);
 
   useEffect(() => {
+    if (!_hasHydrated) return;
+
     if (!solvedQuizId || solvedQuizId <= 0) {
       toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
         position: 'top-center',
@@ -48,7 +50,7 @@ export default function ChecklistSession({
       });
       router.push(`/quizzes`);
     }
-  }, [solvedQuizId, router]);
+  }, [_hasHydrated, solvedQuizId, router]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
     setOptions((prev) =>
@@ -56,19 +58,7 @@ export default function ChecklistSession({
     );
   };
 
-  const handleUpdateSpeech = async () => {
-    try {
-      if (!speechItem) return;
-      await updateSpeechText(mainQuizId, speechItem.solvedQuizId, speechItem.speechText);
-      alert('음성 답변이 저장되었습니다!');
-    } catch (error) {
-      const message = error instanceof Error ? error.message : '음성 답변 저장에 실패했습니다.';
-      alert(message);
-      console.error('Failed to update speech:', error);
-    }
-  };
-
-  const handleResetAndNavigate = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleResetAndNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
       clearSolvedQuizId();
@@ -120,6 +110,11 @@ export default function ChecklistSession({
           subMessage="AI 분석이 진행 중입니다. 잠시만 기다려주세요."
         />
       )}
+      <div className="flex justify-start px-2 mb-4">
+        <div className="inline-block bg-[var(--color-primary)] text-white text-2xl font-medium px-8 py-2 rounded-full mt-1">
+          셀프체크
+        </div>
+      </div>
       {/* 메인 콘텐츠 - 좌우 배치 */}
       <div className="grid grid-cols-2 gap-6 mb-8">
         {/* 왼쪽: 나의 답변 */}
@@ -140,21 +135,14 @@ export default function ChecklistSession({
       </div>
 
       {/* 네비게이션 버튼 */}
-      <div className="flex flex-col sm:flex-row gap-3 md:gap-4 max-w-4xl mx-auto">
-        <Link
-          href="/practice"
-          onClick={handleResetAndNavigate}
-          className="flex-1 py-3 md:py-4 bg-white border-2 border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition text-center flex items-center justify-center gap-2 text-sm md:text-base"
-        >
-          다시풀기
-        </Link>
-        <button
-          onClick={handleSubmit}
-          className="flex-1 py-3 md:py-4 text-white rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2 text-sm md:text-base"
-          style={{ backgroundColor: '#4278FF' }}
-        >
+      <div className="mx-auto mt-8 flex w-full items-center justify-between">
+        <Button variant="secondary" size="fixed" onClick={handleResetAndNavigate}>
+          다시 풀기
+        </Button>
+
+        <Button variant="primary" size="fixed" onClick={handleSubmit}>
           다음
-        </button>
+        </Button>
       </div>
     </div>
   );

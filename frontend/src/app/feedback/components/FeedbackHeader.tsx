@@ -1,9 +1,9 @@
-import { Chip } from '@/components/Chip';
+import { QuizInfoBadge } from '@/components/QuizInfoBadge';
 
 type Props = {
   content: string;
   category: string;
-  difficultyLevel: string;
+  difficultyLevel: '상' | '중' | '하';
   userName: string;
   checklistCount: number;
   checkedCount: number;
@@ -21,15 +21,7 @@ export default function FeedbackHeader({
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px]">
         <div className="flex justify-center mb-4">
-          <Chip variant="primary" className="p-0 flex items-center divide-x divide-white">
-            <span className="px-3 text-sm font-medium">{category}</span>
-            <span className="px-3 text-sm font-medium flex items-center gap-2">
-              난이도
-              <span className="px-2 py-1 text-xs font-bold bg-white text-[var(--color-primary)] rounded-full">
-                {difficultyLevel}
-              </span>
-            </span>
-          </Chip>
+          <QuizInfoBadge quizCategoryName={category} difficultyLevel={difficultyLevel} size="sm" />
         </div>
         <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap">
           {content}

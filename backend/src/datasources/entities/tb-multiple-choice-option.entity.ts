@@ -22,6 +22,9 @@ export class MultipleChoiceOption {
   @Column({ name: 'option', type: 'varchar', length: 255 })
   option: string;
 
-  @Column({ name: 'is_correct', type: 'boolean', nullable: true })
-  isCorrect?: boolean;
+  @Column({ name: 'is_correct', type: 'boolean', nullable: false })
+  isCorrect: boolean;
+
+  @Column({ name: 'explanation', type: 'text', nullable: true })
+  explanation?: string;
 }
