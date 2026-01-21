@@ -14,7 +14,7 @@ describe('SpeechesController', () => {
   let controller: SpeechesController;
 
   const mockSpeechesService = {
-    speechToText: jest.fn(),
+    csrSpeechToText: jest.fn(),
     updateSpeechText: jest.fn(),
     getByQuizAndUser: jest.fn(),
   };
@@ -36,7 +36,7 @@ describe('SpeechesController', () => {
     jest.clearAllMocks();
   });
 
-  describe('speechToText', () => {
+  describe('csrSpeechToText', () => {
     const mockAudioFile: Express.Multer.File = {
       originalname: 'test.wav',
       mimetype: 'audio/wav',
@@ -51,9 +51,9 @@ describe('SpeechesController', () => {
         solvedQuizId: 1,
         text: '테스트 음성 텍스트',
       };
-      mockSpeechesService.speechToText.mockResolvedValue(serviceResult);
+      mockSpeechesService.csrSpeechToText.mockResolvedValue(serviceResult);
 
-      const result: SttResponseDto = await controller.speechToText(
+      const result: SttResponseDto = await controller.csrSpeechToText(
         mockAudioFile,
         mainQuizId,
       );
@@ -61,7 +61,7 @@ describe('SpeechesController', () => {
       expect(result).toBeInstanceOf(SttResponseDto);
       expect(result.solvedQuizId).toBe(1);
       expect(result.text).toBe('테스트 음성 텍스트');
-      expect(mockSpeechesService.speechToText).toHaveBeenCalledWith(
+      expect(mockSpeechesService.csrSpeechToText).toHaveBeenCalledWith(
         mockAudioFile,
         mainQuizId,
         1, // TEST_USER_ID
@@ -72,28 +72,28 @@ describe('SpeechesController', () => {
       const undefinedFile: Express.Multer.File | undefined = undefined;
 
       await expect(
-        controller.speechToText(undefinedFile!, mainQuizId),
+        controller.csrSpeechToText(undefinedFile!, mainQuizId),
       ).rejects.toThrow(BadRequestException);
-      expect(mockSpeechesService.speechToText).not.toHaveBeenCalled();
+      expect(mockSpeechesService.csrSpeechToText).not.toHaveBeenCalled();
     });
 
     it('음성 파일이 null이면 BadRequestException을 던진다', async () => {
       const nullFile: Express.Multer.File | null = null;
 
       await expect(
-        controller.speechToText(nullFile!, mainQuizId),
+        controller.csrSpeechToText(nullFile!, mainQuizId),
       ).rejects.toThrow(BadRequestException);
-      expect(mockSpeechesService.speechToText).not.toHaveBeenCalled();
+      expect(mockSpeechesService.csrSpeechToText).not.toHaveBeenCalled();
     });
 
     it('STT 변환 실패 시 서비스에서 발생한 에러를 던진다', async () => {
       const error: Error = new InternalServerErrorException(
         'STT conversion failed',
       );
-      mockSpeechesService.speechToText.mockRejectedValue(error);
+      mockSpeechesService.csrSpeechToText.mockRejectedValue(error);
 
       await expect(
-        controller.speechToText(mockAudioFile, mainQuizId),
+        controller.csrSpeechToText(mockAudioFile, mainQuizId),
       ).rejects.toThrow(error);
     });
 
@@ -107,9 +107,9 @@ describe('SpeechesController', () => {
         solvedQuizId: 2,
         text: 'MP3 텍스트',
       };
-      mockSpeechesService.speechToText.mockResolvedValue(serviceResult);
+      mockSpeechesService.csrSpeechToText.mockResolvedValue(serviceResult);
 
-      const result: SttResponseDto = await controller.speechToText(
+      const result: SttResponseDto = await controller.csrSpeechToText(
         mp3File,
         mainQuizId,
       );

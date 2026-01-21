@@ -7,7 +7,7 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
+import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 
@@ -29,7 +29,7 @@ export class SpeechesService {
    * @param userId : 사용자 id
    * @returns : 음성 파일을 텍스트로 변환한 문자열
    */
-  async speechToText(
+  async csrSpeechToText(
     audioFile: Express.Multer.File,
     mainQuizId: number,
     userId: number,
@@ -40,7 +40,7 @@ export class SpeechesService {
     let sttText: string;
 
     try {
-      sttText = await this.sttWithClova(audio);
+      sttText = await this.csrSttWithClova(audio);
     } catch {
       throw new InternalServerErrorException(
         '음성 인식(STT) 처리 중 오류가 발생했습니다.',
@@ -147,7 +147,7 @@ export class SpeechesService {
   }
 
   /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */
-  private async sttWithClova(audio: Buffer) {
+  private async csrSttWithClova(audio: Buffer) {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'NAVER_CLOVA_CLIENT_SECRET',
@@ -171,7 +171,7 @@ export class SpeechesService {
       );
     }
 
-    const sttResponse = (await response.json()) as ClovaSttResponse;
+    const sttResponse = (await response.json()) as CsrClovaSttResponse;
 
     return sttResponse.text;
   }

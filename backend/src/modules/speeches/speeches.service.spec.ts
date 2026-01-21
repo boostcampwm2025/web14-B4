@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SpeechesService } from './speeches.service';
 import { ConfigService } from '@nestjs/config';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
-import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
+import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
 
 type SolvedQuizEntity = {
   solvedQuizId: number;
@@ -10,7 +10,7 @@ type SolvedQuizEntity = {
   createdAt: Date;
 };
 
-type SpeechToTextResult = {
+type csrSpeechToTextResult = {
   solvedQuizId: number;
   text: string;
 };
@@ -53,7 +53,7 @@ describe('SpeechesService', () => {
     jest.clearAllMocks();
   });
 
-  describe('speechToText', () => {
+  describe('csrSpeechToText', () => {
     const mockAudioFile: Express.Multer.File = {
       originalname: 'test.wav',
       mimetype: 'audio/wav',
@@ -70,9 +70,9 @@ describe('SpeechesService', () => {
     const userId: number = 1;
 
     it('유효한 음성 파일을 텍스트로 변환하고 저장한다', async () => {
-      const clovaResponse: ClovaSttResponse = {
+      const clovaResponse: CsrClovaSttResponse = {
         text: '변환된 음성 텍스트',
-      } as ClovaSttResponse;
+      } as CsrClovaSttResponse;
       const mockSolvedQuiz: SolvedQuizEntity = {
         solvedQuizId: 1,
         speechText: '변환된 음성 텍스트',
@@ -89,7 +89,7 @@ describe('SpeechesService', () => {
         mockSolvedQuiz,
       );
 
-      const result: SpeechToTextResult = await service.speechToText(
+      const result: csrSpeechToTextResult = await service.csrSpeechToText(
         mockAudioFile,
         mainQuizId,
         userId,
@@ -106,7 +106,7 @@ describe('SpeechesService', () => {
       } as Express.Multer.File;
 
       await expect(
-        service.speechToText(invalidFile, mainQuizId, userId),
+        service.csrSpeechToText(invalidFile, mainQuizId, userId),
       ).rejects.toThrow('지원하지 않는 녹음 파일입니다: video/mp4');
     });
 
@@ -118,7 +118,7 @@ describe('SpeechesService', () => {
       } as Express.Multer.File;
 
       await expect(
-        service.speechToText(largeFile, mainQuizId, userId),
+        service.csrSpeechToText(largeFile, mainQuizId, userId),
       ).rejects.toThrow(
         '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
       );
@@ -131,7 +131,7 @@ describe('SpeechesService', () => {
       };
 
       await expect(
-        service.speechToText(
+        service.csrSpeechToText(
           noBufferFile as Express.Multer.File,
           mainQuizId,
           userId,
@@ -148,14 +148,14 @@ describe('SpeechesService', () => {
       mockConfigService.get.mockReturnValue('test-key');
 
       await expect(
-        service.speechToText(mockAudioFile, mainQuizId, userId),
+        service.csrSpeechToText(mockAudioFile, mainQuizId, userId),
       ).rejects.toThrow('음성 인식(STT) 처리 중 오류가 발생했습니다.');
     });
 
     it('STT 변환 결과가 없으면 에러를 던진다', async () => {
-      const clovaResponse: ClovaSttResponse = {
+      const clovaResponse: CsrClovaSttResponse = {
         text: '',
-      } as ClovaSttResponse;
+      } as CsrClovaSttResponse;
 
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
@@ -165,16 +165,16 @@ describe('SpeechesService', () => {
       mockConfigService.get.mockReturnValue('test-key');
 
       await expect(
-        service.speechToText(mockAudioFile, mainQuizId, userId),
+        service.csrSpeechToText(mockAudioFile, mainQuizId, userId),
       ).rejects.toThrow(
         'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
       );
     });
 
     it('STT 변환 결과가 공백만 있으면 에러를 던진다', async () => {
-      const clovaResponse: ClovaSttResponse = {
+      const clovaResponse: CsrClovaSttResponse = {
         text: '   ',
-      } as ClovaSttResponse;
+      } as CsrClovaSttResponse;
 
       global.fetch = jest.fn().mockResolvedValue({
         ok: true,
@@ -184,7 +184,7 @@ describe('SpeechesService', () => {
       mockConfigService.get.mockReturnValue('test-key');
 
       await expect(
-        service.speechToText(mockAudioFile, mainQuizId, userId),
+        service.csrSpeechToText(mockAudioFile, mainQuizId, userId),
       ).rejects.toThrow(
         'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
       );
