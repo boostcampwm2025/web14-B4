@@ -24,7 +24,26 @@ const TEST_USER_ID = 1;
 
 @Controller('speeches')
 export class SpeechesController {
-  constructor(private readonly recordsService: SpeechesService) {}
+  constructor(private readonly speechesService: SpeechesService) {}
+
+  @Post('stt')
+  @UseInterceptors(FileInterceptor('audio'))
+  async clovaLongStt(
+    @UploadedFile() recordFile: Express.Multer.File,
+    @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
+  ): Promise<SttResponseDto> {
+    if (!recordFile) {
+      throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
+    }
+
+    const result = await this.speechesService.clovaSpeechLongStt(
+      recordFile,
+      mainQuizId,
+      TEST_USER_ID,
+    );
+
+    return new SttResponseDto(result.solvedQuizId, result.text);
+  }
 
   @Post('stt-csr')
   @UseInterceptors(FileInterceptor('audio'))
@@ -36,7 +55,7 @@ export class SpeechesController {
       throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
-    const result = await this.recordsService.csrSpeechToText(
+    const result = await this.speechesService.csrSpeechToText(
       recordFile,
       mainQuizId,
       TEST_USER_ID,
@@ -52,7 +71,7 @@ export class SpeechesController {
   ): Promise<UpdateSpeechTextResponseDto> {
     // TODO : mainQuizId 로 mainQuiz record조회 후 유효한지 확인
 
-    const result = await this.recordsService.updateSpeechText(
+    const result = await this.speechesService.updateSpeechText(
       updateSpeechTextRequestDto.solvedQuizId,
       updateSpeechTextRequestDto.speechText,
     );
@@ -68,7 +87,7 @@ export class SpeechesController {
   async getSpeechesByMainQuizId(
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<GetSpeechesResponseDto> {
-    const solvedQuizzes = await this.recordsService.getByQuizAndUser(
+    const solvedQuizzes = await this.speechesService.getByQuizAndUser(
       mainQuizId,
       TEST_USER_ID,
     );
