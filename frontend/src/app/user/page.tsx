@@ -135,7 +135,7 @@ export default function Page() {
           {activeTab === 'understanding' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
               <div>
-                <HexagonChart />
+                <HexagonChart comprehensionData={comprehensionData} />
               </div>
               <div>
                 <BasicTable type="comprehension" data={comprehensionData} />
@@ -147,7 +147,7 @@ export default function Page() {
           {activeTab === 'solved' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
               <div>
-                <DonutChart />
+                <DonutChart solvedData={solvedData} />
               </div>
               <div>
                 <BasicTable type="solved" data={solvedData} />
