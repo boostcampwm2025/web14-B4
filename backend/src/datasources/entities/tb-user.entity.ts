@@ -19,8 +19,8 @@ export class User {
   @PrimaryGeneratedColumn('increment', { type: 'bigint', name: 'user_id' })
   userId: number;
 
-  @Column({ name: 'password', type: 'varchar', length: 255, nullable: true })
-  password?: string;
+  @Column({ name: 'uuid', type: 'uuid', unique: true })
+  uuid: string;
 
   @Column({ name: 'username', type: 'varchar', length: 255 })
   username: string;
