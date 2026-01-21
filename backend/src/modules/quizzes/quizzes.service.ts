@@ -50,7 +50,6 @@ export class QuizzesService {
     if (difficulty) where.difficultyLevel = difficulty;
 
     const result = await this.quizRepository.getCategoriesWithCount(difficulty);
-    console.log(result);
 
     const categories = result.map((row) => ({
       id: Number(row.id),
