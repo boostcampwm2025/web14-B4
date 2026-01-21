@@ -22,7 +22,7 @@ export default function Home() {
       <div className="absolute inset-0 z-0">
         <Image
           src="/wave-bg.svg"
-          alt="wave background"
+          alt="메인 page 배경 이미지"
           width={0}
           height={0}
           sizes="100vw"
