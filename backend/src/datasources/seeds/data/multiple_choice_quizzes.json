@@ -1,0 +1,1018 @@
+{
+  "data": [
+    {
+      "mainQuizId": 1,
+      "content": "사용자가 브라우저에 도메인 이름을 입력했을 때, DNS의 역할은 무엇인가요?",
+      "choices": [
+        {
+          "option": "웹 페이지를 화면에 렌더링한다",
+          "isCorrect": false,
+          "explanation": "렌더링은 브라우저가 HTML/CSS/JS를 해석하여 화면에 표시하는 과정으로, DNS의 역할이 아닙니다."
+        },
+        {
+          "option": "도메인 이름을 IP 주소로 변환한다",
+          "isCorrect": true,
+          "explanation": "DNS는 사람이 읽기 쉬운 도메인 이름(예: www.google.com)을 컴퓨터가 이해할 수 있는 IP 주소로 변환하는 역할을 합니다."
+        },
+        {
+          "option": "서버와 TCP 연결을 수립한다",
+          "isCorrect": false,
+          "explanation": "TCP 연결은 DNS 조회 이후에 3-way handshake를 통해 수립됩니다."
+        },
+        {
+          "option": "HTTP 요청을 생성한다",
+          "isCorrect": false,
+          "explanation": "HTTP 요청은 TCP 연결이 수립된 후에 브라우저가 생성합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 1,
+      "content": "TCP 3-way handshake의 목적은 무엇인가요?",
+      "choices": [
+        {
+          "option": "데이터를 암호화하기 위해",
+          "isCorrect": false,
+          "explanation": "데이터 암호화는 TLS/SSL의 역할입니다."
+        },
+        {
+          "option": "서버와 신뢰성 있는 연결을 수립하기 위해",
+          "isCorrect": true,
+          "explanation": "TCP 3-way handshake는 클라이언트와 서버 간에 신뢰성 있는 양방향 연결을 수립하는 과정입니다."
+        },
+        {
+          "option": "IP 주소를 찾기 위해",
+          "isCorrect": false,
+          "explanation": "IP 주소를 찾는 것은 DNS의 역할입니다."
+        },
+        {
+          "option": "HTML 파일을 다운로드하기 위해",
+          "isCorrect": false,
+          "explanation": "HTML 파일 다운로드는 HTTP 요청/응답 단계에서 이루어집니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 1,
+      "content": "HTTPS에서 TLS의 역할은 무엇인가요?",
+      "choices": [
+        {
+          "option": "웹 페이지를 빠르게 로딩한다",
+          "isCorrect": false,
+          "explanation": "TLS는 보안을 위한 프로토콜이며, 성능 최적화와는 직접적인 관련이 없습니다."
+        },
+        {
+          "option": "암호화된 통신을 위한 보안 연결을 제공한다",
+          "isCorrect": true,
+          "explanation": "TLS(Transport Layer Security)는 클라이언트와 서버 간의 통신을 암호화하여 안전한 데이터 전송을 보장합니다."
+        },
+        {
+          "option": "DNS 조회 속도를 향상시킨다",
+          "isCorrect": false,
+          "explanation": "DNS 조회는 TLS와 별개의 과정입니다."
+        },
+        {
+          "option": "서버의 부하를 분산한다",
+          "isCorrect": false,
+          "explanation": "부하 분산은 로드 밸런서의 역할입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 2,
+      "content": "HTTP/1.1의 HOL Blocking 문제는 무엇인가요?",
+      "choices": [
+        {
+          "option": "서버가 과부하로 응답하지 못하는 문제",
+          "isCorrect": false,
+          "explanation": "이는 서버 성능 문제이지 HOL Blocking과는 다릅니다."
+        },
+        {
+          "option": "앞선 요청의 응답이 지연되면 뒤 요청들도 대기하게 되는 문제",
+          "isCorrect": true,
+          "explanation": "HOL(Head-of-Line) Blocking은 HTTP/1.1에서 순차 처리 방식으로 인해 앞선 요청이 지연되면 후속 요청들도 함께 대기해야 하는 문제입니다."
+        },
+        {
+          "option": "네트워크 연결이 끊어지는 문제",
+          "isCorrect": false,
+          "explanation": "연결 끊김은 네트워크 장애이며 HOL Blocking과는 별개입니다."
+        },
+        {
+          "option": "메모리 부족으로 요청을 처리하지 못하는 문제",
+          "isCorrect": false,
+          "explanation": "메모리 부족은 시스템 리소스 문제입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 2,
+      "content": "HTTP/2의 멀티플렉싱이란 무엇인가요?",
+      "choices": [
+        {
+          "option": "여러 서버에 요청을 분산하는 방식",
+          "isCorrect": false,
+          "explanation": "이는 로드 밸런싱에 대한 설명입니다."
+        },
+        {
+          "option": "하나의 TCP 연결에서 여러 요청과 응답을 동시에 주고받는 방식",
+          "isCorrect": true,
+          "explanation": "멀티플렉싱은 HTTP/2의 핵심 기능으로, 하나의 TCP 연결 위에서 여러 요청과 응답을 동시에 처리할 수 있어 HOL Blocking 문제를 해결합니다."
+        },
+        {
+          "option": "요청을 압축하여 전송하는 방식",
+          "isCorrect": false,
+          "explanation": "압축은 별도의 기능이며, 멀티플렉싱과는 다릅니다."
+        },
+        {
+          "option": "캐시를 활용하여 응답 속도를 높이는 방식",
+          "isCorrect": false,
+          "explanation": "캐싱은 별도의 최적화 기법입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 2,
+      "content": "HTTP/2가 데이터를 전송하는 방식은?",
+      "choices": [
+        {
+          "option": "텍스트 기반으로 전송",
+          "isCorrect": false,
+          "explanation": "텍스트 기반 전송은 HTTP/1.1의 방식입니다."
+        },
+        {
+          "option": "바이너리 프레임 단위로 나누어 전송",
+          "isCorrect": true,
+          "explanation": "HTTP/2는 기존 HTTP의 의미는 유지하면서, 전송 방식을 바이너리 프레임 단위로 나누어 전송함으로써 성능을 크게 향상시켰습니다."
+        },
+        {
+          "option": "XML 형식으로 전송",
+          "isCorrect": false,
+          "explanation": "XML은 데이터 형식이지 전송 방식이 아닙니다."
+        },
+        {
+          "option": "JSON 형식으로 전송",
+          "isCorrect": false,
+          "explanation": "JSON은 애플리케이션 레벨의 데이터 형식입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 3,
+      "content": "SMTP의 주요 역할은 무엇인가요?",
+      "choices": [
+        {
+          "option": "이메일을 수신하여 저장하는 프로토콜",
+          "isCorrect": false,
+          "explanation": "이메일 수신과 저장은 POP3 또는 IMAP의 역할입니다."
+        },
+        {
+          "option": "클라이언트와 메일 서버 간에 이메일을 전송하는 프로토콜",
+          "isCorrect": true,
+          "explanation": "SMTP(Simple Mail Transfer Protocol)는 클라이언트와 메일 서버, 또는 메일 서버 간에 이메일을 전송하기 위한 프로토콜입니다."
+        },
+        {
+          "option": "이메일을 암호화하는 프로토콜",
+          "isCorrect": false,
+          "explanation": "암호화는 TLS/SSL 등의 보안 프로토콜이 담당합니다."
+        },
+        {
+          "option": "스팸 메일을 필터링하는 프로토콜",
+          "isCorrect": false,
+          "explanation": "스팸 필터링은 별도의 애플리케이션 레벨 기능입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 3,
+      "content": "MX 레코드의 역할은 무엇인가요?",
+      "choices": [
+        {
+          "option": "이메일의 크기를 제한한다",
+          "isCorrect": false,
+          "explanation": "이메일 크기 제한은 메일 서버의 설정 사항입니다."
+        },
+        {
+          "option": "특정 도메인의 메일을 처리할 서버 정보를 제공한다",
+          "isCorrect": true,
+          "explanation": "MX(Mail Exchange) 레코드는 DNS에 저장된 정보로, 특정 도메인의 이메일을 어느 서버로 전송해야 하는지 알려주는 역할을 합니다."
+        },
+        {
+          "option": "이메일을 암호화한다",
+          "isCorrect": false,
+          "explanation": "암호화는 보안 프로토콜의 역할입니다."
+        },
+        {
+          "option": "발신자의 신원을 인증한다",
+          "isCorrect": false,
+          "explanation": "발신자 인증은 SPF, DKIM 등의 기술이 담당합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 3,
+      "content": "메일 큐의 역할은 무엇인가요?",
+      "choices": [
+        {
+          "option": "수신된 메일을 영구 저장한다",
+          "isCorrect": false,
+          "explanation": "영구 저장은 수신 메일 서버의 메일박스가 담당합니다."
+        },
+        {
+          "option": "수신 서버로 바로 전송되지 못한 메일을 임시 저장한다",
+          "isCorrect": true,
+          "explanation": "메일 큐는 네트워크 문제나 서버 장애 등으로 수신 서버로 즉시 전송되지 못한 메일을 임시로 저장하는 대기 공간입니다."
+        },
+        {
+          "option": "스팸 메일을 분류한다",
+          "isCorrect": false,
+          "explanation": "스팸 분류는 메일 필터의 역할입니다."
+        },
+        {
+          "option": "메일 첨부 파일을 압축한다",
+          "isCorrect": false,
+          "explanation": "첨부 파일 압축은 클라이언트나 별도 애플리케이션이 수행합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 4,
+      "content": "프로세스가 가지는 독립된 메모리 영역이 아닌 것은?",
+      "choices": [
+        {
+          "option": "코드 영역",
+          "isCorrect": false,
+          "explanation": "코드 영역은 프로세스가 실행할 명령어들이 저장되는 독립된 메모리 공간입니다."
+        },
+        {
+          "option": "데이터 영역",
+          "isCorrect": false,
+          "explanation": "데이터 영역은 전역 변수와 정적 변수가 저장되는 독립된 메모리 공간입니다."
+        },
+        {
+          "option": "레지스터",
+          "isCorrect": true,
+          "explanation": "프로세스는 코드, 데이터, 힙, 스택 영역을 독립적으로 가지지만, 레지스터는 CPU의 구성 요소로 프로세스의 메모리 공간이 아닙니다."
+        },
+        {
+          "option": "힙 영역",
+          "isCorrect": false,
+          "explanation": "힙 영역은 동적 메모리 할당을 위한 독립된 메모리 공간입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 4,
+      "content": "같은 프로세스 내의 스레드들이 공유하지 않는 영역은?",
+      "choices": [
+        {
+          "option": "코드 영역",
+          "isCorrect": false,
+          "explanation": "코드 영역은 같은 프로세스의 모든 스레드가 공유합니다."
+        },
+        {
+          "option": "데이터 영역",
+          "isCorrect": false,
+          "explanation": "데이터 영역(전역 변수 등)은 스레드들이 공유합니다."
+        },
+        {
+          "option": "스택 영역",
+          "isCorrect": true,
+          "explanation": "스레드는 프로세스 내에서 코드, 데이터, 힙 영역을 공유하지만, 스택은 각 스레드가 독립적으로 가집니다."
+        },
+        {
+          "option": "힙 영역",
+          "isCorrect": false,
+          "explanation": "힙 영역은 스레드들이 공유하여 사용합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 4,
+      "content": "프로세스 간 컨텍스트 스위칭이 스레드 간보다 비용이 더 높은 이유는?",
+      "choices": [
+        {
+          "option": "프로세스는 네트워크 통신이 필요하기 때문에",
+          "isCorrect": false,
+          "explanation": "컨텍스트 스위칭은 네트워크 통신과 무관합니다."
+        },
+        {
+          "option": "프로세스는 독립된 메모리 공간을 가져 저장·복원할 정보가 더 많기 때문에",
+          "isCorrect": true,
+          "explanation": "프로세스는 독립된 메모리 공간을 가지므로 컨텍스트 스위칭 시 더 많은 상태 정보를 저장하고 복원해야 하여 비용이 더 큽니다."
+        },
+        {
+          "option": "프로세스는 더 많은 CPU를 사용하기 때문에",
+          "isCorrect": false,
+          "explanation": "CPU 사용량은 컨텍스트 스위칭 비용과 직접적인 관련이 없습니다."
+        },
+        {
+          "option": "프로세스는 디스크 접근이 필요하기 때문에",
+          "isCorrect": false,
+          "explanation": "컨텍스트 스위칭은 주로 메모리와 레지스터 작업이며, 디스크 접근과는 무관합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 5,
+      "content": "운영체제의 자원 관리 대상이 아닌 것은?",
+      "choices": [
+        {
+          "option": "CPU",
+          "isCorrect": false,
+          "explanation": "CPU는 운영체제가 스케줄링을 통해 관리하는 핵심 자원입니다."
+        },
+        {
+          "option": "메모리",
+          "isCorrect": false,
+          "explanation": "메모리는 운영체제가 할당과 회수를 관리하는 주요 자원입니다."
+        },
+        {
+          "option": "소스 코드",
+          "isCorrect": true,
+          "explanation": "운영체제는 CPU, 메모리, 디스크 같은 하드웨어 자원을 관리하지만, 소스 코드는 개발자가 작성하는 것으로 운영체제가 관리하지 않습니다."
+        },
+        {
+          "option": "디스크",
+          "isCorrect": false,
+          "explanation": "디스크(저장장치)는 운영체제가 파일 시스템을 통해 관리합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 5,
+      "content": "운영체제가 없다면 발생하는 문제로 가장 적절한 것은?",
+      "choices": [
+        {
+          "option": "인터넷 속도가 느려진다",
+          "isCorrect": false,
+          "explanation": "인터넷 속도는 네트워크 환경에 영향을 받습니다."
+        },
+        {
+          "option": "프로그램마다 하드웨어를 직접 제어해야 하므로 개발이 복잡해진다",
+          "isCorrect": true,
+          "explanation": "운영체제가 없으면 각 프로그램이 하드웨어를 직접 제어해야 하므로 개발이 매우 복잡하고 비효율적이 됩니다."
+        },
+        {
+          "option": "컴퓨터가 작동하지 않는다",
+          "isCorrect": false,
+          "explanation": "초기 컴퓨터는 운영체제 없이도 작동했지만, 매우 불편했습니다."
+        },
+        {
+          "option": "파일을 저장할 수 없다",
+          "isCorrect": false,
+          "explanation": "운영체제 없이도 저장은 가능하지만, 관리가 매우 어렵습니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 5,
+      "content": "운영체제가 프로그램 실행을 지원하는 방법은?",
+      "choices": [
+        {
+          "option": "프로그램 코드를 자동으로 작성한다",
+          "isCorrect": false,
+          "explanation": "코드 작성은 개발자의 역할입니다."
+        },
+        {
+          "option": "프로그램을 메모리에 올리고 CPU가 처리하도록 관리한다",
+          "isCorrect": true,
+          "explanation": "운영체제는 사용자가 실행한 프로그램을 메모리에 적재하고, CPU가 해당 프로그램을 처리할 수 있도록 스케줄링하고 관리합니다."
+        },
+        {
+          "option": "프로그램의 버그를 자동으로 수정한다",
+          "isCorrect": false,
+          "explanation": "버그 수정은 개발자가 해야 하는 작업입니다."
+        },
+        {
+          "option": "프로그램을 컴파일한다",
+          "isCorrect": false,
+          "explanation": "컴파일은 컴파일러가 수행하며, 운영체제의 직접적인 역할은 아닙니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 6,
+      "content": "세마포어에서 P 연산(wait)의 역할은?",
+      "choices": [
+        {
+          "option": "자원을 반환하고 카운터를 증가시킨다",
+          "isCorrect": false,
+          "explanation": "이는 V 연산(signal)의 역할입니다."
+        },
+        {
+          "option": "자원을 요청하고 카운터를 감소시킨다",
+          "isCorrect": true,
+          "explanation": "P 연산(wait, acquire)은 공유 자원을 요청할 때 사용되며, 세마포어 값을 1 감소시킵니다. 값이 0 이하면 대기 상태가 됩니다."
+        },
+        {
+          "option": "프로세스를 종료시킨다",
+          "isCorrect": false,
+          "explanation": "프로세스 종료는 별도의 시스템 호출로 처리됩니다."
+        },
+        {
+          "option": "메모리를 할당한다",
+          "isCorrect": false,
+          "explanation": "메모리 할당은 별도의 메모리 관리 함수가 담당합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 6,
+      "content": "세마포어의 카운팅 기능은 무엇을 의미하나요?",
+      "choices": [
+        {
+          "option": "프로세스의 실행 시간을 측정한다",
+          "isCorrect": false,
+          "explanation": "실행 시간 측정은 별도의 타이머나 프로파일링 도구가 수행합니다."
+        },
+        {
+          "option": "사용 가능한 자원의 개수를 숫자로 관리한다",
+          "isCorrect": true,
+          "explanation": "세마포어는 정수형 변수를 사용하여 동시에 접근 가능한 공유 자원의 개수를 카운팅 방식으로 관리합니다."
+        },
+        {
+          "option": "메모리 사용량을 계산한다",
+          "isCorrect": false,
+          "explanation": "메모리 사용량은 운영체제의 메모리 관리자가 추적합니다."
+        },
+        {
+          "option": "CPU 사용률을 모니터링한다",
+          "isCorrect": false,
+          "explanation": "CPU 사용률은 운영체제의 성능 모니터링 기능이 담당합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 6,
+      "content": "세마포어에서 V 연산(signal)의 역할은?",
+      "choices": [
+        {
+          "option": "프로세스를 강제 종료시킨다",
+          "isCorrect": false,
+          "explanation": "프로세스 강제 종료는 kill 시스템 호출 등으로 수행됩니다."
+        },
+        {
+          "option": "자원을 반환하고 카운터를 증가시킨다",
+          "isCorrect": true,
+          "explanation": "V 연산(signal, release)은 사용이 끝난 자원을 반환할 때 사용되며, 세마포어 값을 1 증가시켜 대기 중인 프로세스가 실행될 수 있게 합니다."
+        },
+        {
+          "option": "자원을 요청하고 카운터를 감소시킨다",
+          "isCorrect": false,
+          "explanation": "이는 P 연산(wait)의 역할입니다."
+        },
+        {
+          "option": "메모리를 해제한다",
+          "isCorrect": false,
+          "explanation": "메모리 해제는 별도의 메모리 관리 함수가 수행합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 7,
+      "content": "뮤텍스의 핵심 개념인 '상호 배제'란?",
+      "choices": [
+        {
+          "option": "여러 프로세스가 동시에 접근할 수 있다",
+          "isCorrect": false,
+          "explanation": "이는 상호 배제의 반대 개념입니다."
+        },
+        {
+          "option": "한 번에 하나의 프로세스만 임계 구역에 접근할 수 있다",
+          "isCorrect": true,
+          "explanation": "상호 배제(Mutual Exclusion)는 임계 구역에 동시에 하나의 프로세스나 스레드만 접근할 수 있도록 보장하는 것을 의미합니다."
+        },
+        {
+          "option": "우선순위가 높은 프로세스만 접근할 수 있다",
+          "isCorrect": false,
+          "explanation": "우선순위는 스케줄링과 관련된 개념입니다."
+        },
+        {
+          "option": "모든 프로세스가 순차적으로 접근한다",
+          "isCorrect": false,
+          "explanation": "순차 접근은 결과일 뿐, 상호 배제의 정의는 아닙니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 7,
+      "content": "뮤텍스에서 lock과 unlock의 역할은?",
+      "choices": [
+        {
+          "option": "메모리를 할당하고 해제한다",
+          "isCorrect": false,
+          "explanation": "메모리 할당/해제는 malloc/free 같은 함수가 수행합니다."
+        },
+        {
+          "option": "자원 사용을 잠그고 해제한다",
+          "isCorrect": true,
+          "explanation": "lock은 임계 구역에 진입하기 전에 자원을 잠그는 동작이고, unlock은 임계 구역을 빠져나온 후 자원을 해제하는 동작입니다."
+        },
+        {
+          "option": "프로세스를 생성하고 종료한다",
+          "isCorrect": false,
+          "explanation": "프로세스 생성/종료는 fork/exit 같은 시스템 호출이 수행합니다."
+        },
+        {
+          "option": "파일을 열고 닫는다",
+          "isCorrect": false,
+          "explanation": "파일 열기/닫기는 open/close 시스템 호출이 수행합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 7,
+      "content": "뮤텍스와 세마포어의 가장 큰 차이점은?",
+      "choices": [
+        {
+          "option": "뮤텍스는 하나, 세마포어는 여러 개의 자원 접근을 제어한다",
+          "isCorrect": true,
+          "explanation": "뮤텍스는 한 번에 하나의 실행 흐름만 접근하도록 보장하며(이진 세마포어), 세마포어는 카운팅을 통해 여러 개의 자원 접근을 제어할 수 있습니다."
+        },
+        {
+          "option": "뮤텍스는 느리고 세마포어는 빠르다",
+          "isCorrect": false,
+          "explanation": "성능 차이는 구현과 사용 상황에 따라 다릅니다."
+        },
+        {
+          "option": "뮤텍스는 메모리를, 세마포어는 CPU를 관리한다",
+          "isCorrect": false,
+          "explanation": "둘 다 동기화 메커니즘이며, 특정 자원을 직접 관리하지 않습니다."
+        },
+        {
+          "option": "뮤텍스는 자동이고 세마포어는 수동이다",
+          "isCorrect": false,
+          "explanation": "둘 다 프로그래머가 명시적으로 사용해야 합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 8,
+      "content": "트랜잭션의 원자성(Atomicity)이란?",
+      "choices": [
+        {
+          "option": "트랜잭션이 빠르게 실행되는 것",
+          "isCorrect": false,
+          "explanation": "속도는 성능 관련 개념이며 원자성과는 무관합니다."
+        },
+        {
+          "option": "트랜잭션의 모든 연산이 전부 성공하거나 전부 실패하는 것",
+          "isCorrect": true,
+          "explanation": "원자성은 트랜잭션 내의 모든 작업이 전부 성공하거나 전부 실패해야 하며, 부분적인 성공은 허용되지 않는다는 의미입니다."
+        },
+        {
+          "option": "트랜잭션이 독립적으로 실행되는 것",
+          "isCorrect": false,
+          "explanation": "이는 격리성(Isolation)에 대한 설명입니다."
+        },
+        {
+          "option": "트랜잭션 결과가 영구적으로 저장되는 것",
+          "isCorrect": false,
+          "explanation": "이는 지속성(Durability)에 대한 설명입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 8,
+      "content": "ACID의 격리성(Isolation)이 의미하는 것은?",
+      "choices": [
+        {
+          "option": "트랜잭션 실행 중 외부 접근을 차단한다",
+          "isCorrect": false,
+          "explanation": "완전 차단이 아니라 격리 수준에 따라 다릅니다."
+        },
+        {
+          "option": "동시에 실행되는 트랜잭션들이 서로 영향을 주지 않는다",
+          "isCorrect": true,
+          "explanation": "격리성은 동시에 실행되는 여러 트랜잭션이 서로 간섭하지 않고 독립적으로 실행되는 것처럼 보장하는 특성입니다."
+        },
+        {
+          "option": "트랜잭션이 독립된 메모리 공간에서 실행된다",
+          "isCorrect": false,
+          "explanation": "메모리 공간 분리가 아니라 논리적 격리입니다."
+        },
+        {
+          "option": "트랜잭션이 순차적으로만 실행된다",
+          "isCorrect": false,
+          "explanation": "동시 실행이 가능하며, 격리 수준에 따라 제어됩니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 8,
+      "content": "ACID의 지속성(Durability)이란?",
+      "choices": [
+        {
+          "option": "트랜잭션이 오래 실행될 수 있다",
+          "isCorrect": false,
+          "explanation": "실행 시간과는 무관한 개념입니다."
+        },
+        {
+          "option": "커밋된 데이터는 시스템 장애가 발생해도 유지된다",
+          "isCorrect": true,
+          "explanation": "지속성은 트랜잭션이 성공적으로 커밋되면 그 결과가 영구적으로 데이터베이스에 저장되어 장애가 발생해도 유지되는 특성입니다."
+        },
+        {
+          "option": "트랜잭션을 반복 실행할 수 있다",
+          "isCorrect": false,
+          "explanation": "반복 실행 가능성은 지속성과 다른 개념입니다."
+        },
+        {
+          "option": "데이터가 압축되어 저장된다",
+          "isCorrect": false,
+          "explanation": "압축은 저장 방식이며 지속성과는 무관합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 9,
+      "content": "데이터베이스 인덱스에 주로 사용되는 자료구조는?",
+      "choices": [
+        {
+          "option": "배열",
+          "isCorrect": false,
+          "explanation": "배열은 검색 속도가 느려 인덱스로 적합하지 않습니다."
+        },
+        {
+          "option": "B-Tree / B+-Tree",
+          "isCorrect": true,
+          "explanation": "인덱스는 빠른 검색을 위해 B-Tree 또는 B+-Tree와 같은 균형 잡힌 트리 구조를 주로 사용합니다."
+        },
+        {
+          "option": "스택",
+          "isCorrect": false,
+          "explanation": "스택은 LIFO 구조로 검색에 적합하지 않습니다."
+        },
+        {
+          "option": "큐",
+          "isCorrect": false,
+          "explanation": "큐는 FIFO 구조로 검색에 적합하지 않습니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 9,
+      "content": "인덱스가 검색 속도를 향상시키는 원리는?",
+      "choices": [
+        {
+          "option": "데이터를 압축하여 저장한다",
+          "isCorrect": false,
+          "explanation": "압축은 저장 공간 절약이며 검색 속도 향상의 주된 원리가 아닙니다."
+        },
+        {
+          "option": "데이터가 정렬된 상태로 유지되어 빠른 탐색이 가능하다",
+          "isCorrect": true,
+          "explanation": "인덱스는 데이터를 정렬된 상태로 유지하여 전체 테이블을 스캔하지 않고도 원하는 데이터를 빠르게 찾을 수 있습니다."
+        },
+        {
+          "option": "모든 데이터를 메모리에 캐싱한다",
+          "isCorrect": false,
+          "explanation": "캐싱은 별도의 최적화 기법이며, 인덱스의 기본 원리는 아닙니다."
+        },
+        {
+          "option": "병렬 처리를 통해 속도를 높인다",
+          "isCorrect": false,
+          "explanation": "병렬 처리는 별도의 최적화이며, 인덱스의 핵심 원리는 아닙니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 9,
+      "content": "인덱스 사용의 단점(추가 비용)은?",
+      "choices": [
+        {
+          "option": "조회 속도가 느려진다",
+          "isCorrect": false,
+          "explanation": "인덱스는 조회 속도를 향상시킵니다."
+        },
+        {
+          "option": "저장 공간이 증가하고 쓰기 성능이 저하된다",
+          "isCorrect": true,
+          "explanation": "인덱스는 별도의 저장 공간이 필요하며, 데이터 삽입/수정/삭제 시 인덱스도 함께 갱신해야 하므로 쓰기 성능이 저하될 수 있습니다."
+        },
+        {
+          "option": "데이터 무결성이 깨진다",
+          "isCorrect": false,
+          "explanation": "인덱스는 데이터 무결성에 영향을 주지 않습니다."
+        },
+        {
+          "option": "동시 접근이 불가능해진다",
+          "isCorrect": false,
+          "explanation": "인덱스는 동시 접근을 제한하지 않습니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 10,
+      "content": "READ UNCOMMITTED 격리 수준의 특징은?",
+      "choices": [
+        {
+          "option": "가장 높은 격리 수준이다",
+          "isCorrect": false,
+          "explanation": "READ UNCOMMITTED는 가장 낮은 격리 수준입니다."
+        },
+        {
+          "option": "커밋되지 않은 데이터도 읽을 수 있다",
+          "isCorrect": true,
+          "explanation": "READ UNCOMMITTED는 가장 낮은 격리 수준으로, 다른 트랜잭션이 커밋하지 않은 데이터도 읽을 수 있어 Dirty Read가 발생할 수 있습니다."
+        },
+        {
+          "option": "같은 데이터를 반복해서 읽어도 값이 변하지 않는다",
+          "isCorrect": false,
+          "explanation": "이는 REPEATABLE READ의 특징입니다."
+        },
+        {
+          "option": "트랜잭션을 순차 실행처럼 처리한다",
+          "isCorrect": false,
+          "explanation": "이는 SERIALIZABLE의 특징입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 10,
+      "content": "SERIALIZABLE 격리 수준의 특징은?",
+      "choices": [
+        {
+          "option": "가장 낮은 격리 수준이다",
+          "isCorrect": false,
+          "explanation": "SERIALIZABLE은 가장 높은 격리 수준입니다."
+        },
+        {
+          "option": "커밋되지 않은 데이터를 읽을 수 있다",
+          "isCorrect": false,
+          "explanation": "이는 READ UNCOMMITTED의 특징입니다."
+        },
+        {
+          "option": "트랜잭션을 순차 실행처럼 처리하는 가장 높은 격리 수준이다",
+          "isCorrect": true,
+          "explanation": "SERIALIZABLE은 가장 높은 격리 수준으로, 트랜잭션을 완전히 순차적으로 실행하는 것처럼 처리하여 가장 높은 일관성을 보장하지만 동시성은 가장 낮습니다."
+        },
+        {
+          "option": "동시성이 가장 높다",
+          "isCorrect": false,
+          "explanation": "SERIALIZABLE은 일관성은 높지만 동시성은 가장 낮습니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 10,
+      "content": "REPEATABLE READ 격리 수준의 특징은?",
+      "choices": [
+        {
+          "option": "커밋되지 않은 데이터를 읽을 수 있다",
+          "isCorrect": false,
+          "explanation": "REPEATABLE READ는 커밋된 데이터만 읽습니다."
+        },
+        {
+          "option": "같은 쿼리를 반복 실행해도 동일한 결과를 보장한다",
+          "isCorrect": true,
+          "explanation": "REPEATABLE READ는 트랜잭션 내에서 같은 데이터를 반복해서 읽어도 처음 읽은 값이 유지되는 것을 보장하는 격리 수준입니다."
+        },
+        {
+          "option": "가장 낮은 격리 수준이다",
+          "isCorrect": false,
+          "explanation": "가장 낮은 격리 수준은 READ UNCOMMITTED입니다."
+        },
+        {
+          "option": "데이터 무결성을 보장하지 않는다",
+          "isCorrect": false,
+          "explanation": "REPEATABLE READ는 적절한 수준의 무결성을 보장합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 11,
+      "content": "CPU가 RAM을 사용하는 주된 이유는?",
+      "choices": [
+        {
+          "option": "RAM이 저장 용량이 크기 때문에",
+          "isCorrect": false,
+          "explanation": "일반적으로 하드디스크가 RAM보다 용량이 큽니다."
+        },
+        {
+          "option": "RAM의 접근 속도가 디스크보다 훨씬 빠르기 때문에",
+          "isCorrect": true,
+          "explanation": "RAM은 디스크에 비해 접근 속도가 수천 배 빠르기 때문에 CPU가 실행 중인 프로그램과 데이터를 처리할 때 사용됩니다."
+        },
+        {
+          "option": "RAM이 더 저렴하기 때문에",
+          "isCorrect": false,
+          "explanation": "RAM은 일반적으로 하드디스크보다 비쌉니다."
+        },
+        {
+          "option": "RAM이 데이터를 영구 보관하기 때문에",
+          "isCorrect": false,
+          "explanation": "RAM은 휘발성 메모리로 전원이 꺼지면 데이터가 사라집니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 11,
+      "content": "메모리(RAM)의 역할은?",
+      "choices": [
+        {
+          "option": "데이터를 영구적으로 저장한다",
+          "isCorrect": false,
+          "explanation": "영구 저장은 하드디스크나 SSD의 역할입니다."
+        },
+        {
+          "option": "실행 중인 프로그램과 데이터를 임시로 저장한다",
+          "isCorrect": true,
+          "explanation": "메모리(RAM)는 실행 중인 프로그램과 데이터를 임시로 저장하는 공간으로, CPU가 빠르게 접근할 수 있도록 합니다."
+        },
+        {
+          "option": "연산을 직접 수행한다",
+          "isCorrect": false,
+          "explanation": "연산은 CPU가 수행합니다."
+        },
+        {
+          "option": "화면에 그래픽을 출력한다",
+          "isCorrect": false,
+          "explanation": "그래픽 출력은 GPU와 모니터가 담당합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 11,
+      "content": "프로그램이 실행되는 과정에서 메모리의 역할은?",
+      "choices": [
+        {
+          "option": "프로그램 코드를 컴파일한다",
+          "isCorrect": false,
+          "explanation": "컴파일은 실행 전에 컴파일러가 수행합니다."
+        },
+        {
+          "option": "하드디스크에서 가져온 프로그램을 저장하여 CPU가 처리할 수 있게 한다",
+          "isCorrect": true,
+          "explanation": "프로그램 실행 시 하드디스크에 저장된 프로그램이 메모리로 로드되고, CPU는 메모리에 있는 명령어와 데이터를 읽어 처리합니다."
+        },
+        {
+          "option": "프로그램의 오류를 검사한다",
+          "isCorrect": false,
+          "explanation": "오류 검사는 컴파일러나 디버거가 수행합니다."
+        },
+        {
+          "option": "프로그램을 네트워크로 전송한다",
+          "isCorrect": false,
+          "explanation": "네트워크 전송은 네트워크 인터페이스가 담당합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 12,
+      "content": "CPU 파이프라이닝의 주요 목적은?",
+      "choices": [
+        {
+          "option": "전력 소비를 줄이기 위해",
+          "isCorrect": false,
+          "explanation": "전력 절감이 아닌 처리량 향상이 주 목적입니다."
+        },
+        {
+          "option": "명령어를 여러 단계로 나누어 동시에 처리함으로써 처리량을 높이기 위해",
+          "isCorrect": true,
+          "explanation": "파이프라이닝은 명령어 실행을 여러 단계로 나누고 각 단계에 서로 다른 명령어를 배치하여 CPU의 유휴 시간을 줄이고 전체 처리량을 향상시킵니다."
+        },
+        {
+          "option": "메모리 용량을 늘리기 위해",
+          "isCorrect": false,
+          "explanation": "파이프라이닝은 메모리 용량과 무관합니다."
+        },
+        {
+          "option": "클럭 속도를 낮추기 위해",
+          "isCorrect": false,
+          "explanation": "파이프라이닝은 클럭 속도와 직접적인 관련이 없습니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 12,
+      "content": "파이프라인 해저드가 발생하는 원인은?",
+      "choices": [
+        {
+          "option": "메모리 부족",
+          "isCorrect": false,
+          "explanation": "메모리 부족은 시스템 리소스 문제입니다."
+        },
+        {
+          "option": "명령어 간 의존성, 자원 충돌, 분기 명령 등",
+          "isCorrect": true,
+          "explanation": "파이프라인 해저드는 명령어 간 데이터 의존성, 자원 충돌, 조건 분기 등으로 인해 파이프라인이 정상적으로 동작하지 못하는 상황을 말합니다."
+        },
+        {
+          "option": "전력 부족",
+          "isCorrect": false,
+          "explanation": "전력 부족은 하드웨어 공급 문제입니다."
+        },
+        {
+          "option": "네트워크 지연",
+          "isCorrect": false,
+          "explanation": "네트워크 지연은 CPU 파이프라인과 무관합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 12,
+      "content": "파이프라이닝의 성능 향상 효과는?",
+      "choices": [
+        {
+          "option": "개별 명령어의 실행 시간이 단축된다",
+          "isCorrect": false,
+          "explanation": "개별 명령어의 실행 시간(latency)은 변하지 않습니다."
+        },
+        {
+          "option": "단위 시간당 처리할 수 있는 명령어 개수가 증가한다",
+          "isCorrect": true,
+          "explanation": "파이프라이닝은 개별 명령어의 실행 시간을 줄이지는 않지만, 여러 명령어를 동시에 처리함으로써 전체 처리량(throughput)을 증가시킵니다."
+        },
+        {
+          "option": "메모리 접근 속도가 빨라진다",
+          "isCorrect": false,
+          "explanation": "메모리 접근 속도는 메모리 하드웨어에 의해 결정됩니다."
+        },
+        {
+          "option": "클럭 속도가 증가한다",
+          "isCorrect": false,
+          "explanation": "클럭 속도는 파이프라이닝과 독립적입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 13,
+      "content": "가상 메모리의 주요 목적은?",
+      "choices": [
+        {
+          "option": "디스크 공간을 늘리기 위해",
+          "isCorrect": false,
+          "explanation": "디스크 공간 확장이 아닌 메모리 효율성 향상이 목적입니다."
+        },
+        {
+          "option": "프로세스마다 독립적인 주소 공간을 제공하고 물리 메모리를 효율적으로 사용하기 위해",
+          "isCorrect": true,
+          "explanation": "가상 메모리는 각 프로세스에 독립적인 주소 공간을 제공하고, 실제로 필요한 부분만 RAM에 올려 물리 메모리를 효율적으로 사용하게 합니다."
+        },
+        {
+          "option": "CPU 속도를 높이기 위해",
+          "isCorrect": false,
+          "explanation": "CPU 속도 향상이 아닌 메모리 관리가 목적입니다."
+        },
+        {
+          "option": "네트워크 속도를 향상시키기 위해",
+          "isCorrect": false,
+          "explanation": "가상 메모리는 네트워크와 무관합니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 13,
+      "content": "페이지 테이블의 역할은?",
+      "choices": [
+        {
+          "option": "프로그램을 컴파일한다",
+          "isCorrect": false,
+          "explanation": "컴파일은 컴파일러의 역할입니다."
+        },
+        {
+          "option": "가상 주소를 물리 주소로 매핑한다",
+          "isCorrect": true,
+          "explanation": "페이지 테이블은 프로세스의 가상 페이지 번호를 실제 물리 메모리의 프레임 번호로 변환하는 자료구조입니다."
+        },
+        {
+          "option": "디스크 공간을 관리한다",
+          "isCorrect": false,
+          "explanation": "디스크 공간은 파일 시스템이 관리합니다."
+        },
+        {
+          "option": "네트워크 패킷을 라우팅한다",
+          "isCorrect": false,
+          "explanation": "패킷 라우팅은 네트워크 계층의 역할입니다."
+        }
+      ]
+    },
+    {
+      "mainQuizId": 13,
+      "content": "주소 변환 과정에서 CPU가 사용하는 주소 타입은?",
+      "choices": [
+        {
+          "option": "물리 주소",
+          "isCorrect": false,
+          "explanation": "CPU는 가상 주소를 사용하며, 이것이 물리 주소로 변환됩니다."
+        },
+        {
+          "option": "가상 주소",
+          "isCorrect": true,
+          "explanation": "CPU는 프로세스 실행 시 가상 주소를 사용하며, 이것이 MMU(Memory Management Unit)를 통해 물리 주소로 변환됩니다."
+        },
+        {
+          "option": "MAC 주소",
+          "isCorrect": false,
+          "explanation": "MAC 주소는 네트워크 인터페이스의 하드웨어 주소입니다."
+        },
+        {
+          "option": "IP 주소",
+          "isCorrect": false,
+          "explanation": "IP 주소는 네트워크 계층의 주소입니다."
+        }
+      ]
+    }
+  ]
+}
