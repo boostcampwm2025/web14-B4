@@ -80,4 +80,26 @@ export const ERROR_MESSAGES = {
     status: 500,
     message: 'AI 서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
   },
+
+  // OAuth 및 인증 관련 에러
+  NAVER_TOKEN_FAILED: {
+    errorCode: 'NAVER_TOKEN_FAILED',
+    status: 401,
+    message: '네이버 인증 토큰 발급에 실패했습니다.',
+  },
+  NAVER_PROFILE_FAILED: {
+    errorCode: 'NAVER_PROFILE_FAILED',
+    status: 401,
+    message: '네이버 프로필 조회에 실패했습니다.',
+  },
+  REFRESH_TOKEN_INVALID: {
+    errorCode: 'REFRESH_TOKEN_INVALID',
+    status: 401,
+    message: '유효하지 않은 리프레시 토큰입니다. 다시 로그인해주세요.',
+  },
+  REFRESH_TOKEN_EXPIRED: {
+    errorCode: 'REFRESH_TOKEN_EXPIRED',
+    status: 401,
+    message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요.',
+  },
 };
