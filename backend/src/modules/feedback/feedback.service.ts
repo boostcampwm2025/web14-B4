@@ -20,20 +20,9 @@ import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-qui
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 
 const MIN_USER_ANSWER_LENGTH = 50;
-
-interface GeminiErrorResponse extends Error {
-  response?: {
-    status?: number;
-    data?: {
-      error?: {
-        details?: Array<{ reason?: string }>;
-      };
-    };
-  };
-  status?: number;
-}
 
 @Injectable()
 export class FeedbackService {
@@ -131,30 +120,18 @@ export class FeedbackService {
 
       return JSON.parse(textResponse) as Record<string, unknown>;
     } catch (error: unknown) {
-      const err = error as GeminiErrorResponse;
+      const err = error as Error & {
+        status?: number;
+        response?: { status?: number; data?: unknown };
+      };
+
       const status = err.status ?? err.response?.status;
       const message = err.message ?? '';
 
-      // 제미나이 API가 반환하는 오류 스택 로깅
-      if (error instanceof Error) {
-        // 오류 객체일 경우
-        this.logger.error(
-          {
-            message: '[Gemini API Error]',
-            inputLength: userText.length,
-            status,
-            responseData: err.response?.data,
-          },
-          err.stack,
-        );
-      } else {
-        // 오류 객체가 아닐 경우
-        this.logger.error({
-          message: '[Gemini API Error - Unknown Throwable]',
-          error,
-          inputLength: userText.length,
-        });
-      }
+      // 제미나이 API가 반환하는 오류 메시지 로깅
+      logExternalApiError(this.logger, 'GEMINI', '[Gemini API Error]', error, {
+        inputLength: userText.length,
+      });
 
       // 토큰 할당량 초과 (429)
       if (status === 429) {
