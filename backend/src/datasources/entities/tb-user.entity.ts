@@ -47,6 +47,9 @@ export class User {
   })
   provider?: Provider;
 
+  @Column({ name: 'provider_id', type: 'varchar', length: 255, nullable: true })
+  providerId?: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
