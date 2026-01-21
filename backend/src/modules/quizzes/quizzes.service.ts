@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { MainQuizRepository } from '../../datasources/repositories/tb-main-quiz.repository';
-import { QuizChecklistResponseDto } from './dto/quiz-response.dto';
+import {
+  QuizChecklistResponseDto,
+  MultipleChoicesResponseDto,
+} from './dto/quiz-response.dto';
 import {
   MainQuiz,
   DifficultyLevel,
@@ -8,12 +11,16 @@ import {
 import { FindOptionsWhere } from 'typeorm';
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyword.repository';
+import { MultipleChoiceRepository } from 'src/datasources/repositories/tb-multiple-choice.repository';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
 @Injectable()
 export class QuizzesService {
   constructor(
     private readonly quizRepository: MainQuizRepository,
     private readonly quizKeywordRepository: QuizKeywordRepository,
+    private readonly multipleChoiceRepository: MultipleChoiceRepository,
   ) {}
 
   async getQuizzes(
@@ -95,5 +102,34 @@ export class QuizzesService {
         content: item.content,
       })),
     });
+  }
+
+  async getMultipleChoicesByMainQuizId(
+    mainQuizId: number,
+  ): Promise<MultipleChoicesResponseDto> {
+    const mainQuiz = await this.quizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
+    }
+
+    const multipleChoices =
+      await this.multipleChoiceRepository.findByMainQuizId(mainQuizId);
+
+    const mapped = multipleChoices.map((mc) => ({
+      multipleChoiceId: mc.multipleChoiceId,
+      content: mc.content,
+      options: mc.options.map((opt) => ({
+        multipleQuizOptionId: opt.multipleQuizOptionId,
+        option: opt.option,
+        isCorrect: Boolean(opt.isCorrect),
+        explanation: opt.explanation ?? null,
+      })),
+    }));
+
+    return {
+      mainQuizId,
+      totalCount: mapped.length,
+      multipleChoices: mapped,
+    };
   }
 }
