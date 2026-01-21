@@ -24,6 +24,11 @@ interface NaverProfileResponse {
   };
 }
 
+interface JwtPayload {
+  uuid: string;
+  sub: number;
+}
+
 @Injectable()
 export class AuthService {
   private readonly redisClient: Redis;
@@ -114,5 +119,42 @@ export class AuthService {
         username: user.username,
       },
     };
+  }
+
+  async refresh(refreshToken: string) {
+    try {
+      const payload = this.jwtService.verify<JwtPayload>(refreshToken);
+      const uuid = payload.uuid;
+
+      const redisRt = await this.redisClient.get(`RT:${uuid}`);
+
+      if (!redisRt || redisRt !== refreshToken) {
+        throw new UnauthorizedException(
+          '유효하지 않은 리프레시 토큰입니다. 재로그인이 필요합니다.',
+        );
+      }
+
+      const newPayload: JwtPayload = { uuid: uuid, sub: payload.sub };
+      const newAccessToken = this.jwtService.sign(newPayload, {
+        expiresIn: '1h',
+      });
+      const newRefreshToken = this.jwtService.sign(newPayload, {
+        expiresIn: '7d',
+      });
+
+      await this.redisClient.set(
+        `RT:${uuid}`,
+        newRefreshToken,
+        'EX',
+        60 * 60 * 24 * 7,
+      );
+
+      return {
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch {
+      throw new UnauthorizedException('토큰이 만료되었거나 유효하지 않습니다.');
+    }
   }
 }
