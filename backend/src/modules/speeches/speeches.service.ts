@@ -1,5 +1,4 @@
 import {
-  BadGatewayException,
   BadRequestException,
   Inject,
   Injectable,
@@ -15,14 +14,16 @@ import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-q
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
 
   // 로깅용
-  result?: string; // 예: "COMPLETED"
-  message?: string; // 예: "Succeeded"
-  confidence?: string; // 정확도
+  result?: 'COMPLETED' | 'FAILED' | (string & {});
+  message?: string; // 성공시 "Succeeded"
+  confidence?: string; // 변환 정확도
 };
 
 // TODO : 추가로 처리해야할 예외
@@ -321,33 +322,63 @@ export class SpeechesService {
         const err = new Error(errorText) as Error & { status?: number };
         err.status = response.status;
 
+        // CLOVA API가 반환하는 오류 메시지 로깅
         logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', err, {
           ...meta,
           durationMs,
         });
 
-        throw new BadGatewayException(`CLOVA STT 변환 실패: ${errorText}`);
+        // 인증 실패(Authentication Failed), 권한 없음(Permission Denied)
+        if (response.status === 401) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_UNAUTHORIZED);
+        }
+
+        // 권한 없음(Not Found Exception)
+        if (response.status === 404) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_FORBIDDEN);
+        }
+
+        // 요청 한도 초과
+        if (response.status === 429) {
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_RATE_LIMIT_EXCEEDED,
+          );
+        }
+
+        // 기타 CLOVA 서비스 오류
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
       }
 
       const result = (await response.json()) as ClovaSpeechLongSyncResponse;
 
+      if (result.result === 'FAILED') {
+        // 일별 한도 제한 초과 오류 (CLOVA가 response.ok && body.result=FAILED 으로 응답함)
+        if (result.message?.includes('일별 한도')) {
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_DAILY_QUOTA_EXCEEDED,
+          );
+        }
+
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
+      }
+
       this.logger.log(
-        `[STT API] result=${result.result ?? 'UNKNOWN'} message=${result.message ?? 'UNKNOWN'} confidence=${result.confidence ?? 'UNKNOWN'} duration=${durationMs} meta=${JSON.stringify(meta)}`,
+        `[STT API] result=${result.result ?? 'UNKNOWN'} message=${result.message ?? 'UNKNOWN'} confidence=${result.confidence ?? 'UNKNOWN'} duration=${durationMs}ms meta=${JSON.stringify(meta)}`,
         'SpeechesService',
       );
-
-      console.log(result);
 
       return result;
     } catch (error: unknown) {
       const durationMs = Date.now() - startedAt;
+
       // 네트워크 에러/타임아웃 같은 fetch 자체 실패 (응답도 못 받은 케이스)
+      // CLOVA API가 반환하는 오류 메시지 로깅
       logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', error, {
         ...meta,
-        durationMs,
+        durationMs: `${durationMs}ms`,
       });
 
-      throw error;
+      throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
   }
 }
