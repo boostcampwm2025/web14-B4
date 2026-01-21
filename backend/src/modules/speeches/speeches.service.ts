@@ -371,6 +371,10 @@ export class SpeechesService {
     } catch (error: unknown) {
       const durationMs = Date.now() - startedAt;
 
+      if (error instanceof BusinessException) {
+        throw error;
+      }
+
       // 네트워크 에러/타임아웃 같은 fetch 자체 실패 (응답도 못 받은 케이스)
       // CLOVA API가 반환하는 오류 메시지 로깅
       logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', error, {
