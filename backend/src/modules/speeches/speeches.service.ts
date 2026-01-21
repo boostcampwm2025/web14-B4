@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -12,6 +13,8 @@ import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -31,6 +34,8 @@ export class SpeechesService {
   constructor(
     private configService: ConfigService,
     private solvedQuizRepository: SolvedQuizRepository,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
   ) {}
 
   /**
@@ -217,7 +222,10 @@ export class SpeechesService {
     const { url, secretKey, language } = this.getClovaSpeechLongConfig();
     const formData = this.buildFormData(audioFile, language);
 
-    const result = await this.fetchClovaSpeechLong(url, secretKey, formData);
+    const result = await this.fetchClovaSpeechLong(url, secretKey, formData, {
+      mainQuizId,
+      size: audioFile.size,
+    });
 
     const sttText = typeof result.text === 'string' ? result.text.trim() : '';
     if (sttText.length === 0) {
@@ -270,7 +278,7 @@ export class SpeechesService {
     const params = {
       language, // 'ko-KR'
       completion: 'sync', // sync로 바로 결과 받기
-      fullText: true, // 전체 텍스트 반환
+      fullText: true, // 전체 인식 결과 텍스트 출력 여부
       wordAlignment: false, // 인식 결과의 음성과 텍스트 정렬 출력 여부
       noiseFiltering: true, // 잡음 제거
       diarization: { enable: false }, // 화자 인식 비활성화
@@ -291,21 +299,55 @@ export class SpeechesService {
     url: string,
     secretKey: string,
     formData: FormData,
+    meta: {
+      mainQuizId: number;
+      size: number;
+    },
   ): Promise<ClovaSpeechLongSyncResponse> {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'X-CLOVASPEECH-API-KEY': secretKey,
-      },
-      body: formData,
-    });
+    const startedAt = Date.now();
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CLOVASPEECH-API-KEY': secretKey,
+        },
+        body: formData,
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new BadGatewayException(`CLOVA STT 변환 실패: ${errorText}`);
+      const durationMs = Date.now() - startedAt;
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        const err = new Error(errorText) as Error & { status?: number };
+        err.status = response.status;
+
+        logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', err, {
+          ...meta,
+          durationMs,
+        });
+
+        throw new BadGatewayException(`CLOVA STT 변환 실패: ${errorText}`);
+      }
+
+      const result = (await response.json()) as ClovaSpeechLongSyncResponse;
+
+      this.logger.log(
+        `[STT API] result=${result.result ?? 'UNKNOWN'} message=${result.message ?? 'UNKNOWN'} confidence=${result.confidence ?? 'UNKNOWN'} duration=${durationMs} meta=${JSON.stringify(meta)}`,
+        'SpeechesService',
+      );
+
+      console.log(result);
+
+      return result;
+    } catch (error: unknown) {
+      const durationMs = Date.now() - startedAt;
+      // 네트워크 에러/타임아웃 같은 fetch 자체 실패 (응답도 못 받은 케이스)
+      logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', error, {
+        ...meta,
+        durationMs,
+      });
+
+      throw error;
     }
-
-    const result = (await response.json()) as ClovaSpeechLongSyncResponse;
-    return result;
   }
 }
