@@ -2,6 +2,7 @@ export interface MultipleChoiceOption {
   multipleQuizOptionId: number;
   option: string;
   isCorrect: boolean;
+  explanation: string | null;
 }
 
 export interface MultipleChoice {
