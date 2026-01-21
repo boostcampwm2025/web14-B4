@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { GoogleGenAI } from '@google/genai';
 import { CreateAIFeedbackRequestDto } from './dto/feedback-request.dto';
@@ -18,10 +19,11 @@ import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklis
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 
 const MIN_USER_ANSWER_LENGTH = 50;
 
-interface GeminiErrorResponse {
+interface GeminiErrorResponse extends Error {
   response?: {
     status?: number;
     data?: {
@@ -31,7 +33,6 @@ interface GeminiErrorResponse {
     };
   };
   status?: number;
-  message?: string;
 }
 
 @Injectable()
@@ -43,6 +44,8 @@ export class FeedbackService {
     private solvedQuizRepository: SolvedQuizRepository,
     private speechesService: SpeechesService,
     private usersService: UsersService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
   ) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -131,6 +134,27 @@ export class FeedbackService {
       const err = error as GeminiErrorResponse;
       const status = err.status ?? err.response?.status;
       const message = err.message ?? '';
+
+      // 제미나이 API가 반환하는 오류 스택 로깅
+      if (error instanceof Error) {
+        // 오류 객체일 경우
+        this.logger.error(
+          {
+            message: '[Gemini API Error]',
+            inputLength: userText.length,
+            status,
+            responseData: err.response?.data,
+          },
+          err.stack,
+        );
+      } else {
+        // 오류 객체가 아닐 경우
+        this.logger.error({
+          message: '[Gemini API Error - Unknown Throwable]',
+          error,
+          inputLength: userText.length,
+        });
+      }
 
       // 토큰 할당량 초과 (429)
       if (status === 429) {
