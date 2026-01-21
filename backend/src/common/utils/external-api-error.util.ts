@@ -1,22 +1,34 @@
-// 외부 API (클로바, 제미나이) 오류 스택 로깅용 유틸
+// 외부 API(클로바, 제미나이)가 반환하는 오류 메시지 로깅용 유틸
 
 import type { WinstonLogger } from 'nest-winston';
 
 type ExternalApiProvider = 'GEMINI' | 'CLOVA';
+type LogMeta = Record<string, unknown>; // 로그에 남길 메타데이터 추가 가능
+const MSG_MAX_LEN = 1000;
 
-type ExternalApiError = Error & {
-  status?: number;
-  code?: string;
-  response?: {
-    status?: number;
-    data?: unknown;
-    headers?: Record<string, unknown>;
-  };
-  cause?: unknown;
-};
+function safeStringify(value: unknown): string {
+  const seen = new WeakSet<object>();
 
-// 로그에 남길 메타데이터 추가 가능
-type LogMeta = Record<string, unknown>;
+  return JSON.stringify(value, (_key: string, val: unknown): unknown => {
+    if (typeof val === 'object' && val !== null) {
+      if (seen.has(val)) {
+        return '[Circular]';
+      }
+      seen.add(val);
+    }
+
+    if (typeof val === 'bigint') {
+      return val.toString();
+    }
+
+    return val;
+  });
+}
+
+function truncate(text: string, maxLength: number): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength)}...(truncated)`;
+}
 
 export function logExternalApiError(
   logger: WinstonLogger,
@@ -25,31 +37,22 @@ export function logExternalApiError(
   error: unknown,
   meta: LogMeta = {},
 ): void {
-  // 오류 객체일 경우
   if (error instanceof Error) {
-    const err = error as ExternalApiError;
+    const err = error as Error & {
+      status?: number;
+      response?: { status?: number; data?: unknown };
+    };
+
     const status = err.status ?? err.response?.status;
+    const msg = truncate(err.message ?? '', MSG_MAX_LEN);
 
     logger.error(
-      {
-        message: label,
-        provider,
-        ...meta,
-        status,
-        code: err.code,
-        responseData: err.response?.data,
-        cause: err.cause,
-      },
-      err.stack,
+      `${label} | provider=${provider} | status=${status} | name=${err.name} | message=${msg} | meta=${safeStringify(meta)}`,
     );
     return;
   }
 
-  // 오류 객체가 아닐 경우
-  logger.error({
-    message: `${label} - Unknown Throwable`,
-    provider,
-    ...meta,
-    throwable: error,
-  });
+  logger.error(
+    `${label} | provider=${provider} | meta=${safeStringify(meta)} | throwable=${safeStringify(error)}`,
+  );
 }
