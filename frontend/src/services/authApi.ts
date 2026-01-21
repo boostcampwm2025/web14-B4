@@ -1,5 +1,5 @@
 export async function loginWithNaver(code: string, state: string | null) {
-  const response = await fetch('http://localhost:8080/auth/login/naver', {
+  const response = await fetch('http://localhost:8080/api/auth/login/naver', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code, state }),
