@@ -8,7 +8,28 @@ interface DonutChartProps {
 }
 
 export default function DonutChart({ solvedData }: DonutChartProps) {
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658'];
+  const COLORS = [
+    '#a8dadc', // 파스텔 청록
+    '#f1faee', // 아이보리
+    '#e63946', // 빨강
+    '#457b9d', // 파란색
+    '#1d3557', // 진한 파랑
+    '#fca311', // 노란색
+    '#14213d', // 네이비
+    '#ffafcc', // 연분홍
+    '#bde0fe', // 하늘색
+    '#a2d2ff', // 연파랑
+    '#cdb4db', // 연보라
+    '#ffc8dd', // 분홍
+    '#caffbf', // 연두
+    '#9bf6ff', // 민트
+    '#fdffb6', // 연노랑
+    '#bdb2ff', // 라벤더
+    '#ffd6a5', // 복숭아색
+    '#ffadad', // 연한 빨강
+    '#a0c4ff', // 베이비블루
+    '#ffd6ff', // 연한 자주
+  ];
 
   const data = solvedData.map((cat) => ({
     name: cat.category,

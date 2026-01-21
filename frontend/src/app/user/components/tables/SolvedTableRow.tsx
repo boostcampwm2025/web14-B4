@@ -1,12 +1,6 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
-
-interface SolvedData {
-  category: string;
-  solvedQuizAmount: number;
-  totalQuizAmount: number;
-  percentage: number;
-}
+import { SolvedData } from '../../types/table';
 
 interface SolvedTableRowProps {
   category: SolvedData;

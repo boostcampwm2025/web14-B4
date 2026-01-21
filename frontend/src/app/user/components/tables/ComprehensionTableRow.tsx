@@ -1,14 +1,10 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
+import { ComprehensionData } from '../../types/table';
 
-interface ComprehensionData {
-  category: string;
-  totalSolved: number;
-  high: number;
-  medium: number;
-  low: number;
-  comprehensionScore: number;
+interface ComprehensionTableRowProps {
+  item: ComprehensionData;
 }
 
 const getScoreColor = (score: number) => {
@@ -33,10 +29,6 @@ const getScoreLabel = (score: number) => {
   if (score >= 2.5) return '보통';
   return '미흡';
 };
-
-interface ComprehensionTableRowProps {
-  item: ComprehensionData;
-}
 
 export function ComprehensionTableRow({ item }: ComprehensionTableRowProps) {
   return (
