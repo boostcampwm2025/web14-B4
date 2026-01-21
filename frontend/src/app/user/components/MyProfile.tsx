@@ -28,7 +28,7 @@ export default function MyProfile({ user }: UserProfileProps) {
   const gradeInfo = GRADE_CONFIG[user.grade];
 
   const handleEdit = () => {
-    alert('프로필 수정화면으로 이동');
+    alert('프로필 수정');
   };
 
   return (
