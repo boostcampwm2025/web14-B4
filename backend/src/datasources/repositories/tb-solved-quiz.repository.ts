@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository, Not, IsNull } from 'typeorm';
 import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -87,5 +87,16 @@ export class SolvedQuizRepository {
     importance: Importance,
   ): Promise<UpdateResult> {
     return await this.repository.update(solvedQuizId, { importance });
+  }
+
+  async getImportanceByUserId(userId: number): Promise<SolvedQuiz[]> {
+    return await this.repository.find({
+      where: {
+        user: { userId },
+        importance: Not(IsNull()),
+      },
+      relations: ['mainQuiz', 'mainQuiz.quizCategory'],
+      order: { createdAt: 'DESC' },
+    });
   }
 }
