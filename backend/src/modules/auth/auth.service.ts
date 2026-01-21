@@ -1,9 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { JwtService } from '@nestjs/jwt';
 import Redis from 'ioredis';
 import { NaverLoginDto } from './dto/naver-login';
+import { User, Provider } from 'src/datasources/entities/tb-user.entity';
+import { v4 as uuidv4 } from 'uuid';
+
+interface NaverTokenResponse {
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: string;
+}
+
+interface NaverProfileResponse {
+  resultcode: string;
+  message: string;
+  response: {
+    id: string;
+    name: string;
+    email: string;
+  };
+}
 
 @Injectable()
 export class AuthService {
@@ -20,8 +39,80 @@ export class AuthService {
     });
   }
 
-  async loginWithNaver(_dto: NaverLoginDto) {
-    // OAuth 로직은 다음 커밋에서 구현 예정
-    await Promise.resolve();
+  async loginWithNaver(dto: NaverLoginDto) {
+    const tokenUrl = 'https://nid.naver.com/oauth2.0/token';
+    const tokenParams = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: this.configService.get<string>('NAVER_CLIENT_ID') ?? '',
+      client_secret:
+        this.configService.get<string>('NAVER_CLIENT_SECRET') ?? '',
+      code: dto.code,
+      state: dto.state ?? '',
+    }).toString();
+
+    const tokenResponse = await fetch(`${tokenUrl}?${tokenParams}`);
+    if (!tokenResponse.ok) {
+      throw new UnauthorizedException('네이버 토큰 발급 실패');
+    }
+
+    const tokenData = (await tokenResponse.json()) as NaverTokenResponse;
+    const accessToken = tokenData.access_token;
+    if (!accessToken)
+      throw new UnauthorizedException('네이버 접근 토큰이 없습니다.');
+
+    const profileUrl = 'https://openapi.naver.com/v1/nid/me';
+    const profileResponse = await fetch(profileUrl, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    if (!profileResponse.ok) {
+      throw new UnauthorizedException('네이버 프로필 조회 실패');
+    }
+
+    const profileJson = (await profileResponse.json()) as NaverProfileResponse;
+    const userData = profileJson.response;
+
+    const username = userData.name;
+    const email = userData.email;
+    const providerId = userData.id;
+
+    let user = await this.userRepository.findByProvider(
+      Provider.NAVER,
+      providerId,
+    );
+
+    if (!user) {
+      user = new User();
+      user.username = username;
+      user.email = email;
+      user.provider = Provider.NAVER;
+      user.providerId = providerId;
+      user.uuid = uuidv4();
+      user.createdBy = 0;
+      user = await this.userRepository.createUser(user);
+    }
+
+    const payload = { uuid: user.uuid, sub: user.userId };
+    const newAccessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    await this.redisClient.set(
+      `RT:${user.uuid}`,
+      newRefreshToken,
+      'EX',
+      60 * 60 * 24 * 7,
+    );
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+      user: {
+        uuid: user.uuid,
+        username: user.username,
+      },
+    };
   }
 }
