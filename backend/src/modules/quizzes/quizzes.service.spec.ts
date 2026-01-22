@@ -13,6 +13,8 @@ import { MultipleChoice } from '../../datasources/entities/tb-multiple-choice.en
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { QuizKeywordRepository } from '../../datasources/repositories/tb-quiz-keyword.repository';
+import { UserRepository } from '../../datasources/repositories/tb-user.repository';
+import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 
 const createMockQuiz = (overrides?: Partial<MainQuiz>): MainQuiz => {
   return {
@@ -53,6 +55,14 @@ describe('QuizzesService', () => {
       findByMainQuizId: jest.fn().mockResolvedValue([]),
     };
 
+    const mockUserRepository = {
+      findById: jest.fn().mockResolvedValue(null),
+    };
+
+    const mockSolvedQuizRepository = {
+      getImportanceByUserId: jest.fn().mockResolvedValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QuizzesService,
@@ -67,6 +77,14 @@ describe('QuizzesService', () => {
         {
           provide: MultipleChoiceRepository,
           useValue: mockMultipleChoiceRepository,
+        },
+        {
+          provide: UserRepository,
+          useValue: mockUserRepository,
+        },
+        {
+          provide: SolvedQuizRepository,
+          useValue: mockSolvedQuizRepository,
         },
       ],
     }).compile();
