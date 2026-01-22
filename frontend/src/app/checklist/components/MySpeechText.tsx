@@ -8,6 +8,8 @@ interface MySpeechTextProps {
   setSpeechItem: React.Dispatch<React.SetStateAction<SpeechItemDto>>;
 }
 
+const TEXT_MAX_LENGTH = 2000;
+
 export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechTextProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -18,9 +20,15 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
     }
   }, [speechItem.speechText]);
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+
+    if (value.length > TEXT_MAX_LENGTH) {
+      return;
+    }
+
     setSpeechItem({
       ...speechItem,
-      speechText: e.target.value,
+      speechText: value,
     });
   };
 
@@ -35,6 +43,9 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
           className="rounded-xl p-6 border-2 mb-6 w-full min-h-[700px] resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400"
           style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF', overflow: 'hidden' }}
         />
+      </div>
+      <div className="flex justify-end text-sm text-gray-500">
+        {speechItem.speechText.length}자 / {TEXT_MAX_LENGTH}자
       </div>
     </div>
   );
