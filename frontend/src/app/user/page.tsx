@@ -6,6 +6,7 @@ import HexagonChart from './components/charts/HexagonChart';
 import MyProfile, { mockUserData } from './components/MyProfile';
 import TabSwitch, { Tab } from './components/TabSwitch';
 import { BasicTable } from './components/tables/BasicTable';
+import ImportanceBoard from './components/ImportanceBoard';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<Tab>('understanding');
@@ -147,6 +148,7 @@ export default function Page() {
             </div>
           )}
         </div>
+        <ImportanceBoard />
       </div>
     </div>
   );
