@@ -32,12 +32,6 @@ export class UserRepository {
     });
   }
 
-  findByEmail(email: string): Promise<User | null> {
-    return this.repository.findOne({
-      where: { email },
-    });
-  }
-
   async deleteById(id: number): Promise<void> {
     await this.repository.delete(id);
   }
