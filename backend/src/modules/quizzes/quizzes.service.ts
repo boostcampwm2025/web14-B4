@@ -19,10 +19,12 @@ import { MultipleChoiceRepository } from 'src/datasources/repositories/tb-multip
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
+import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 
 @Injectable()
 export class QuizzesService {
   constructor(
+    private readonly userRepository: UserRepository,
     private readonly quizRepository: MainQuizRepository,
     private readonly quizKeywordRepository: QuizKeywordRepository,
     private readonly multipleChoiceRepository: MultipleChoiceRepository,
@@ -142,7 +144,10 @@ export class QuizzesService {
     userId: number,
   ): Promise<QuizImportanceDataDto> {
     // userId로 해당 유저가 존재하는지 조회
-    // userId에 해당하는 solvedQuiz 조회
+    const user = this.userRepository.findById(userId);
+    if (user === null)
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND.message);
+
     const solvedQuiz =
       await this.solvedQuizRepository.getImportanceByUserId(userId);
 
