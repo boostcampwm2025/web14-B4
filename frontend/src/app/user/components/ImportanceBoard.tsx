@@ -67,9 +67,11 @@ export default function ImportanceBoard() {
         </span>
       </div>
 
-      <ImportanceGroup title="중요도 상" importance="HIGH" items={mockData.high} />
-      <ImportanceGroup title="중요도 중" importance="NORMAL" items={mockData.normal} />
-      <ImportanceGroup title="중요도 하" importance="LOW" items={mockData.low} />
+      <div className="rounded-2xl bg-white shadow-sm divide-y py-3 px-10 divide-slate-300">
+        <ImportanceGroup title="중요도 상" importance="HIGH" items={mockData.high} />
+        <ImportanceGroup title="중요도 중" importance="NORMAL" items={mockData.normal} />
+        <ImportanceGroup title="중요도 하" importance="LOW" items={mockData.low} />
+      </div>
     </div>
   );
 }
