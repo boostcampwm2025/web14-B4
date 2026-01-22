@@ -1,5 +1,5 @@
 import { Importance } from '@/types/solvedQuiz.types';
-import { Item } from './ImportanceBoard';
+import { ImportanceItem } from '../types/importanceItem';
 
 export function ImportanceGroup({
   title,
@@ -8,7 +8,7 @@ export function ImportanceGroup({
 }: {
   title: string;
   importance: Importance;
-  items: Item[];
+  items: ImportanceItem[];
 }) {
   const borderColor =
     importance === 'HIGH'
@@ -25,11 +25,11 @@ export function ImportanceGroup({
         {title}
       </div>
 
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(180px,1fr))] gap-3">
         {items.map((item) => (
           <div
-            key={item.id}
-            className={`group flex cursor-pointer flex-col gap-2 rounded-lg border border-slate-200 bg-white p-3 text-center text-sm font-medium text-slate-500 transition-all hover:-translate-y-0.5 hover:border-blue-500 hover:text-blue-500 hover:shadow-md ${
+            key={item.solvedQuizId}
+            className={`group flex cursor-pointer flex-col gap-1 rounded-lg border border-slate-200 bg-white p-3 text-left text-sm transition-all hover:-translate-y-0.5 hover:border-blue-500 hover:shadow-md ${
               importance === 'HIGH'
                 ? 'border-l-4 border-l-red-400'
                 : importance === 'NORMAL'
@@ -37,8 +37,13 @@ export function ImportanceGroup({
                   : 'border-l-4 border-l-emerald-500'
             }`}
           >
-            <span className="text-[11px] text-slate-400">{item.id}</span>
-            <span className="truncate">{item.name}</span>
+            <span className="text-[11px] text-slate-400">{item.category}</span>
+
+            <span className="font-medium text-slate-700 truncate">{item.mainQuizTitle}</span>
+
+            <span className="text-[11px] text-slate-400">
+              {new Date(item.createdAt).toLocaleDateString()}
+            </span>
           </div>
         ))}
       </div>

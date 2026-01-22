@@ -1,44 +1,75 @@
 'use client';
 
-import { Importance } from '@/types/solvedQuiz.types';
+import { ImportanceItem } from '../types/importanceItem';
 import { ImportanceGroup } from './ImportanceGroup';
 
-export interface Item {
-  id: string;
-  name: string;
-  importance: Importance;
-}
-
-/** 더미 데이터 */
-const items: Item[] = [
-  { id: 'Q.01', name: '문항 A', importance: 'HIGH' },
-  { id: 'Q.02', name: '문항 B', importance: 'HIGH' },
-  { id: 'Q.03', name: '문항 C', importance: 'HIGH' },
-
-  { id: 'Q.04', name: '문항 D', importance: 'NORMAL' },
-  { id: 'Q.05', name: '문항 E', importance: 'NORMAL' },
-
-  { id: 'Q.06', name: '문항 F', importance: 'LOW' },
-];
-
-const grouped = {
-  high: items.filter((i) => i.importance === 'HIGH'),
-  medium: items.filter((i) => i.importance === 'NORMAL'),
-  low: items.filter((i) => i.importance === 'LOW'),
+const mockData: {
+  high: ImportanceItem[];
+  normal: ImportanceItem[];
+  low: ImportanceItem[];
+} = {
+  high: [
+    {
+      solvedQuizId: 1,
+      category: '네트워크',
+      mainQuizId: 2,
+      mainQuizTitle: 'TCP 3-Way Handshake',
+      createdAt: '2026-01-21T09:12:34Z',
+    },
+    {
+      solvedQuizId: 5,
+      category: '운영체제',
+      mainQuizId: 7,
+      mainQuizTitle: '프로세스와 스레드의 차이',
+      createdAt: '2026-01-20T15:41:10Z',
+    },
+  ],
+  normal: [
+    {
+      solvedQuizId: 8,
+      category: '데이터베이스',
+      mainQuizId: 12,
+      mainQuizTitle: '인덱스의 동작 원리',
+      createdAt: '2026-01-18T11:05:22Z',
+    },
+    {
+      solvedQuizId: 10,
+      category: 'Java',
+      mainQuizId: 14,
+      mainQuizTitle: 'JVM 메모리 구조',
+      createdAt: '2026-01-17T20:30:55Z',
+    },
+  ],
+  low: [
+    {
+      solvedQuizId: 13,
+      category: 'HTTP',
+      mainQuizId: 20,
+      mainQuizTitle: 'HTTP 상태 코드',
+      createdAt: '2026-01-10T08:12:03Z',
+    },
+    {
+      solvedQuizId: 15,
+      category: '기초',
+      mainQuizId: 25,
+      mainQuizTitle: '변수와 타입',
+      createdAt: '2026-01-05T14:44:01Z',
+    },
+  ],
 };
 
 export default function ImportanceBoard() {
   return (
-    <div className=" bg-slate-100 mt-30 mb-50">
+    <div className="mt-30 mb-50 bg-slate-100">
       <div className="mb-6 flex items-center">
-        <span className="rounded-full shadow-md bg-blue-500 px-4 py-1.5 text-xl text-white">
+        <span className="rounded-full bg-blue-500 px-4 py-1.5 text-xl text-white shadow-md">
           중요도별 분석
         </span>
       </div>
 
-      <ImportanceGroup title="중요도 상" importance="HIGH" items={grouped.high} />
-      <ImportanceGroup title="중요도 중" importance="NORMAL" items={grouped.medium} />
-      <ImportanceGroup title="중요도 하" importance="LOW" items={grouped.low} />
+      <ImportanceGroup title="중요도 상" importance="HIGH" items={mockData.high} />
+      <ImportanceGroup title="중요도 중" importance="NORMAL" items={mockData.normal} />
+      <ImportanceGroup title="중요도 하" importance="LOW" items={mockData.low} />
     </div>
   );
 }
