@@ -16,6 +16,7 @@ import { ApiResponseInterceptor } from './common/interceptors/api-response.inter
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { FeedbackModule } from './modules/feedback/feedback.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
     SpeechesModule,
     QuizModule,
     FeedbackModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
