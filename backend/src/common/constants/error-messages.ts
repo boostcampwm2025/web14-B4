@@ -97,4 +97,33 @@ export const ERROR_MESSAGES = {
     message:
       '답변에 부적절한 내용이 포함되어 외부 서비스가 응답을 거부했습니다.',
   },
+
+  // 인증/인가 관련 에러
+  ACCESS_DENIED: {
+    errorCode: 'ACCESS_DENIED',
+    status: 401, // 또는 403
+    message: '접근 권한이 없습니다. 로그인 후 이용해주세요.',
+  },
+
+  // OAuth 및 인증 관련 에러
+  NAVER_TOKEN_FAILED: {
+    errorCode: 'NAVER_TOKEN_FAILED',
+    status: 401,
+    message: '네이버 인증 토큰 발급에 실패했습니다.',
+  },
+  NAVER_PROFILE_FAILED: {
+    errorCode: 'NAVER_PROFILE_FAILED',
+    status: 401,
+    message: '네이버 프로필 조회에 실패했습니다.',
+  },
+  REFRESH_TOKEN_INVALID: {
+    errorCode: 'REFRESH_TOKEN_INVALID',
+    status: 401,
+    message: '유효하지 않은 리프레시 토큰입니다. 다시 로그인해주세요.',
+  },
+  REFRESH_TOKEN_EXPIRED: {
+    errorCode: 'REFRESH_TOKEN_EXPIRED',
+    status: 401,
+    message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요.',
+  },
 };
