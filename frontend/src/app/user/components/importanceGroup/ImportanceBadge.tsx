@@ -2,9 +2,9 @@
 'use client';
 
 import { Category } from '@/types/category.types';
-import { ImportanceItem } from '../types/importanceItem';
+import { ImportanceItem } from '../../types/importanceItem';
 import { CATEGORY_STYLE_MAP, DEFAULT_CATEGORY_STYLE } from '@/services/mapper/categoryMapper';
-import { Tooltip } from './importanceGroup/Tooltip';
+import { Tooltip } from './Tooltip';
 
 interface ImportanceBadgeProps {
   item: ImportanceItem;

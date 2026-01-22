@@ -1,4 +1,4 @@
-import { ImportanceItem } from '../types/importanceItem';
+import { ImportanceItem } from '../../types/importanceItem';
 import { ImportanceBadge } from './ImportanceBadge';
 
 export function ImportanceGroup({ title, items }: { title: string; items: ImportanceItem[] }) {

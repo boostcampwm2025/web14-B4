@@ -1,6 +1,6 @@
 'use client';
 
-import { ImportanceItem } from '../types/importanceItem';
+import { ImportanceItem } from '../../types/importanceItem';
 import { ImportanceGroup } from './ImportanceGroup';
 
 const mockData: {
