@@ -81,6 +81,13 @@ export const ERROR_MESSAGES = {
     message: 'AI 서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
   },
 
+  // 인증/인가 관련 에러
+  ACCESS_DENIED: {
+    errorCode: 'ACCESS_DENIED',
+    status: 401, // 또는 403
+    message: '접근 권한이 없습니다. 로그인 후 이용해주세요.',
+  },
+
   // OAuth 및 인증 관련 에러
   NAVER_TOKEN_FAILED: {
     errorCode: 'NAVER_TOKEN_FAILED',

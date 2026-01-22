@@ -20,6 +20,12 @@ export class UserRepository {
     });
   }
 
+  findByUuid(uuid: string): Promise<User | null> {
+    return this.repository.findOne({
+      where: { uuid },
+    });
+  }
+
   findByProvider(provider: Provider, providerId: string): Promise<User | null> {
     return this.repository.findOne({
       where: { provider, providerId },
