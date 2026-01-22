@@ -25,9 +25,6 @@ export class User {
   @Column({ name: 'username', type: 'varchar', length: 255 })
   username: string;
 
-  @Column({ name: 'email', type: 'varchar', length: 255 })
-  email: string;
-
   @Column({ name: 'level', type: 'varchar', length: 255, nullable: true })
   level?: string;
 
