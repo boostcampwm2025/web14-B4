@@ -1,16 +1,20 @@
 'use client';
 
 import { Quiz } from '@/app/quizzes/types/quiz';
-import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import QuizTypeSelectPopup from '../QuizTypeSelectPopup';
 
 interface QuizCardProps {
   quiz: Quiz;
 }
 
 export default function QuizCard({ quiz }: QuizCardProps) {
-  const router = useRouter();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const handleStartQuiz = () => {
-    router.push(`/main-quiz/${quiz.mainQuizId}`);
+    setIsPopupOpen(true);
+  };
+  const handleCancel = () => {
+    setIsPopupOpen(false);
   };
 
   return (
@@ -40,6 +44,8 @@ export default function QuizCard({ quiz }: QuizCardProps) {
       >
         시작하기
       </button>
+
+      <QuizTypeSelectPopup quiz={quiz} isOpen={isPopupOpen} onClose={handleCancel} />
     </div>
   );
 }

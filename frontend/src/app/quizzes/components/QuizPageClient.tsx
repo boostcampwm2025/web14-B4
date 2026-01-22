@@ -1,6 +1,6 @@
 'use client';
 
-import { fetchQuizzes, fetchCategoryCounts } from '@/services/quizApi';
+import { fetchQuizzes, fetchCategoryCounts } from '@/services/apis/quizApi';
 import DifficultyFilter from './filters/DifficultyFilter';
 import CategoryFilter from './filters/CategoryFilter';
 import QuizGrid from './card/QuizGrid';
