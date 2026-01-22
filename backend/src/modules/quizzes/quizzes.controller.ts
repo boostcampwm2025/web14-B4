@@ -11,6 +11,7 @@ import {
   MainQuiz,
   DifficultyLevel,
 } from '../../datasources/entities/tb-main-quiz.entity';
+import { MultipleChoicesResponseDto } from './dto/quiz-response.dto';
 
 @Controller('quizzes')
 export class QuizzesController {
@@ -50,6 +51,15 @@ export class QuizzesController {
       throw new NotFoundException('퀴즈를 찾을 수 없습니다.');
     }
 
+    return result;
+  }
+
+  @Get(':mainQuizId/multiple-choices')
+  async getMultipleChoices(
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
+  ): Promise<MultipleChoicesResponseDto> {
+    const result =
+      await this.quizService.getMultipleChoicesByMainQuizId(mainQuizId);
     return result;
   }
 }

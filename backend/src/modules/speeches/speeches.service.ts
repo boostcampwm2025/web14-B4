@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,9 +8,23 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ClovaSttResponse } from './dto/ClovaSttResponse.dto';
+import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
 import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
+import { SttResponseDto } from './dto/SttResponseDto.dto';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+
+type ClovaSpeechLongSyncResponse = {
+  text: string; // 변환 텍스트
+
+  // 로깅용
+  result?: 'COMPLETED' | 'FAILED' | (string & {});
+  message?: string; // 성공시 "Succeeded"
+  confidence?: string; // 변환 정확도
+};
 
 // TODO : 추가로 처리해야할 예외
 /* 답변 텍스트가 너무 짧은 경우, 예외 처리.
@@ -20,16 +35,18 @@ export class SpeechesService {
   constructor(
     private configService: ConfigService,
     private solvedQuizRepository: SolvedQuizRepository,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
   ) {}
 
   /**
-   * 음성 녹음을 텍스트로 변환하여 반환한다.
+   * 음성 녹음을 텍스트로 변환하여 반환한다. - CSR 방식 (60초 처리 제한)
    * @param audioFile : 음성 파일
    * @param mainQuizId : 메인 퀴즈 id
    * @param userId : 사용자 id
    * @returns : 음성 파일을 텍스트로 변환한 문자열
    */
-  async speechToText(
+  async csrSpeechToText(
     audioFile: Express.Multer.File,
     mainQuizId: number,
     userId: number,
@@ -40,7 +57,7 @@ export class SpeechesService {
     let sttText: string;
 
     try {
-      sttText = await this.sttWithClova(audio);
+      sttText = await this.csrSttWithClova(audio);
     } catch {
       throw new InternalServerErrorException(
         '음성 인식(STT) 처리 중 오류가 발생했습니다.',
@@ -147,7 +164,7 @@ export class SpeechesService {
   }
 
   /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */
-  private async sttWithClova(audio: Buffer) {
+  private async csrSttWithClova(audio: Buffer) {
     const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
     const clientSecret = this.configService.get<string>(
       'NAVER_CLOVA_CLIENT_SECRET',
@@ -171,7 +188,7 @@ export class SpeechesService {
       );
     }
 
-    const sttResponse = (await response.json()) as ClovaSttResponse;
+    const sttResponse = (await response.json()) as CsrClovaSttResponse;
 
     return sttResponse.text;
   }
@@ -192,6 +209,180 @@ export class SpeechesService {
       throw new PayloadTooLargeException(
         '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
       );
+    }
+  }
+
+  // STT 변환: CLOVA speech 장문 처리 메서드 (로컬 파일인식 + sync 방식)
+  async clovaSpeechLongStt(
+    audioFile: Express.Multer.File,
+    mainQuizId: number,
+    userId: number,
+  ): Promise<SttResponseDto> {
+    this.checkValidation(audioFile);
+
+    const { url, secretKey, language } = this.getClovaSpeechLongConfig();
+    const formData = this.buildFormData(audioFile, language);
+
+    const result = await this.fetchClovaSpeechLong(url, secretKey, formData, {
+      mainQuizId,
+      size: audioFile.size,
+    });
+
+    const sttText = typeof result.text === 'string' ? result.text.trim() : '';
+    if (sttText.length === 0) {
+      throw new InternalServerErrorException(
+        'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
+      );
+    }
+
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
+      user: { userId },
+      mainQuiz: { mainQuizId },
+      speechText: sttText,
+    });
+
+    return {
+      solvedQuizId: solvedQuiz.solvedQuizId,
+      text: sttText,
+    };
+  }
+
+  private getClovaSpeechLongConfig(): {
+    url: string;
+    secretKey: string;
+    language: string;
+  } {
+    const invokeUrl = this.configService.get<string>(
+      'NAVER_CLOVA_SPEECH_INVOKE_URL',
+    );
+    const secretKey = this.configService.get<string>(
+      'NAVER_CLOVA_SPEECH_SECRET_KEY',
+    );
+    const language =
+      this.configService.get<string>('NAVER_CLOVA_SPEECH_DEFAULT_LANG') ??
+      'ko-KR';
+
+    if (!invokeUrl || !secretKey) {
+      throw new InternalServerErrorException(
+        'CLOVA Speech 환경변수가 설정되지 않았습니다.',
+      );
+    }
+
+    const url = `${invokeUrl}/recognizer/upload`;
+    return { url, secretKey, language };
+  }
+
+  private buildFormData(
+    audioFile: Express.Multer.File,
+    language: string,
+  ): FormData {
+    const params = {
+      language, // 'ko-KR'
+      completion: 'sync', // sync로 바로 결과 받기
+      fullText: true, // 전체 인식 결과 텍스트 출력 여부
+      wordAlignment: false, // 인식 결과의 음성과 텍스트 정렬 출력 여부
+      noiseFiltering: true, // 잡음 제거
+      diarization: { enable: false }, // 화자 인식 비활성화
+    } as const;
+
+    const form = new FormData();
+
+    const blob = new Blob([new Uint8Array(audioFile.buffer)], {
+      type: audioFile.mimetype || 'audio/webm',
+    });
+    form.append('media', blob, audioFile.originalname || 'audio.webm');
+    form.append('params', JSON.stringify(params));
+
+    return form;
+  }
+
+  private async fetchClovaSpeechLong(
+    url: string,
+    secretKey: string,
+    formData: FormData,
+    meta: {
+      mainQuizId: number;
+      size: number;
+    },
+  ): Promise<ClovaSpeechLongSyncResponse> {
+    const startedAt = Date.now();
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'X-CLOVASPEECH-API-KEY': secretKey,
+        },
+        body: formData,
+      });
+
+      const durationMs = Date.now() - startedAt;
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        const err = new Error(errorText) as Error & { status?: number };
+        err.status = response.status;
+
+        // CLOVA API가 반환하는 오류 메시지 로깅
+        logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', err, {
+          ...meta,
+          durationMs,
+        });
+
+        // 인증 실패(Authentication Failed), 권한 없음(Permission Denied)
+        if (response.status === 401) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_UNAUTHORIZED);
+        }
+
+        // 권한 없음(Not Found Exception)
+        if (response.status === 404) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_FORBIDDEN);
+        }
+
+        // 요청 한도 초과
+        if (response.status === 429) {
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_RATE_LIMIT_EXCEEDED,
+          );
+        }
+
+        // 기타 CLOVA 서비스 오류
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
+      }
+
+      const result = (await response.json()) as ClovaSpeechLongSyncResponse;
+
+      if (result.result === 'FAILED') {
+        // 일별 한도 제한 초과 오류 (CLOVA가 response.ok && body.result=FAILED 으로 응답함)
+        if (result.message?.includes('일별 한도')) {
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_DAILY_QUOTA_EXCEEDED,
+          );
+        }
+
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
+      }
+
+      this.logger.log(
+        `[STT API] result=${result.result ?? 'UNKNOWN'} message=${result.message ?? 'UNKNOWN'} confidence=${result.confidence ?? 'UNKNOWN'} duration=${durationMs}ms meta=${JSON.stringify(meta)}`,
+        'SpeechesService',
+      );
+
+      return result;
+    } catch (error: unknown) {
+      const durationMs = Date.now() - startedAt;
+
+      if (error instanceof BusinessException) {
+        throw error;
+      }
+
+      // 네트워크 에러/타임아웃 같은 fetch 자체 실패 (응답도 못 받은 케이스)
+      // CLOVA API가 반환하는 오류 메시지 로깅
+      logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', error, {
+        ...meta,
+        durationMs: `${durationMs}ms`,
+      });
+
+      throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
   }
 }

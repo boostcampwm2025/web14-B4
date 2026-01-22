@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { GoogleGenAI } from '@google/genai';
 import { CreateAIFeedbackRequestDto } from './dto/feedback-request.dto';
@@ -16,6 +17,12 @@ import {
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
+
+const MIN_USER_ANSWER_LENGTH = 50;
 
 @Injectable()
 export class FeedbackService {
@@ -26,6 +33,8 @@ export class FeedbackService {
     private solvedQuizRepository: SolvedQuizRepository,
     private speechesService: SpeechesService,
     private usersService: UsersService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
   ) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -47,6 +56,11 @@ export class FeedbackService {
     const userAnswer = await this.speechesService.getSolvedQuizInfo(
       requestDto.solvedQuizId,
     );
+
+    if (!userAnswer || userAnswer.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(requestDto.solvedQuizId);
 
@@ -105,10 +119,62 @@ export class FeedbackService {
       }
 
       return JSON.parse(textResponse) as Record<string, unknown>;
-    } catch {
-      throw new InternalServerErrorException(
-        '답변 분석 중 오류가 발생했습니다.',
-      );
+    } catch (error: unknown) {
+      const err = error as Error & {
+        status?: number;
+        response?: { status?: number; data?: unknown };
+      };
+
+      const status = err.status ?? err.response?.status;
+      const message = err.message ?? '';
+
+      // 제미나이 API가 반환하는 오류 메시지 로깅
+      logExternalApiError(this.logger, 'GEMINI', '[Gemini API Error]', error, {
+        inputLength: userText.length,
+      });
+
+      // 토큰 할당량 초과 (429)
+      if (status === 429) {
+        if (message.toLowerCase().includes('daily')) {
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_DAILY_QUOTA_EXCEEDED,
+          );
+        }
+
+        throw new BusinessException(
+          ERROR_MESSAGES.EXTERNAL_API_RATE_LIMIT_EXCEEDED,
+        );
+      }
+
+      // 잘못된 요청 및 지역 제한 (400)
+      if (status === 400) {
+        // 안전 필터 관련 메시지가 포함된 경우 별도 처리
+        if (message.toLowerCase().includes('safety')) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SAFETY_BLOCK);
+        }
+
+        // API 키 형식 오류
+        if (message.toLowerCase().includes('api key')) {
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_KEY_INVALID);
+        }
+
+        // 지역 미지원(Location) 또는 기타 파라미터 오류
+        throw new BusinessException(
+          ERROR_MESSAGES.EXTERNAL_API_INVALID_REQUEST,
+        );
+      }
+
+      // API 키 권한 문제 (403)
+      if (status === 403) {
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_KEY_INVALID);
+      }
+
+      // 구글 서버 오류 (500, 503, 504)
+      if (status && status >= 500) {
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
+      }
+
+      throw new BusinessException(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -138,14 +204,15 @@ export class FeedbackService {
   }
 
   async getAIFeedback(solvedQuizId: number) {
+    // TODO: 추후에 로그인/회원가입 기능 구현 시에 userID 인자로 받아서 본인 기록 맞는지 검증하는 로직 추가
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
 
     if (!solvedQuiz) {
-      throw new NotFoundException('해당 기록을 찾을 수 없습니다. ');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
 
     if (!solvedQuiz.aiFeedback) {
-      throw new NotFoundException('AI 피드백이 아직 생성되지 않았습니다.');
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
     const checklistInSolvedQuiz =

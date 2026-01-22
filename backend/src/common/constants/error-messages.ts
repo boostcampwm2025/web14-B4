@@ -42,4 +42,54 @@ export const ERROR_MESSAGES = {
     status: 400,
     message: '해당 말하기 연습과 결과 기록이 일치하지 않습니다.',
   },
+
+  // 답변이 너무 짧은 경우 AI 피드백 생성 X
+  ANSWER_TOO_SHORT: {
+    errorCode: 'ANSWER_TOO_SHORT',
+    status: 400,
+    message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
+  },
+
+  // 외부 API 공통
+  EXTERNAL_API_SERVER_ERROR: {
+    errorCode: 'EXTERNAL_API_SERVER_ERROR',
+    status: 502,
+    message: '외부 서비스 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+  },
+  EXTERNAL_API_UNAUTHORIZED: {
+    errorCode: 'EXTERNAL_API_UNAUTHORIZED',
+    status: 401,
+    message: '외부 서비스 인증에 실패했습니다.',
+  },
+  EXTERNAL_API_FORBIDDEN: {
+    errorCode: 'EXTERNAL_API_FORBIDDEN',
+    status: 403,
+    message: '외부 서비스 접근 권한이 없습니다.',
+  },
+  EXTERNAL_API_DAILY_QUOTA_EXCEEDED: {
+    errorCode: 'EXTERNAL_API_DAILY_QUOTA_EXCEEDED',
+    status: 429,
+    message: '오늘 요청 가능한 한도를 모두 소진했습니다.',
+  },
+  EXTERNAL_API_RATE_LIMIT_EXCEEDED: {
+    errorCode: 'EXTERNAL_API_RATE_LIMIT_EXCEEDED',
+    status: 429,
+    message: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+  },
+  EXTERNAL_API_INVALID_REQUEST: {
+    errorCode: 'EXTERNAL_API_INVALID_REQUEST',
+    status: 400,
+    message: '요청 파라미터가 올바르지 않습니다.',
+  },
+  EXTERNAL_API_KEY_INVALID: {
+    errorCode: 'EXTERNAL_API_KEY_INVALID',
+    status: 403,
+    message: '외부 서비스 키가 유효하지 않거나 권한이 없습니다.',
+  },
+  EXTERNAL_API_SAFETY_BLOCK: {
+    errorCode: 'EXTERNAL_API_SAFETY_BLOCK',
+    status: 400,
+    message:
+      '답변에 부적절한 내용이 포함되어 외부 서비스가 응답을 거부했습니다.',
+  },
 };

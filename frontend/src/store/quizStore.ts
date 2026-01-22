@@ -4,12 +4,13 @@ import {
   SolvedQuizSubmitRequestDto,
   submitSolvedQuiz,
   generateAIFeedBack,
-} from '@/services/feedbackApi';
+} from '@/services/apis/feedbackApi';
 
 interface QuizStore {
   solvedQuizId: number | null;
   setSolvedQuizId: (id: number) => void;
   clearSolvedQuizId: () => void;
+  _hasHydrated: boolean;
   isAnalyzing: boolean;
   actions: {
     requestAiFeedback: (payload: SolvedQuizSubmitRequestDto) => Promise<boolean>;
@@ -24,6 +25,7 @@ export const useQuizStore = create<QuizStore>()(
       clearSolvedQuizId: () => set({ solvedQuizId: null }),
 
       isAnalyzing: false,
+      _hasHydrated: false,
 
       actions: {
         requestAiFeedback: async (payload) => {
@@ -45,6 +47,11 @@ export const useQuizStore = create<QuizStore>()(
       partialize: (state) => ({
         solvedQuizId: state.solvedQuizId,
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state._hasHydrated = true;
+        }
+      },
     },
   ),
 );

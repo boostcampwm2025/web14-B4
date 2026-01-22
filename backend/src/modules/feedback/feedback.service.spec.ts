@@ -8,6 +8,8 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+import { MainQuiz } from 'src/datasources/entities/tb-main-quiz.entity';
 
 // GoogleGenAI mock
 const generateContentMock = jest.fn();
@@ -99,7 +101,9 @@ describe('FeedbackService', () => {
       mainQuizRepositoryMock.findByIdWithDetails.mockResolvedValue(
         mockMainQuiz,
       );
-      speechesServiceMock.getSolvedQuizInfo.mockResolvedValue('사용자 답변');
+      const longAnswer =
+        '이 답변은 테스트를 통과하기 위해 50자 이상으로 작성되었습니다. AI 피드백 생성 로직이 정상적으로 동작하려면 답변 길이가 충분해야 합니다. 하나 둘 셋 넷 다섯.';
+      speechesServiceMock.getSolvedQuizInfo.mockResolvedValue(longAnswer);
       usersServiceMock.getUserChecklistProgress.mockResolvedValue(
         mockChecklist,
       );
@@ -178,6 +182,71 @@ describe('FeedbackService', () => {
       await expect(
         service.updateAiFeedback(1, { score: 5 }),
       ).rejects.toBeInstanceOf(InternalServerErrorException);
+    });
+  });
+});
+
+describe('FeedbackService', () => {
+  let service: FeedbackService;
+  let mainQuizRepository: MainQuizRepository;
+  let speechesService: SpeechesService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        FeedbackService,
+        {
+          provide: MainQuizRepository,
+          useValue: {
+            findByIdWithDetails: jest.fn(), // 함수 껍데기만 만듭니다.
+          },
+        },
+        {
+          provide: SolvedQuizRepository,
+          useValue: {
+            updateAiFeedback: jest.fn(),
+          },
+        },
+        {
+          provide: SpeechesService,
+          useValue: {
+            getSolvedQuizInfo: jest.fn(),
+          },
+        },
+        {
+          provide: UsersService,
+          useValue: {
+            getUserChecklistProgress: jest.fn(),
+          },
+        },
+      ],
+    }).compile();
+    service = module.get<FeedbackService>(FeedbackService);
+    mainQuizRepository = module.get<MainQuizRepository>(MainQuizRepository);
+    speechesService = module.get<SpeechesService>(SpeechesService);
+  });
+
+  describe('generateAIFeedback()', () => {
+    it('답변 길이가 50자 미만인 경우 BusinessException을 던져야 한다', async () => {
+      const requestDto = {
+        mainQuizId: 1,
+        solvedQuizId: 1,
+      };
+
+      const shortAnswer = '이것은 50자가 안 되는 아주 짧은 답변입니다.';
+
+      jest.spyOn(mainQuizRepository, 'findByIdWithDetails').mockResolvedValue({
+        mainQuizId: 1,
+        title: '테스트 퀴즈',
+        content: '내용',
+      } as unknown as MainQuiz);
+      jest
+        .spyOn(speechesService, 'getSolvedQuizInfo')
+        .mockResolvedValue(shortAnswer);
+
+      await expect(service.generateAIFeedback(requestDto)).rejects.toThrow(
+        BusinessException,
+      );
     });
   });
 });
