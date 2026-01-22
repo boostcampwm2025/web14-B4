@@ -1,6 +1,6 @@
 import { CommonResponse, NullDataErrorMessage } from '@/services/http/types';
 import { ApiError } from '@/services/http/errors';
-import { refreshAccessToken } from '@/services/authApi';
+import { refreshAccessToken } from '@/services/apis/authApi';
 
 // 슬래시 중복 방지
 function normalizeBaseUrl(baseUrl: string) {

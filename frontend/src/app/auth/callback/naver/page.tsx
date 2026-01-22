@@ -3,7 +3,7 @@
 import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
-import { loginWithNaver } from '@/services/authApi';
+import { loginWithNaver } from '@/services/apis/authApi';
 import { verifyState } from '@/utils/oauth';
 
 function NaverLoginContent() {

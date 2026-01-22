@@ -1,4 +1,4 @@
-import { apiFetch } from './http/apiFetch';
+import { apiFetch } from '../http/apiFetch';
 
 interface LoginResponse {
   accessToken: string;
@@ -15,11 +15,6 @@ export async function loginWithNaver(code: string, state: string | null) {
     body: JSON.stringify({ code, state }),
     skipAuth: true,
   });
-
-  localStorage.setItem('accessToken', data.accessToken);
-  localStorage.setItem('refreshToken', data.refreshToken);
-
-  return data;
 }
 
 export async function refreshAccessToken() {
