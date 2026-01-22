@@ -21,6 +21,7 @@ import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
+import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
 
 const MIN_USER_ANSWER_LENGTH = 50;
 
@@ -59,6 +60,11 @@ export class FeedbackService {
 
     if (!userAnswer || userAnswer.trim().length < MIN_USER_ANSWER_LENGTH) {
       throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
+    // 나의 답변이 길이 제한을 초과할 경우 오류 반환
+    if (userAnswer.length > MAX_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_LONG);
     }
 
     const checklistInSolvedQuiz =

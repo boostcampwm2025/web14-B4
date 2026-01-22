@@ -15,8 +15,8 @@ import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklis
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
+import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
 
-const MAX_USER_ANSWER_LENGTH = 1500;
 @Injectable()
 export class UsersService {
   constructor(
