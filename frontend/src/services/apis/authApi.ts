@@ -10,7 +10,7 @@ interface LoginResponse {
 }
 
 export async function loginWithNaver(code: string, state: string | null) {
-  const data = await apiFetch<LoginResponse>('/api/auth/login/naver', {
+  await apiFetch('/api/auth/login/naver', {
     method: 'POST',
     body: JSON.stringify({ code, state }),
     skipAuth: true,
