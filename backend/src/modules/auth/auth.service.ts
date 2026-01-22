@@ -27,8 +27,7 @@ interface NaverProfileResponse {
 }
 
 interface JwtPayload {
-  uuid: string;
-  sub: number;
+  sub: string;
 }
 
 @Injectable()
@@ -105,7 +104,7 @@ export class AuthService {
       user = await this.userRepository.createUser(user);
     }
 
-    const payload = { uuid: user.uuid, sub: user.userId };
+    const payload = { sub: user.uuid };
     const newAccessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
     const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
@@ -129,7 +128,7 @@ export class AuthService {
   async refresh(refreshToken: string) {
     try {
       const payload = this.jwtService.verify<JwtPayload>(refreshToken);
-      const uuid = payload.uuid;
+      const uuid = payload.sub;
 
       const redisRt = await this.redisClient.get(`RT:${uuid}`);
 
@@ -137,7 +136,7 @@ export class AuthService {
         throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
       }
 
-      const newPayload: JwtPayload = { uuid: uuid, sub: payload.sub };
+      const newPayload: JwtPayload = { sub: uuid };
       const newAccessToken = this.jwtService.sign(newPayload, {
         expiresIn: '1h',
       });
