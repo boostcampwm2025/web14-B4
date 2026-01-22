@@ -144,7 +144,8 @@ export class QuizzesService {
     userId: number,
   ): Promise<QuizImportanceDataDto> {
     // userId로 해당 유저가 존재하는지 조회
-    const user = this.userRepository.findById(userId);
+    const user = await this.userRepository.findById(userId);
+
     if (user === null)
       throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND.message);
 

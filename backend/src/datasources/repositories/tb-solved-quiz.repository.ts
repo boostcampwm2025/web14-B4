@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DeepPartial, Repository, Not, IsNull } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -90,13 +90,15 @@ export class SolvedQuizRepository {
   }
 
   async getImportanceByUserId(userId: number): Promise<SolvedQuiz[]> {
-    return await this.repository.find({
-      where: {
-        user: { userId },
-        importance: Not(IsNull()),
-      },
-      relations: ['mainQuiz', 'mainQuiz.quizCategory'],
-      order: { createdAt: 'DESC' },
-    });
+    return this.repository
+      .createQueryBuilder('sq')
+      .innerJoinAndSelect('sq.mainQuiz', 'mq')
+      .innerJoinAndSelect('mq.quizCategory', 'qc')
+      .where('sq.user_id = :userId', { userId })
+      .andWhere('sq.importance IS NOT NULL')
+      .distinctOn(['sq.main_quiz_id'])
+      .orderBy('sq.main_quiz_id')
+      .addOrderBy('sq.created_at', 'DESC')
+      .getMany();
   }
 }
