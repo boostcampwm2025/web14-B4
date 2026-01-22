@@ -9,6 +9,8 @@ services:
     container_name: nestjs-backend
     environment:
       - NODE_ENV=production
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - app-network
     restart: unless-stopped
