@@ -1,5 +1,5 @@
+import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
 import { redirect } from 'next/navigation';
-import { fetchAIFeedbackResult } from '@/services/feedbackApi';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';

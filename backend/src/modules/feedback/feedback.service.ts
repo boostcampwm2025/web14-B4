@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { GoogleGenAI } from '@google/genai';
 import { CreateAIFeedbackRequestDto } from './dto/feedback-request.dto';
@@ -18,21 +19,10 @@ import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklis
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 
 const MIN_USER_ANSWER_LENGTH = 50;
-
-interface GeminiErrorResponse {
-  response?: {
-    status?: number;
-    data?: {
-      error?: {
-        details?: Array<{ reason?: string }>;
-      };
-    };
-  };
-  status?: number;
-  message?: string;
-}
 
 @Injectable()
 export class FeedbackService {
@@ -43,6 +33,8 @@ export class FeedbackService {
     private solvedQuizRepository: SolvedQuizRepository,
     private speechesService: SpeechesService,
     private usersService: UsersService,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
   ) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
@@ -128,48 +120,61 @@ export class FeedbackService {
 
       return JSON.parse(textResponse) as Record<string, unknown>;
     } catch (error: unknown) {
-      const err = error as GeminiErrorResponse;
+      const err = error as Error & {
+        status?: number;
+        response?: { status?: number; data?: unknown };
+      };
+
       const status = err.status ?? err.response?.status;
       const message = err.message ?? '';
+
+      // 제미나이 API가 반환하는 오류 메시지 로깅
+      logExternalApiError(this.logger, 'GEMINI', '[Gemini API Error]', error, {
+        inputLength: userText.length,
+      });
 
       // 토큰 할당량 초과 (429)
       if (status === 429) {
         if (message.toLowerCase().includes('daily')) {
-          throw new BusinessException(ERROR_MESSAGES.AI_DAILY_QUOTA_EXCEEDED);
+          throw new BusinessException(
+            ERROR_MESSAGES.EXTERNAL_API_DAILY_QUOTA_EXCEEDED,
+          );
         }
 
-        throw new BusinessException(ERROR_MESSAGES.AI_RATE_LIMIT_EXCEEDED);
+        throw new BusinessException(
+          ERROR_MESSAGES.EXTERNAL_API_RATE_LIMIT_EXCEEDED,
+        );
       }
 
       // 잘못된 요청 및 지역 제한 (400)
       if (status === 400) {
         // 안전 필터 관련 메시지가 포함된 경우 별도 처리
         if (message.toLowerCase().includes('safety')) {
-          throw new BusinessException(ERROR_MESSAGES.AI_SAFETY_BLOCK);
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SAFETY_BLOCK);
         }
 
         // API 키 형식 오류
         if (message.toLowerCase().includes('api key')) {
-          throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
+          throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_KEY_INVALID);
         }
 
         // 지역 미지원(Location) 또는 기타 파라미터 오류
-        throw new BusinessException(ERROR_MESSAGES.AI_INVALID_REQUEST);
+        throw new BusinessException(
+          ERROR_MESSAGES.EXTERNAL_API_INVALID_REQUEST,
+        );
       }
 
       // API 키 권한 문제 (403)
       if (status === 403) {
-        throw new BusinessException(ERROR_MESSAGES.AI_KEY_INVALID);
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_KEY_INVALID);
       }
 
       // 구글 서버 오류 (500, 503, 504)
       if (status && status >= 500) {
-        throw new BusinessException(ERROR_MESSAGES.AI_SERVER_ERROR);
+        throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
       }
 
-      throw new InternalServerErrorException(
-        '답변 분석 중 알 수 없는 오류가 발생했습니다.',
-      );
+      throw new BusinessException(ERROR_MESSAGES.INTERNAL_SERVER_ERROR);
     }
   }
 
