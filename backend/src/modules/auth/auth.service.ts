@@ -21,8 +21,7 @@ interface NaverProfileResponse {
   message: string;
   response: {
     id: string;
-    name: string;
-    email: string;
+    nickname: string;
   };
 }
 
@@ -84,8 +83,7 @@ export class AuthService {
     const profileJson = (await profileResponse.json()) as NaverProfileResponse;
     const userData = profileJson.response;
 
-    const username = userData.name;
-    const email = userData.email;
+    const username = userData.nickname;
     const providerId = userData.id;
 
     let user = await this.userRepository.findByProvider(
@@ -96,7 +94,6 @@ export class AuthService {
     if (!user) {
       user = new User();
       user.username = username;
-      user.email = email;
       user.provider = Provider.NAVER;
       user.providerId = providerId;
       user.uuid = uuidv4();
