@@ -30,7 +30,7 @@ export default function Home() {
           priority
         />
       </div>
-      <div className="flex flex-col gap-5 absolute bottom-[10%] right-[5%] md:bottom-[15%] md:right-[15%] z-20">
+      <div className="flex flex-col gap-3 absolute bottom-[8%] right-[3%] md:bottom-[12%] md:right-[13%] z-20">
         <Link href="/quizzes">
           <Button
             variant="secondary"
