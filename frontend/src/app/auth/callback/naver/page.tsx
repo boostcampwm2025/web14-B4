@@ -4,6 +4,7 @@ import { useEffect, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
 import { loginWithNaver } from '@/services/authApi';
+import { verifyState } from '@/utils/oauth';
 
 function NaverLoginContent() {
   const router = useRouter();
@@ -14,6 +15,16 @@ function NaverLoginContent() {
     const code = searchParams.get('code');
     const state = searchParams.get('state');
 
+    // state 검증
+    if (code && state) {
+      if (!verifyState(state)) {
+        alert('잘못된 요청입니다. State가 불일치합니다.');
+        router.push('/');
+        return;
+      }
+    }
+
+    // 로그인 요청
     if (code && !requestSent.current) {
       requestSent.current = true;
       loginWithNaver(code, state)
