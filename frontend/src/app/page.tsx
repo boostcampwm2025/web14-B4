@@ -35,7 +35,7 @@ export default function Home() {
           <Button
             variant="secondary"
             size="cta"
-            className="hover:var[(--color-accent-sky)] text-lg transition-transform hover:scale-105"
+            className="w-[210px] h-[48px] rounded-[8px] p-0 hover:var[(--color-accent-sky)] text-base transition-transform hover:scale-105"
           >
             비회원으로 체험해보기
           </Button>
