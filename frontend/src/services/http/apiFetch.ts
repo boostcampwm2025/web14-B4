@@ -43,22 +43,13 @@ export async function apiFetch<T>(
   const API_BASE = getApiBaseUrl();
   const isClient = typeof window !== 'undefined';
 
-  // 요청 인터셉터 헤더에 AT 자동 주입
-  const headers = new Headers(init?.headers);
-
-  if (isClient && !init?.skipAuth) {
-    const accessToken = localStorage.getItem('accessToken');
-    if (accessToken) {
-      headers.set('Authorization', `Bearer ${accessToken}`);
-    }
-  }
-
   let res: Response;
+  const { skipAuth, ...fetchInit } = init || {};
+
   try {
-    const { skipAuth, ...fetchInit } = init || {};
     res = await fetch(`${API_BASE}${path}`, {
       ...fetchInit,
-      headers,
+      credentials: 'include',
     });
   } catch {
     // 네트워크 단에서 죽는 케이스(서버 응답 자체가 없음)
@@ -68,16 +59,12 @@ export async function apiFetch<T>(
   // 응답 인터셉터 401 에러 감지 및 토큰 갱신
   if (res.status === 401 && !init?.skipAuth && isClient) {
     try {
-      const newTokens = await refreshAccessToken();
-      localStorage.setItem('accessToken', newTokens.accessToken);
-      headers.set('Authorization', `Bearer ${newTokens.accessToken}`);
-      const { skipAuth, ...retryInit } = init || {};
+      await refreshAccessToken();
       res = await fetch(`${API_BASE}${path}`, {
-        ...retryInit,
-        headers,
+        ...fetchInit,
+        credentials: 'include',
       });
     } catch (refreshError) {
-      localStorage.removeItem('accessToken');
       throw new ApiError('세션이 만료되었습니다. 다시 로그인해주세요.', 401, 'TOKEN_EXPIRED');
     }
   }
