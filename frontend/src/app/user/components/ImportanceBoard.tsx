@@ -40,22 +40,7 @@ const mockData: {
       createdAt: '2026-01-17T20:30:55Z',
     },
   ],
-  low: [
-    {
-      solvedQuizId: 13,
-      category: 'HTTP',
-      mainQuizId: 20,
-      mainQuizTitle: 'HTTP 상태 코드',
-      createdAt: '2026-01-10T08:12:03Z',
-    },
-    {
-      solvedQuizId: 15,
-      category: '기초',
-      mainQuizId: 25,
-      mainQuizTitle: '변수와 타입',
-      createdAt: '2026-01-05T14:44:01Z',
-    },
-  ],
+  low: [],
 };
 
 export default function ImportanceBoard() {
@@ -68,9 +53,9 @@ export default function ImportanceBoard() {
       </div>
 
       <div className="rounded-2xl bg-white shadow-sm divide-y py-3 px-10 divide-slate-300">
-        <ImportanceGroup title="중요도 상" importance="HIGH" items={mockData.high} />
-        <ImportanceGroup title="중요도 중" importance="NORMAL" items={mockData.normal} />
-        <ImportanceGroup title="중요도 하" importance="LOW" items={mockData.low} />
+        <ImportanceGroup title="중요도 상" items={mockData.high} />
+        <ImportanceGroup title="중요도 중" items={mockData.normal} />
+        <ImportanceGroup title="중요도 하" items={mockData.low} />
       </div>
     </div>
   );
