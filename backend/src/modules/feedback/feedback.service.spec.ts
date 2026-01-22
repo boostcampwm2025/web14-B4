@@ -60,16 +60,6 @@ describe('FeedbackService', () => {
           provide: UsersService,
           useValue: usersServiceMock,
         },
-        {
-          provide: 'NestWinston',
-          useValue: {
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-            debug: jest.fn(),
-            verbose: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
@@ -153,7 +143,7 @@ describe('FeedbackService', () => {
 
       await expect(
         service.generateAIFeedback(requestDto),
-      ).rejects.toBeInstanceOf(BusinessException);
+      ).rejects.toBeInstanceOf(InternalServerErrorException);
     });
 
     it('AI 피드백 저장 실패 시 InternalServerErrorException 발생', async () => {
@@ -172,7 +162,7 @@ describe('FeedbackService', () => {
       });
 
       await expect(service.analyzeAnswer('test')).rejects.toBeInstanceOf(
-        BusinessException,
+        InternalServerErrorException,
       );
     });
   });
@@ -227,16 +217,6 @@ describe('FeedbackService', () => {
           provide: UsersService,
           useValue: {
             getUserChecklistProgress: jest.fn(),
-          },
-        },
-        {
-          provide: 'NestWinston',
-          useValue: {
-            log: jest.fn(),
-            error: jest.fn(),
-            warn: jest.fn(),
-            debug: jest.fn(),
-            verbose: jest.fn(),
           },
         },
       ],

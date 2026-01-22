@@ -88,17 +88,4 @@ export class SolvedQuizRepository {
   ): Promise<UpdateResult> {
     return await this.repository.update(solvedQuizId, { importance });
   }
-
-  async getImportanceByUserId(userId: number): Promise<SolvedQuiz[]> {
-    return this.repository
-      .createQueryBuilder('sq')
-      .innerJoinAndSelect('sq.mainQuiz', 'mq')
-      .innerJoinAndSelect('mq.quizCategory', 'qc')
-      .where('sq.user_id = :userId', { userId })
-      .andWhere('sq.importance IS NOT NULL')
-      .distinctOn(['sq.main_quiz_id'])
-      .orderBy('sq.main_quiz_id')
-      .addOrderBy('sq.created_at', 'DESC')
-      .getMany();
-  }
 }

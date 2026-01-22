@@ -25,11 +25,6 @@ export const ERROR_MESSAGES = {
   },
 
   // DB관련 오류
-  USER_NOT_FOUND: {
-    errorCode: 'USER_NOT_FOUND',
-    status: 404,
-    message: '해당 유저를 찾을 수 없습니다.',
-  },
   // 테이블에서 말하기 연습 관련 데이터를 찾을 수 없는경우
   MAIN_QUIZ_NOT_FOUND: {
     errorCode: 'MAIN_QUIZ_NOT_FOUND',

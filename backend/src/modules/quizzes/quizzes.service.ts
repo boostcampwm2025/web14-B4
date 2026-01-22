@@ -4,7 +4,6 @@ import {
   QuizChecklistResponseDto,
   MultipleChoicesResponseDto,
 } from './dto/quiz-response.dto';
-import { QuizImportanceDataDto } from './dto/quiz-importance-response.dto';
 import {
   MainQuiz,
   DifficultyLevel,
@@ -15,18 +14,13 @@ import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyw
 import { MultipleChoiceRepository } from 'src/datasources/repositories/tb-multiple-choice.repository';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
-import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
-import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
-import { mapSolvedQuizzesToImportanceData } from './mapper/response-mapper';
 
 @Injectable()
 export class QuizzesService {
   constructor(
-    private readonly userRepository: UserRepository,
     private readonly quizRepository: MainQuizRepository,
     private readonly quizKeywordRepository: QuizKeywordRepository,
     private readonly multipleChoiceRepository: MultipleChoiceRepository,
-    private readonly solvedQuizRepository: SolvedQuizRepository,
   ) {}
 
   async getQuizzes(
@@ -56,6 +50,7 @@ export class QuizzesService {
     if (difficulty) where.difficultyLevel = difficulty;
 
     const result = await this.quizRepository.getCategoriesWithCount(difficulty);
+    console.log(result);
 
     const categories = result.map((row) => ({
       id: Number(row.id),
@@ -136,20 +131,5 @@ export class QuizzesService {
       totalCount: mapped.length,
       multipleChoices: mapped,
     };
-  }
-
-  async getSolvedWithImportance(
-    userId: number,
-  ): Promise<QuizImportanceDataDto> {
-    // userId로 해당 유저가 존재하는지 조회
-    const user = await this.userRepository.findById(userId);
-
-    if (user === null)
-      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND.message);
-
-    const solvedQuiz =
-      await this.solvedQuizRepository.getImportanceByUserId(userId);
-
-    return mapSolvedQuizzesToImportanceData(solvedQuiz);
   }
 }

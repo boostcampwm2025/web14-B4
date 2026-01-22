@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   SaveImportanceRequestDto,
@@ -8,17 +8,12 @@ import {
   SaveImportanceResponseDto,
   SolvedQuizResponseDto,
 } from './dto/users-response.dto';
-import { QuizImportanceDataDto } from '../quizzes/dto/quiz-importance-response.dto';
-import { QuizzesService } from '../quizzes/quizzes.service';
 
 const TEST_USER_ID = 1;
 
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly quizzesService: QuizzesService,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Post('solved-quizzes')
   async saveChecklistProgress(
@@ -34,13 +29,6 @@ export class UsersController {
     @Body() dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const result = await this.usersService.saveImportance(dto);
-    return result;
-  }
-
-  @Get('/solved-quizzes/importance')
-  async getSolvedImportance(): Promise<QuizImportanceDataDto> {
-    const result =
-      await this.quizzesService.getSolvedWithImportance(TEST_USER_ID);
     return result;
   }
 }
