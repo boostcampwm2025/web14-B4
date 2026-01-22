@@ -4,10 +4,7 @@ import {
   QuizChecklistResponseDto,
   MultipleChoicesResponseDto,
 } from './dto/quiz-response.dto';
-import {
-  QuizImportanceDataDto,
-  mapSolvedQuizzesToImportanceData,
-} from './dto/quiz-importance-response.dto';
+import { QuizImportanceDataDto } from './dto/quiz-importance-response.dto';
 import {
   MainQuiz,
   DifficultyLevel,
@@ -20,6 +17,7 @@ import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
+import { mapSolvedQuizzesToImportanceData } from './mapper/response-mapper';
 
 @Injectable()
 export class QuizzesService {
