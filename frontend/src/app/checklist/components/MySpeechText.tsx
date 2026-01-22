@@ -2,13 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { SpeechItemDto } from '../types/speeches.types';
+import { MAX_SPEECH_TEXT_LENGTH } from '@/constants/speech.constants';
 
 interface MySpeechTextProps {
   speechItem: SpeechItemDto;
   setSpeechItem: React.Dispatch<React.SetStateAction<SpeechItemDto>>;
 }
-
-const TEXT_MAX_LENGTH = 2000;
 
 export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechTextProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -20,15 +19,15 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
     }
   }, [speechItem.speechText]);
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
+    const speechTextValue = e.target.value;
 
-    if (value.length > TEXT_MAX_LENGTH) {
+    if (speechTextValue.length > MAX_SPEECH_TEXT_LENGTH) {
       return;
     }
 
     setSpeechItem({
       ...speechItem,
-      speechText: value,
+      speechText: speechTextValue,
     });
   };
 
@@ -45,7 +44,7 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
         />
       </div>
       <div className="flex justify-end text-sm text-gray-500">
-        {speechItem.speechText.length}자 / {TEXT_MAX_LENGTH}자
+        {speechItem.speechText.length}자 / {MAX_SPEECH_TEXT_LENGTH}자
       </div>
     </div>
   );
