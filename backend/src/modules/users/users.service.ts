@@ -16,6 +16,7 @@ import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
 
+const MAX_USER_ANSWER_LENGTH = 1500;
 @Injectable()
 export class UsersService {
   constructor(
@@ -71,6 +72,11 @@ export class UsersService {
     // 나의 답변 및 이해도 저장
     solvedQuiz.speechText = dto.speechText;
     solvedQuiz.comprehensionLevel = dto.comprehensionLevel;
+
+    // 나의 답변이 길이 제한을 초과할 경우 오류 반환
+    if (solvedQuiz.speechText.length > MAX_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_LONG);
+    }
 
     const savedSolvedQuiz =
       await this.solvedQuizRepository.updateSolvedQuiz(solvedQuiz);

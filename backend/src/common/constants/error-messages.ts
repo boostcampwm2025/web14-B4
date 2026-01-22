@@ -60,6 +60,13 @@ export const ERROR_MESSAGES = {
     message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
   },
 
+  // 답변이 너무 긴 경우 푼 퀴즈에 저장하지 않고 오류 반환
+  ANSWER_TOO_LONG: {
+    errorCode: 'ANSWER_TOO_LONG',
+    status: 400,
+    message: '답변이 너무 깁니다. 1500자 이하로 답변해주세요.',
+  },
+
   // 외부 API 공통
   EXTERNAL_API_SERVER_ERROR: {
     errorCode: 'EXTERNAL_API_SERVER_ERROR',
