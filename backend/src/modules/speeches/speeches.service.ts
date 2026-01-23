@@ -351,12 +351,12 @@ export class SpeechesService {
 
       const result = (await response.json()) as ClovaSpeechLongSyncResponse;
 
-      if (result.result === 'FAILED') {
+      if (result.result !== 'COMPLETED') {
         logExternalApiError(
           this.logger,
           'CLOVA',
-          '[STT API FAILED]',
-          new Error(result.message ?? 'FAILED'),
+          '[STT API NOT_COMPLETED]',
+          new Error(result.message ?? 'NOT_COMPLETED'),
           {
             ...meta,
             durationMs: `${durationMs}ms`,
