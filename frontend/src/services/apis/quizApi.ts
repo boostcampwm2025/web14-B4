@@ -6,6 +6,16 @@ export interface ChecklistSubmitResponseDto {
   savedCount: number;
 }
 
+export async function fetchAllQuizzes(): Promise<Quiz[]> {
+  const data = await apiFetch<Quiz[]>(
+    '/quizzes',
+    { method: 'GET', next: { revalidate: 3600 } },
+    { message: '퀴즈 목록 응답 데이터가 없습니다.' },
+  );
+
+  return data;
+}
+
 export async function fetchQuizzes(category?: string, difficulty?: string): Promise<Quiz[]> {
   const params = new URLSearchParams();
 
