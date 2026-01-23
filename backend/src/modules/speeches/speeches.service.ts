@@ -366,7 +366,10 @@ export class SpeechesService {
         );
 
         // 일별 한도 제한 초과 오류 (CLOVA가 response.ok && body.result=FAILED 으로 응답함)
-        if (result.message?.includes('일별 한도')) {
+        if (
+          result.result === 'FAILED' &&
+          result.message?.includes('일별 한도')
+        ) {
           throw new BusinessException(
             ERROR_MESSAGES.EXTERNAL_API_DAILY_QUOTA_EXCEEDED,
           );
