@@ -10,14 +10,16 @@ import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 
 // 스키마 정의
-const ComprehensionStatisticsSchema = z.object({
-  category: z.string(),
-  totalSolved: z.number().int().nonnegative(),
-  high: z.number().int().nonnegative(),
-  normal: z.number().int().nonnegative(),
-  low: z.number().int().nonnegative(),
-  comprehensionScore: z.number().min(0).max(5),
-});
+const ComprehensionStatisticsSchema = z
+  .object({
+    category: z.string(),
+    totalSolved: z.number().int().nonnegative(),
+    high: z.number().int().nonnegative(),
+    normal: z.number().int().nonnegative(),
+    low: z.number().int().nonnegative(),
+    comprehensionScore: z.number().min(0).max(5),
+  })
+  .strict();
 
 export type ComprehensionStatistics = z.infer<
   typeof ComprehensionStatisticsSchema
