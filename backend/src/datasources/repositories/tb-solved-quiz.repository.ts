@@ -152,7 +152,7 @@ export class SolvedQuizRepository {
               COUNT(*) FILTER (WHERE ls.comprehension_level = 'LOW')::INTEGER * 1.0
             ) / NULLIF(COUNT(ls.solved_quiz_id)::INTEGER, 0),
             2
-        )::INTEGER AS "comprehensionScore"
+        )::FLOAT AS "comprehensionScore"
     FROM tb_main_quiz tmq
     INNER JOIN tb_quiz_category tqc 
         ON tmq.quiz_category_id = tqc.quiz_category_id
