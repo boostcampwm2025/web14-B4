@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { DeepPartial, Repository } from 'typeorm';
+import { DeepPartial, Repository, DataSource } from 'typeorm';
 import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ComprehensionStatistics } from 'src/modules/users/types/statistics.types';
 
 @Injectable()
 export class SolvedQuizRepository {
   constructor(
     @InjectRepository(SolvedQuiz)
     private readonly repository: Repository<SolvedQuiz>,
+    private readonly dataSource: DataSource,
   ) {}
 
   async createSolvedQuiz(
@@ -100,5 +102,46 @@ export class SolvedQuizRepository {
       .orderBy('sq.main_quiz_id')
       .addOrderBy('sq.created_at', 'DESC')
       .getMany();
+  }
+
+  async getComprehensionStatistics(
+    userId: number,
+  ): Promise<ComprehensionStatistics[]> {
+    const query = `
+      WITH latest_solves AS (
+        SELECT DISTINCT ON (main_quiz_id)
+              main_quiz_id,
+              solved_quiz_id,
+              comprehension_level
+        FROM tb_solved_quiz
+        WHERE user_id = $1
+          AND solved_state = 'COMPLETED'
+          AND comprehension_level IS NOT NULL
+        ORDER BY main_quiz_id, created_at DESC
+    )
+    SELECT 
+        COALESCE(tqc.name, '기타') AS category,
+        COUNT(ls.solved_quiz_id)::INTEGER AS "totalSolved",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH')::INTEGER AS "high",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL')::INTEGER AS "normal",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'LOW')::INTEGER AS "low",
+        ROUND(
+            (
+              COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH')::INTEGER * 5.0 +
+              COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL')::INTEGER * 3.0 +
+              COUNT(*) FILTER (WHERE ls.comprehension_level = 'LOW')::INTEGER * 1.0
+            ) / NULLIF(COUNT(ls.solved_quiz_id)::INTEGER, 0),
+            2
+        )::INTEGER AS "comprehensionScore"
+    FROM tb_main_quiz tmq
+    INNER JOIN tb_quiz_category tqc 
+        ON tmq.quiz_category_id = tqc.quiz_category_id
+    INNER JOIN latest_solves ls 
+        ON tmq.main_quiz_id = ls.main_quiz_id
+    GROUP BY tqc.name
+    ORDER BY "comprehensionScore" DESC NULLS LAST
+    `;
+
+    return this.dataSource.query(query, [userId]);
   }
 }

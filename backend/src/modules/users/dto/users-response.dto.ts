@@ -1,3 +1,4 @@
+import { ComprehensionStatistics } from './../types/statistics.types';
 import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity';
 
 export class SolvedQuizResponseDto {
@@ -12,5 +13,12 @@ export class SaveImportanceResponseDto {
   constructor(params: { solvedQuizId: number; importance: Importance }) {
     this.solvedQuizId = params.solvedQuizId;
     this.importance = params.importance;
+  }
+}
+
+export class GetUserComprehensionsResponseDto {
+  comprehensionData: ComprehensionStatistics[];
+  constructor(comprehensionData: ComprehensionStatistics[]) {
+    this.comprehensionData = comprehensionData;
   }
 }

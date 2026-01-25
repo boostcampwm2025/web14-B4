@@ -6,7 +6,10 @@ import {
   SaveSolvedQuizRequestDto,
 } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
-import { SaveImportanceResponseDto } from './dto/users-response.dto';
+import {
+  GetUserComprehensionsResponseDto,
+  SaveImportanceResponseDto,
+} from './dto/users-response.dto';
 import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
@@ -153,5 +156,20 @@ export class UsersService {
         '해당 solved quiz의 체크리스트가 존재하지 않습니다.',
       );
     return userChecklistProgress;
+  }
+
+  /**
+   * 푼 퀴즈에 대한 카테고리별 이해도 통계
+   * @param userId 유저 아이디
+   * @returns 푼 퀴즈에 대한 카테고리별 이해도 및 평균값
+   */
+  async getUserSolvedQuizWithComprehension(
+    userId: number,
+  ): Promise<GetUserComprehensionsResponseDto> {
+    // TODO 유저 존재여부 판별
+
+    const solvedQuizCategoryStatistics =
+      await this.solvedQuizRepository.getComprehensionStatistics(userId);
+    return new GetUserComprehensionsResponseDto(solvedQuizCategoryStatistics);
   }
 }
