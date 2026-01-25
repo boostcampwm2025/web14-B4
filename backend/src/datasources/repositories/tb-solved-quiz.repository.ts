@@ -1,9 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DeepPartial, Repository, DataSource } from 'typeorm';
 import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ComprehensionStatistics } from 'src/modules/users/types/statistics.types';
+import { z } from 'zod';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
+import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { BusinessException } from 'src/common/exceptions/business.exception';
+
+// 스키마 정의
+const ComprehensionStatisticsSchema = z.object({
+  category: z.string(),
+  totalSolved: z.number().int().nonnegative(),
+  high: z.number().int().nonnegative(),
+  normal: z.number().int().nonnegative(),
+  low: z.number().int().nonnegative(),
+  comprehensionScore: z.number().min(0).max(5),
+});
+
+export type ComprehensionStatistics = z.infer<
+  typeof ComprehensionStatisticsSchema
+>;
 
 @Injectable()
 export class SolvedQuizRepository {
@@ -11,6 +29,8 @@ export class SolvedQuizRepository {
     @InjectRepository(SolvedQuiz)
     private readonly repository: Repository<SolvedQuiz>,
     private readonly dataSource: DataSource,
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: Logger,
   ) {}
 
   async createSolvedQuiz(
@@ -122,8 +142,8 @@ export class SolvedQuizRepository {
     SELECT 
         COALESCE(tqc.name, '기타') AS category,
         COUNT(ls.solved_quiz_id)::INTEGER AS "totalSolved",
-        COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH')::INTEGER AS "high",
-        COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL')::INTEGER AS "normal",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH') AS "high",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL') AS "normal",
         COUNT(*) FILTER (WHERE ls.comprehension_level = 'LOW')::INTEGER AS "low",
         ROUND(
             (
@@ -142,6 +162,20 @@ export class SolvedQuizRepository {
     ORDER BY "comprehensionScore" DESC NULLS LAST
     `;
 
-    return this.dataSource.query(query, [userId]);
+    try {
+      const rawResults = await this.dataSource.query(query, [userId]);
+      return z.array(ComprehensionStatisticsSchema).parse(rawResults);
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        this.logger.error(
+          `${ERROR_MESSAGES.DATA_VALIDATION_FAILED.message}\nuserId: ${userId}, \nerrors: ${JSON.stringify(error.issues)}`,
+        );
+
+        throw new BusinessException(ERROR_MESSAGES.DATA_VALIDATION_FAILED);
+      }
+
+      // DB 연결 에러, 쿼리 에러 등 그대로 전파
+      throw error;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { ComprehensionStatistics } from './../types/statistics.types';
+import { ComprehensionStatistics } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity';
 
 export class SolvedQuizResponseDto {
