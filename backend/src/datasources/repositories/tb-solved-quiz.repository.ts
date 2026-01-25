@@ -142,8 +142,8 @@ export class SolvedQuizRepository {
     SELECT 
         COALESCE(tqc.name, '기타') AS category,
         COUNT(ls.solved_quiz_id)::INTEGER AS "totalSolved",
-        COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH') AS "high",
-        COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL') AS "normal",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'HIGH')::INTEGER AS "high",
+        COUNT(*) FILTER (WHERE ls.comprehension_level = 'NORMAL')::INTEGER AS "normal",
         COUNT(*) FILTER (WHERE ls.comprehension_level = 'LOW')::INTEGER AS "low",
         ROUND(
             (
