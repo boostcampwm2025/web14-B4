@@ -167,3 +167,67 @@ describe('UsersService.saveImportance', () => {
     expect(result).toEqual({ solvedQuizId: 10, importance: 'HIGH' });
   });
 });
+
+describe('UsersService.getComprehensionStats', () => {
+  let service: UsersService;
+
+  const mainQuizRepository = {} as unknown as MainQuizRepository;
+  const userChecklistProgressRepository =
+    {} as unknown as UserChecklistProgressRepository;
+  const checklistItemRepository = {} as unknown as ChecklistItemRepository;
+
+  const solvedQuizRepository = {
+    getComprehensionStatistics: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        { provide: MainQuizRepository, useValue: mainQuizRepository },
+        { provide: SolvedQuizRepository, useValue: solvedQuizRepository },
+        {
+          provide: UserChecklistProgressRepository,
+          useValue: userChecklistProgressRepository,
+        },
+        { provide: ChecklistItemRepository, useValue: checklistItemRepository },
+      ],
+    }).compile();
+
+    service = moduleRef.get(UsersService);
+  });
+
+  it('[정상] 사용자 이해도 통계를 반환한다', async () => {
+    const mockStats = [
+      {
+        category: '알고리즘',
+        totalSolved: 10,
+        상: 5,
+        중: 3,
+        하: 2,
+        comprehensionScore: 3.8,
+      },
+    ];
+
+    solvedQuizRepository.getComprehensionStatistics.mockResolvedValue(
+      mockStats,
+    );
+
+    const result = await service.getUserSolvedQuizWithComprehension(1);
+
+    expect(
+      solvedQuizRepository.getComprehensionStatistics,
+    ).toHaveBeenCalledWith(1);
+    expect(result).toEqual(mockStats);
+  });
+
+  it('[정상] 통계가 비어있으면 빈 배열을 반환한다', async () => {
+    solvedQuizRepository.getComprehensionStatistics.mockResolvedValue([]);
+
+    const result = await service.getUserSolvedQuizWithComprehension(1);
+
+    expect(result).toEqual([]);
+  });
+});
