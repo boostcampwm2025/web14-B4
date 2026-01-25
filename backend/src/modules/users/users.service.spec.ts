@@ -220,7 +220,7 @@ describe('UsersService.getComprehensionStats', () => {
     expect(
       solvedQuizRepository.getComprehensionStatistics,
     ).toHaveBeenCalledWith(1);
-    expect(result).toEqual(mockStats);
+    expect(result.comprehensionData).toEqual(mockStats);
   });
 
   it('[정상] 통계가 비어있으면 빈 배열을 반환한다', async () => {
@@ -228,6 +228,6 @@ describe('UsersService.getComprehensionStats', () => {
 
     const result = await service.getUserSolvedQuizWithComprehension(1);
 
-    expect(result).toEqual([]);
+    expect(result.comprehensionData).toEqual([]);
   });
 });
