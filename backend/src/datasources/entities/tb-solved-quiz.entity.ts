@@ -21,6 +21,13 @@ export enum Importance {
   LOW = 'LOW',
 }
 
+export enum SolvedState {
+  NOT_STARTED = 'NOT_STARTED', // 시작 전(나의 답변 + 체크리스트 제출 전)
+  IN_PROGRESS = 'IN_PROGRESS', // 진행 중 (AI 피드백 생성)
+  COMPLETED = 'COMPLETED', // 풀이 완료 (AI 피드백 확인 후, 끝내기 완료)
+  FAILED = 'FAILED', // 풀이 실패
+}
+
 @Entity('tb_solved_quiz')
 export class SolvedQuiz {
   @PrimaryGeneratedColumn('increment', {
@@ -58,6 +65,15 @@ export class SolvedQuiz {
 
   @Column('jsonb', { name: 'ai_feedback', nullable: true })
   aiFeedback: unknown;
+
+  @Column({
+    name: 'solved_state',
+    type: 'enum',
+    enum: SolvedState,
+    nullable: false,
+    default: SolvedState.NOT_STARTED,
+  })
+  solvedState: SolvedState;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
