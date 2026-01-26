@@ -8,6 +8,7 @@ import {
 import { Transactional } from 'typeorm-transactional';
 import {
   GetUserComprehensionsResponseDto,
+  GetUserSolvedStatisticsResponseDto,
   SaveImportanceResponseDto,
 } from './dto/users-response.dto';
 import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
@@ -171,5 +172,15 @@ export class UsersService {
     const solvedQuizCategoryStatistics =
       await this.solvedQuizRepository.getComprehensionStatistics(userId);
     return new GetUserComprehensionsResponseDto(solvedQuizCategoryStatistics);
+  }
+
+  async getUserSolvedStatistics(
+    userId: number,
+  ): Promise<GetUserSolvedStatisticsResponseDto> {
+    // TODO 유저 정보 확인
+
+    const solvedData =
+      await this.solvedQuizRepository.getSolvedQuizStatistics(userId);
+    return new GetUserSolvedStatisticsResponseDto(solvedData);
   }
 }

@@ -1,4 +1,7 @@
-import { ComprehensionStatistics } from 'src/datasources/repositories/tb-solved-quiz.repository';
+import {
+  ComprehensionStatistics,
+  SolvedQuizStatistics,
+} from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { Importance } from '../../../datasources/entities/tb-solved-quiz.entity';
 
 export class SolvedQuizResponseDto {
@@ -20,5 +23,12 @@ export class GetUserComprehensionsResponseDto {
   comprehensionData: ComprehensionStatistics[];
   constructor(comprehensionData: ComprehensionStatistics[]) {
     this.comprehensionData = comprehensionData;
+  }
+}
+
+export class GetUserSolvedStatisticsResponseDto {
+  solvedData: SolvedQuizStatistics[];
+  constructor(solvedData: SolvedQuizStatistics[]) {
+    this.solvedData = solvedData;
   }
 }

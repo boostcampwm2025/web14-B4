@@ -231,3 +231,63 @@ describe('UsersService.getComprehensionStats', () => {
     expect(result.comprehensionData).toEqual([]);
   });
 });
+
+describe('UsersService.getUserSolvedQuizWithComprehension', () => {
+  let service: UsersService;
+
+  const mainQuizRepository = {} as unknown as MainQuizRepository;
+  const userChecklistProgressRepository =
+    {} as unknown as UserChecklistProgressRepository;
+  const checklistItemRepository = {} as unknown as ChecklistItemRepository;
+
+  const solvedQuizRepository = {
+    getSolvedQuizStatistics: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        UsersService,
+        { provide: MainQuizRepository, useValue: mainQuizRepository },
+        { provide: SolvedQuizRepository, useValue: solvedQuizRepository },
+        {
+          provide: UserChecklistProgressRepository,
+          useValue: userChecklistProgressRepository,
+        },
+        { provide: ChecklistItemRepository, useValue: checklistItemRepository },
+      ],
+    }).compile();
+
+    service = moduleRef.get(UsersService);
+  });
+
+  it('[정상] 사용자가 푼 문제수에 대한 통계를 반환한다', async () => {
+    const mockStats = [
+      {
+        category: '자료구조',
+        solvedQuizAmount: 42,
+        totalQuizAmount: 50,
+        percentage: 84,
+      },
+    ];
+
+    solvedQuizRepository.getSolvedQuizStatistics.mockResolvedValue(mockStats);
+
+    const result = await service.getUserSolvedStatistics(1);
+
+    expect(solvedQuizRepository.getSolvedQuizStatistics).toHaveBeenCalledWith(
+      1,
+    );
+    expect(result.solvedData).toEqual(mockStats);
+  });
+
+  it('[정상] 통계가 비어있으면 빈 배열을 반환한다', async () => {
+    solvedQuizRepository.getSolvedQuizStatistics.mockResolvedValue([]);
+
+    const result = await service.getUserSolvedStatistics(1);
+
+    expect(result.solvedData).toEqual([]);
+  });
+});
