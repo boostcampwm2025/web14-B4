@@ -18,6 +18,7 @@ import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
+import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -38,6 +39,7 @@ export class SpeechesService {
     private configService: ConfigService,
     private solvedQuizRepository: SolvedQuizRepository,
     private readonly userRepository: UserRepository,
+    private readonly mainQuizRepository: MainQuizRepository,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -405,12 +407,22 @@ export class SpeechesService {
     }
   }
 
-  async createSpeechText(params: {
+  async createSpeechText(dto: {
     userId: number;
     mainQuizId: number;
     speechText: string;
   }): Promise<CreateSpeechTextAnswerResponseDto> {
-    const { userId, mainQuizId, speechText } = params;
+    const { userId, mainQuizId, speechText } = dto;
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
+    }
 
     const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
       user: { userId },
