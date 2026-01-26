@@ -124,37 +124,53 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    let payload: JwtPayload;
+    // JWT 서명 검증
     try {
-      const payload = this.jwtService.verify<JwtPayload>(refreshToken);
-      const uuid = payload.sub;
+      payload = this.jwtService.verify<JwtPayload>(refreshToken);
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
 
-      const redisRt = await this.redisClient.get(`RT:${uuid}`);
+    const uuid = payload.sub;
 
-      if (!redisRt || redisRt !== refreshToken) {
-        throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
-      }
+    // Redis 조회
+    let redisRt: string | null;
+    try {
+      redisRt = await this.redisClient.get(`RT:${uuid}`);
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.SERVICE_UNAVAILABLE);
+    }
 
-      const newPayload: JwtPayload = { sub: uuid };
-      const newAccessToken = this.jwtService.sign(newPayload, {
-        expiresIn: '1h',
-      });
-      const newRefreshToken = this.jwtService.sign(newPayload, {
-        expiresIn: '7d',
-      });
+    // 토큰 비교
+    if (!redisRt || redisRt !== refreshToken) {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
 
+    // 새 토큰 발급
+    const newPayload: JwtPayload = { sub: uuid };
+    const newAccessToken = this.jwtService.sign(newPayload, {
+      expiresIn: '1h',
+    });
+    const newRefreshToken = this.jwtService.sign(newPayload, {
+      expiresIn: '7d',
+    });
+
+    // Redis 업데이트
+    try {
       await this.redisClient.set(
         `RT:${uuid}`,
         newRefreshToken,
         'EX',
         60 * 60 * 24 * 7,
       );
-
-      return {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      };
     } catch {
-      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+      throw new BusinessException(ERROR_MESSAGES.TOKEN_UPDATE_FAILED);
     }
+
+    return {
+      accessToken: newAccessToken,
+      refreshToken: newRefreshToken,
+    };
   }
 }

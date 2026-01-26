@@ -128,4 +128,14 @@ export const ERROR_MESSAGES = {
     status: 401,
     message: '리프레시 토큰이 만료되었습니다. 다시 로그인해주세요.',
   },
+  SERVICE_UNAVAILABLE: {
+    errorCode: 'SERVICE_UNAVAILABLE',
+    status: 503,
+    message: 'Redis 서버와의 연결에 실패했습니다',
+  },
+  TOKEN_UPDATE_FAILED: {
+    errorCode: 'TOKEN_UPDATE_FAILED',
+    status: 500,
+    message: '토큰 갱신에 실패했습니다.',
+  },
 };
