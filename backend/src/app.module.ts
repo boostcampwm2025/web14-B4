@@ -29,11 +29,11 @@ import { AuthModule } from './modules/auth/auth.module';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DB_HOST'), // .env 파일에서 읽어옴
-        port: +configService.get('DB_PORT'),
+        port: Number(configService.get('DB_PORT')),
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [__dirname + 'datasources/entities/*.entity{.ts,.js}'],
+        entities: [__dirname + '/datasources/entities/*.entity{.ts,.js}'],
         synchronize: false,
         dropSchema: false,
         extra: {
