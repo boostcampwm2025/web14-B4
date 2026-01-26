@@ -75,6 +75,7 @@ export class AuthController {
     return { success: true };
   }
 
+  @Public()
   @Post('logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
