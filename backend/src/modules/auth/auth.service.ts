@@ -102,20 +102,10 @@ export class AuthService {
       user = await this.userRepository.createUser(user);
     }
 
-    const payload = { sub: user.uuid };
-    const newAccessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
-    const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
-
-    await this.redisClient.set(
-      `RT:${user.uuid}`,
-      newRefreshToken,
-      'EX',
-      60 * 60 * 24 * 7,
-    );
+    const tokens = await this.issueTokens(user.uuid);
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+      ...tokens,
       user: {
         uuid: user.uuid,
         username: user.username,
@@ -148,30 +138,27 @@ export class AuthService {
     }
 
     // 새 토큰 발급
-    const newPayload: JwtPayload = { sub: uuid };
-    const newAccessToken = this.jwtService.sign(newPayload, {
-      expiresIn: '1h',
-    });
-    const newRefreshToken = this.jwtService.sign(newPayload, {
-      expiresIn: '7d',
-    });
+    return this.issueTokens(uuid);
+  }
 
-    // Redis 업데이트
+  // 토큰 발급 및 Redis 저장
+  private async issueTokens(uuid: string) {
+    const payload: JwtPayload = { sub: uuid };
+
+    const access_token = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
+
     try {
       await this.redisClient.set(
         `RT:${uuid}`,
-        newRefreshToken,
+        refresh_token,
         'EX',
         60 * 60 * 24 * 7,
       );
     } catch {
       throw new BusinessException(ERROR_MESSAGES.TOKEN_UPDATE_FAILED);
     }
-
-    return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
-    };
+    return { access_token, refresh_token };
   }
 
   // refreshToken의 JWT 서명 검증
