@@ -6,12 +6,22 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/Auth/useAuth';
 import { logout } from '@/services/apis/authApi';
+import { getNaverLoginUrl } from '@/utils/oauth';
 
 export default function Header() {
   const { isLoggedIn } = useAuth();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const handleNaverLogin = () => {
+    const loginUrl = getNaverLoginUrl();
+    if (loginUrl === '#') {
+      alert('로그인 설정 오류가 발생했습니다.');
+      return;
+    }
+    router.push(loginUrl);
+  };
 
   const handleLogout = async () => {
     try {
@@ -100,19 +110,21 @@ export default function Header() {
             )}
           </div>
         ) : (
-          <Link
-            href="/login"
+          <button
+            onClick={handleNaverLogin}
             className={`
               ${commonButtonClass}
               px-6 py-2 rounded-full 
               border border-[var(--color-primary)]
               text-[var(--color-primary)] text-sm font-bold
+                          variant="secondary"
+            size="cta"
             `}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
           >
             로그인
-          </Link>
+          </button>
         )}
       </div>
     </header>
