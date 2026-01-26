@@ -80,5 +80,13 @@ export async function getUserSolvedStatistics(): Promise<GetUserSolvedStatistics
     { message: '통계 데이터가 존재하지 않습니다.' },
   );
 
+  // 실제로 푼 문제가 있는 카테고리만 필터링
+  const filteredSolvedData = data.solvedData.filter((item) => item.solvedQuizAmount > 0);
+
+  return {
+    ...data,
+    solvedData: filteredSolvedData,
+  };
+
   return data;
 }
