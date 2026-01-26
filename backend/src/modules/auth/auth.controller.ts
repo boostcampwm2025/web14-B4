@@ -71,4 +71,21 @@ export class AuthController {
 
     return { success: true };
   }
+
+  @Post('logout')
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies['refreshToken'] as string | undefined;
+    // RT가 있으면 Redis에서 삭제
+    if (refreshToken) {
+      const payload = this.authService.verifyRefreshToken(refreshToken);
+      await this.authService.logout(payload.sub);
+    }
+
+    // 모든 쿠키 및 username 삭제
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+    res.clearCookie('username');
+
+    return { success: true };
+  }
 }
