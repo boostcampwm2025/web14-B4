@@ -21,7 +21,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-between items-center px-10 py-3 bg-white border-b border-[var(--color-gray-light)]">
+    <header className="sticky top-0 z-50 flex justify-between items-center px-10 py-3 bg-white/80 backdrop-blur-md border-b border-[var(--color-gray-light)]">
       <Link
         href="/"
         className="flex items-center"
