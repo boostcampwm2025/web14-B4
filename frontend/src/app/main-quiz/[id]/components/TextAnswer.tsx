@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@/components/Button';
 import { useRouter } from 'next/navigation';
+import { MAX_SPEECH_TEXT_LENGTH } from '@/constants/speech.constants';
 
 interface Props {
   quizId: number;
@@ -42,7 +43,9 @@ export default function TextAnswer({ quizId }: Props) {
         />
 
         <div className="mt-3 flex items-center justify-between">
-          <p className="text-sm text-gray-500">{text.trim().length}자 / 3800자</p>
+          <p className="text-sm text-gray-500">
+            {text.trim().length}자 / {MAX_SPEECH_TEXT_LENGTH}자
+          </p>
           <Button
             size="fixed"
             variant={isValid ? 'primary' : 'secondary'}
