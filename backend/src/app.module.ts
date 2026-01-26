@@ -16,6 +16,7 @@ import { ApiResponseInterceptor } from './common/interceptors/api-response.inter
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { FeedbackModule } from './modules/feedback/feedback.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [__dirname + 'datasources/entities/*.entity{.ts,.js}'],
         synchronize: false,
         dropSchema: false,
         extra: {
@@ -56,6 +57,7 @@ import { FeedbackModule } from './modules/feedback/feedback.module';
     SpeechesModule,
     QuizModule,
     FeedbackModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [

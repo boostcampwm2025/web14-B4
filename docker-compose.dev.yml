@@ -14,6 +14,13 @@ services:
         - postgres-data:/var/lib/postgresql/data
       networks:
         - app-network
+  redis:
+    image: redis:alpine
+    container_name: redis-dev
+    ports:
+      - "6380:6379"
+    networks:
+      - app-network
   backend-dev:
     build:
       context: ./backend

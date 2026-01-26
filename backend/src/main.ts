@@ -5,6 +5,7 @@ import { initializeTransactionalContext } from 'typeorm-transactional';
 import { WinstonModule } from 'nest-winston';
 import { buildWinstonConfig } from './common/config/winston.config';
 import { getLoggerSettings } from './common/config/logger.config';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   initializeTransactionalContext();
@@ -12,6 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: WinstonModule.createLogger(buildWinstonConfig(loggerSettings)),
   });
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

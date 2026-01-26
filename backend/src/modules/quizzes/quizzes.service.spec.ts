@@ -13,6 +13,13 @@ import { MultipleChoice } from '../../datasources/entities/tb-multiple-choice.en
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { QuizKeywordRepository } from '../../datasources/repositories/tb-quiz-keyword.repository';
+import { UserRepository } from '../../datasources/repositories/tb-user.repository';
+import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
+import {
+  SolvedQuiz,
+  Importance,
+} from '../../datasources/entities/tb-solved-quiz.entity';
+import { User } from '../../datasources/entities/tb-user.entity';
 
 const createMockQuiz = (overrides?: Partial<MainQuiz>): MainQuiz => {
   return {
@@ -35,6 +42,8 @@ describe('QuizzesService', () => {
   let repository: jest.Mocked<MainQuizRepository>;
   let multipleChoiceRepository: jest.Mocked<MultipleChoiceRepository>;
   let _quizKeywordRepository: jest.Mocked<QuizKeywordRepository>;
+  let userRepository: jest.Mocked<UserRepository>;
+  let solvedQuizRepository: jest.Mocked<SolvedQuizRepository>;
 
   beforeEach(async () => {
     const mockRepository = {
@@ -53,6 +62,14 @@ describe('QuizzesService', () => {
       findByMainQuizId: jest.fn().mockResolvedValue([]),
     };
 
+    const mockUserRepository = {
+      findById: jest.fn().mockResolvedValue(null),
+    };
+
+    const mockSolvedQuizRepository = {
+      getImportanceByUserId: jest.fn().mockResolvedValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         QuizzesService,
@@ -68,6 +85,14 @@ describe('QuizzesService', () => {
           provide: MultipleChoiceRepository,
           useValue: mockMultipleChoiceRepository,
         },
+        {
+          provide: UserRepository,
+          useValue: mockUserRepository,
+        },
+        {
+          provide: SolvedQuizRepository,
+          useValue: mockSolvedQuizRepository,
+        },
       ],
     }).compile();
 
@@ -75,6 +100,8 @@ describe('QuizzesService', () => {
     repository = module.get(MainQuizRepository);
     _quizKeywordRepository = module.get(QuizKeywordRepository);
     multipleChoiceRepository = module.get(MultipleChoiceRepository);
+    userRepository = module.get(UserRepository);
+    solvedQuizRepository = module.get(SolvedQuizRepository);
   });
 
   describe('getQuizzes', () => {
@@ -298,6 +325,105 @@ describe('QuizzesService', () => {
         mainQuizId: 1,
         totalCount: 0,
         multipleChoices: [],
+      });
+    });
+  });
+
+  describe('getSolvedWithImportance', () => {
+    it('유저가 존재하지 않으면 NotFoundException을 던진다', async () => {
+      userRepository.findById.mockResolvedValue(null);
+
+      await expect(service.getSolvedWithImportance(999)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('유저가 존재하면 중요도별로 분류된 퀴즈 데이터를 반환한다', async () => {
+      const mockUser: DeepPartial<User> = { userId: 1, email: 'test@test.com' };
+      userRepository.findById.mockResolvedValue(mockUser as User);
+
+      const mockSolvedQuizzes: DeepPartial<SolvedQuiz>[] = [
+        {
+          solvedQuizId: 1,
+          importance: Importance.HIGH,
+          createdAt: new Date('2026-01-20'),
+          mainQuiz: {
+            mainQuizId: 10,
+            title: '운영체제 퀴즈',
+            quizCategory: { name: '운영체제' },
+          },
+        },
+        {
+          solvedQuizId: 2,
+          importance: Importance.NORMAL,
+          createdAt: new Date('2026-01-21'),
+          mainQuiz: {
+            mainQuizId: 20,
+            title: '네트워크 퀴즈',
+            quizCategory: { name: '네트워크' },
+          },
+        },
+        {
+          solvedQuizId: 3,
+          importance: Importance.LOW,
+          createdAt: new Date('2026-01-22'),
+          mainQuiz: {
+            mainQuizId: 30,
+            title: '데이터베이스 퀴즈',
+            quizCategory: { name: '데이터베이스' },
+          },
+        },
+      ];
+
+      solvedQuizRepository.getImportanceByUserId.mockResolvedValue(
+        mockSolvedQuizzes as SolvedQuiz[],
+      );
+
+      const result = await service.getSolvedWithImportance(1);
+
+      expect(result).toEqual({
+        high: [
+          {
+            solvedQuizId: 1,
+            category: '운영체제',
+            mainQuizId: 10,
+            mainQuizTitle: '운영체제 퀴즈',
+            createdAt: '2026-01-20T00:00:00.000Z',
+          },
+        ],
+        normal: [
+          {
+            solvedQuizId: 2,
+            category: '네트워크',
+            mainQuizId: 20,
+            mainQuizTitle: '네트워크 퀴즈',
+            createdAt: '2026-01-21T00:00:00.000Z',
+          },
+        ],
+        low: [
+          {
+            solvedQuizId: 3,
+            category: '데이터베이스',
+            mainQuizId: 30,
+            mainQuizTitle: '데이터베이스 퀴즈',
+            createdAt: '2026-01-22T00:00:00.000Z',
+          },
+        ],
+      });
+    });
+
+    it('푼 퀴즈 중, 중요도가 설정된 퀴즈가 없으면 빈 배열들을 반환한다', async () => {
+      const mockUser: DeepPartial<User> = { userId: 1, email: 'test@test.com' };
+      userRepository.findById.mockResolvedValue(mockUser as User);
+
+      solvedQuizRepository.getImportanceByUserId.mockResolvedValue([]);
+
+      const result = await service.getSolvedWithImportance(1);
+
+      expect(result).toEqual({
+        high: [],
+        normal: [],
+        low: [],
       });
     });
   });
