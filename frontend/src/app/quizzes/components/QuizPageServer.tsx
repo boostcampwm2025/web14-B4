@@ -3,7 +3,6 @@ import CategoryFilter from './filters/CategoryFilter';
 import QuizGrid from './card/QuizGrid';
 import QuizHeader from './header/QuizHeader';
 import { CategoryCountsResponseDto, Quiz } from '../types/quiz';
-import { Container } from 'lucide-react';
 
 interface QuizPageServerProps {
   quizzes: Quiz[];
