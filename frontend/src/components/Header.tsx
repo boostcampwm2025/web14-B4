@@ -35,6 +35,14 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // 프로필, 로그인 버튼 공통 인터렉션
+  const commonButtonClass = `
+    relative flex items-center justify-center
+    transition-all duration-200 ease-in-out
+    hover:shadow-md hover:scale-105 hover:ring-2 hover:ring-[var(--color-primary)] hover:ring-offset-2 hover:border-transparent
+    active:scale-95
+  `;
+
   return (
     <header className="sticky top-0 z-50 flex justify-between items-center px-10 py-3 bg-white/80 backdrop-blur-md border-b border-[var(--color-gray-light)]">
       {/* 로고 영역 */}
@@ -54,10 +62,9 @@ export default function Header() {
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={`
-                relative flex items-center justify-center w-10 h-10 rounded-full 
-                border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out
-                hover:shadow-md hover:scale-105
-                ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary)] ring-offset-2 scale-105 shadow-md' : 'hover:ring-2 hover:ring-gray-200'}
+                ${commonButtonClass}
+                w-10 h-10 rounded-full overflow-hidden
+                ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary)] ring-offset-2 scale-105 shadow-md border-transparent' : ''}
               `}
             >
               <Image
@@ -86,7 +93,7 @@ export default function Header() {
                     draggable={false}
                     onDragStart={(e) => e.preventDefault()}
                   >
-                    로그아웃
+                    ↪️ 로그아웃
                   </button>
                 </div>
               </div>
@@ -95,7 +102,12 @@ export default function Header() {
         ) : (
           <Link
             href="/login"
-            className="px-4 py-2 rounded-full bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-accent-sky)] transition-colors"
+            className={`
+              ${commonButtonClass}
+              px-6 py-2 rounded-full 
+              border border-[var(--color-primary)]
+              text-[var(--color-primary)] text-sm font-bold
+            `}
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
           >
