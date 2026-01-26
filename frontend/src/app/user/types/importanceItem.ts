@@ -5,3 +5,9 @@ export interface ImportanceItem {
   mainQuizTitle: string;
   createdAt: string;
 }
+
+export interface ImportanceData {
+  high: ImportanceItem[];
+  normal: ImportanceItem[];
+  low: ImportanceItem[];
+}
