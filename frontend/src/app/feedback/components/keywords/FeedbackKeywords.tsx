@@ -1,12 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-
-type Keyword = {
-  text: string;
-  isIncluded: boolean;
-  description: string;
-};
+import KeywordButton, { Keyword } from './KeywordButton';
 
 type Props = {
   keywords: Keyword[];
@@ -25,20 +20,12 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
         <div className="flex flex-col items-center md:flex-row">
           <div className="flex-1 flex justify-center flex-wrap gap-3 content-start">
             {keywords.map((keyword, idx) => (
-              <button
+              <KeywordButton
                 key={idx}
+                keyword={keyword}
                 onMouseEnter={() => setHoveredKeyword(keyword)}
                 onMouseLeave={() => setHoveredKeyword(null)}
-                className={`px-3 py-2 rounded-full text-md font-semibold transition-all duration-200 border
-                  ${
-                    keyword.isIncluded
-                      ? 'bg-[var(--color-primary)] text-white border-[var(--color-primary)]'
-                      : 'bg-white text-[var(--color-gray-light)] border-[var(--color-gray-light)]'
-                  }`}
-              >
-                {keyword.text}
-                {keyword.isIncluded && <span className="ml-1">✓</span>}
-              </button>
+              />
             ))}
           </div>
 
