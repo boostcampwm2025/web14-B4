@@ -27,24 +27,16 @@ export default function QuizStatisticsSection({
       {/* 분야별 이해도 탭 */}
       {activeTab === 'understanding' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          <div>
-            <HexagonChart comprehensionData={comprehensionData} />
-          </div>
-          <div>
-            <BasicTable type="comprehension" data={comprehensionData} />
-          </div>
+          <HexagonChart comprehensionData={comprehensionData} />
+          <BasicTable type="comprehension" data={comprehensionData} />
         </div>
       )}
 
       {/* 지금까지 푼 문제 탭 */}
       {activeTab === 'solved' && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-          <div>
-            <DonutChart solvedData={solvedData} />
-          </div>
-          <div>
-            <BasicTable type="solved" data={solvedData} />
-          </div>
+          <DonutChart solvedData={solvedData} />
+          <BasicTable type="solved" data={solvedData} />
         </div>
       )}
     </div>
