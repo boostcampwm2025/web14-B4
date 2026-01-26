@@ -5,15 +5,13 @@ import { FilterLink } from './FilterLink';
 import { cn } from '@/lib/utils';
 import { useWindowSize } from '@/hooks/mainQuiz/window/useWindowSize';
 import CategoryDropdown from './CategoryDropdown';
+import { DEFAULT_CATEGORY, LAYOUT } from '@/constants/quizzes.constant';
 
 interface CategoryFilterProps {
   categoriesData?: CategoryCountsResponseDto;
   category?: string;
   difficulty?: string;
 }
-
-const DIFFICULT_COMPONENT_WIDTH = 400;
-const CATEGORY_BUTTON_WIDTH = 200;
 
 export default function CategoryFilter({
   categoriesData,
@@ -24,10 +22,11 @@ export default function CategoryFilter({
 
   const isCompact =
     width <
-    DIFFICULT_COMPONENT_WIDTH + (categoriesData?.categories.length ?? 0) * CATEGORY_BUTTON_WIDTH;
+    LAYOUT.DIFFICULTY_COMPONENT_WIDTH +
+      (categoriesData?.categories.length ?? 0) * LAYOUT.CATEGORY_BUTTON_WIDTH;
 
   const currentParams = { category, difficulty };
-  const activeCategory = category || '전체';
+  const activeCategory = category || DEFAULT_CATEGORY;
 
   const getButtonStyle = (target: string) =>
     cn(
@@ -46,7 +45,7 @@ export default function CategoryFilter({
     );
 
   const categories = [
-    { id: 0, name: '전체', count: categoriesData?.totalCount || 0 },
+    { id: 0, name: DEFAULT_CATEGORY, count: categoriesData?.totalCount || 0 },
     ...(categoriesData?.categories || []),
   ];
 

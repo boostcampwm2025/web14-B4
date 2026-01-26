@@ -1,5 +1,6 @@
 import { Quiz } from '../../types/quiz';
 import QuizCard from './QuizCard';
+import { MESSAGES } from '@/constants/quizzes.constant';
 
 interface Quizzes {
   quizzes: Quiz[];
@@ -7,9 +8,7 @@ interface Quizzes {
 
 export default function QuizGrid({ quizzes }: Quizzes) {
   if (quizzes.length === 0) {
-    return (
-      <p className="col-span-full text-center text-gray-500 py-10">해당하는 퀴즈가 없습니다. 😅</p>
-    );
+    return <p className="col-span-full text-center text-gray-500 py-10">{MESSAGES.NO_QUIZZES}</p>;
   }
 
   return (

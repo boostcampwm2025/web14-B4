@@ -3,6 +3,7 @@
 import { Quiz } from '@/app/quizzes/types/quiz';
 import { useState } from 'react';
 import QuizTypeSelectPopup from '../QuizTypeSelectPopup';
+import { DIFFICULTY_STYLES } from '@/constants/quizzes.constant';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -10,13 +11,6 @@ interface QuizCardProps {
 
 export default function QuizCard({ quiz }: QuizCardProps) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  // 난이도별 스타일 매핑
-  const difficultyStyles = {
-    상: 'bg-red-50 text-red-600 border-red-100',
-    중: 'bg-yellow-50 text-yellow-600 border-yellow-100',
-    하: 'bg-green-50 text-green-600 border-green-100',
-  };
 
   return (
     <div>
@@ -30,7 +24,7 @@ export default function QuizCard({ quiz }: QuizCardProps) {
             {quiz.quizCategory.name}
           </span>
           <span
-            className={`px-2 py-1 text-xs font-bold border rounded-md ${difficultyStyles[quiz.difficultyLevel as keyof typeof difficultyStyles]}`}
+            className={`px-2 py-1 text-xs font-bold border rounded-md ${DIFFICULTY_STYLES[quiz.difficultyLevel as keyof typeof DIFFICULTY_STYLES]}`}
           >
             {quiz.difficultyLevel}
           </span>

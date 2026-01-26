@@ -1,23 +1,15 @@
 import { FilterLink } from './FilterLink';
+import {
+  LEVEL_ALL,
+  DIFFICULTY_LEVELS,
+  DIFFICULTY_COLOR_CLASS,
+  BUTTON_STYLES,
+} from '@/constants/quizzes.constant';
 
 interface DifficultyFilterProps {
   difficulty?: string;
   category?: string;
 }
-
-const LEVEL_ALL = '전체';
-const DIFFICULTY_LEVELS = [LEVEL_ALL, '상', '중', '하'] as const;
-
-const DIFFICULTY_COLOR_CLASS: Record<string, string> = {
-  전체: 'bg-blue-600 text-white shadow-md',
-  상: 'bg-rose-500 text-white shadow-md',
-  중: 'bg-amber-400 text-white shadow-md',
-  하: 'bg-emerald-500 text-white shadow-md',
-};
-
-const BUTTON_BASE_CLASS = 'px-6 py-2 rounded-full text-lg transition-all duration-300 ease-out';
-const BUTTON_INACTIVE_CLASS =
-  'text-[var(--color-gray-dark)] hover:bg-[var(--color-gray-light)] hover:text-gray-700';
 
 export default function DifficultyFilter({ difficulty, category }: DifficultyFilterProps) {
   const currentParams = { category, difficulty };
@@ -44,11 +36,11 @@ export default function DifficultyFilter({ difficulty, category }: DifficultyFil
               value={level}
               currentParams={currentParams}
               className={`
-                ${BUTTON_BASE_CLASS}
+                ${BUTTON_STYLES.BASE}
                 ${
                   active
                     ? `${DIFFICULTY_COLOR_CLASS[level]} font-bold scale-105`
-                    : BUTTON_INACTIVE_CLASS
+                    : BUTTON_STYLES.INACTIVE
                 }
               `}
             >

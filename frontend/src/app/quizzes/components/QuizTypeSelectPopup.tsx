@@ -2,8 +2,12 @@
 
 import { useRouter } from 'next/navigation';
 import { Quiz } from '../types/quiz';
-
-type QuizEntryMode = 'MULTIPLE' | 'SUBJECTIVE' | 'BOTH' | 'SKIP';
+import {
+  QuizEntryMode,
+  QUIZ_TYPE_OPTIONS,
+  QUIZ_ENTRY_MODES,
+  MESSAGES,
+} from '@/constants/quizzes.constant';
 
 interface QuizTypeSelectPopupProps {
   quiz: Quiz;
@@ -11,32 +15,25 @@ interface QuizTypeSelectPopupProps {
   onClose: () => void;
 }
 
-const options = [
-  { key: 'MULTIPLE', title: '객관식', desc: '객관식 퀴즈 풀고나서 메인퀴즈 풀기' },
-  { key: 'SUBJECTIVE', title: '주관식', desc: '주관식 퀴즈 풀고나서 메인퀴즈 풀기' },
-  { key: 'BOTH', title: '모두', desc: '객관식 및 주관식을 풀고 메인퀴즈' },
-  { key: 'SKIP', title: '메인퀴즈', desc: '몸풀기 퀴즈 없이 바로 시작' },
-] as const;
-
 export default function QuizTypeSelectPopup({ quiz, isOpen, onClose }: QuizTypeSelectPopupProps) {
   const router = useRouter();
   if (!isOpen) return null;
 
   const handleSelect = (mode: QuizEntryMode) => {
     switch (mode) {
-      case 'MULTIPLE':
+      case QUIZ_ENTRY_MODES.MULTIPLE:
         router.push(`/main-quiz/${quiz.mainQuizId}/multiple-choice`);
         break;
 
-      case 'SUBJECTIVE':
-        alert('아직 구현되지 않았습니다.');
+      case QUIZ_ENTRY_MODES.SUBJECTIVE:
+        alert(MESSAGES.NOT_IMPLEMENTED);
         break;
 
-      case 'BOTH':
-        alert('아직 구현되지 않았습니다.');
+      case QUIZ_ENTRY_MODES.BOTH:
+        alert(MESSAGES.NOT_IMPLEMENTED);
         break;
 
-      case 'SKIP':
+      case QUIZ_ENTRY_MODES.SKIP:
         router.push(`/main-quiz/${quiz.mainQuizId}`);
         break;
     }
@@ -60,7 +57,7 @@ export default function QuizTypeSelectPopup({ quiz, isOpen, onClose }: QuizTypeS
         </div>
 
         <div className="grid grid-cols-4 gap-8" onClick={(e) => e.stopPropagation()}>
-          {options.map((o) => (
+          {QUIZ_TYPE_OPTIONS.map((o) => (
             <button
               key={o.key}
               onClick={() => handleSelect(o.key)}
