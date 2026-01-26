@@ -44,6 +44,7 @@ export class AuthController {
     return { sucess: true };
   }
 
+  @Public()
   @Post('refresh')
   async refresh(
     @Req() req: Request,
