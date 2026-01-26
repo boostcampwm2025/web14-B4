@@ -4,6 +4,9 @@ import { useMemo, useState } from 'react';
 import { Button } from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { MAX_SPEECH_TEXT_LENGTH } from '@/constants/speech.constants';
+import { postSpeechTextAnswer } from '@/services/apis/speechesApi';
+import { ApiError } from '@/services/http/errors';
+import { toast } from 'react-toastify';
 
 interface Props {
   quizId: number;
@@ -20,11 +23,16 @@ export default function TextAnswer({ quizId }: Props) {
     if (!isValid || isSubmitting) return;
 
     try {
-      setIsSubmitting(true);
-      // TODO: 텍스트 답변 제출 API 연결
-      // await postTextAnswer({ quizId, text });
+      await postSpeechTextAnswer(quizId, text);
 
       router.push(`/checklist/main-quiz/${quizId}`);
+    } catch (e) {
+      let errorMessage = '제출에 실패했습니다. 다시 시도해주세요.';
+
+      if (e instanceof ApiError) {
+        errorMessage = e.message;
+      }
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
