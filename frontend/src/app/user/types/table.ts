@@ -4,7 +4,7 @@ export interface ComprehensionData {
   category: string;
   totalSolved: number;
   high: number;
-  medium: number;
+  normal: number;
   low: number;
   comprehensionScore: number;
 }
