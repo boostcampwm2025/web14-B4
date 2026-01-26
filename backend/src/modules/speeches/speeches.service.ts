@@ -16,6 +16,8 @@ import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
+import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -35,6 +37,7 @@ export class SpeechesService {
   constructor(
     private configService: ConfigService,
     private solvedQuizRepository: SolvedQuizRepository,
+    private readonly userRepository: UserRepository,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -400,5 +403,24 @@ export class SpeechesService {
 
       throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
+  }
+
+  async createSpeechText(params: {
+    userId: number;
+    mainQuizId: number;
+    speechText: string;
+  }): Promise<CreateSpeechTextAnswerResponseDto> {
+    const { userId, mainQuizId, speechText } = params;
+
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
+      user: { userId },
+      mainQuiz: { mainQuizId },
+      speechText: speechText,
+    });
+
+    return new CreateSpeechTextAnswerResponseDto({
+      mainQuizId,
+      solvedQuizId: solvedQuiz.solvedQuizId,
+    });
   }
 }
