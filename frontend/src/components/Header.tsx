@@ -26,6 +26,7 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout();
+      alert('로그아웃 하시겠습니까?');
       router.push('/quizzes');
       setIsDropdownOpen(false);
     } catch (err) {
