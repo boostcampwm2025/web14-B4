@@ -19,6 +19,10 @@ import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
+import {
+  MAX_USER_ANSWER_LENGTH,
+  MIN_USER_ANSWER_LENGTH,
+} from 'src/common/constants/speech.constant';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -422,6 +426,14 @@ export class SpeechesService {
     const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
     if (!mainQuiz) {
       throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
+    }
+
+    if (speechText.length > MAX_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_LONG);
+    }
+
+    if (!speechText || speechText.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
     }
 
     const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
