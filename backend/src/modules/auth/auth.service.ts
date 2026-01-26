@@ -182,4 +182,9 @@ export class AuthService {
       throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
     }
   }
+
+  // 로그아웃 메서드 추가
+  async logout(uuid: string): Promise<void> {
+    await this.redisClient.del(`RT:${uuid}`);
+  }
 }
