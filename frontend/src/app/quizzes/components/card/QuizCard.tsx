@@ -10,42 +10,56 @@ interface QuizCardProps {
 
 export default function QuizCard({ quiz }: QuizCardProps) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const handleStartQuiz = () => {
-    setIsPopupOpen(true);
-  };
-  const handleCancel = () => {
-    setIsPopupOpen(false);
+
+  // 난이도별 스타일 매핑
+  const difficultyStyles = {
+    상: 'bg-red-50 text-red-600 border-red-100',
+    중: 'bg-yellow-50 text-yellow-600 border-yellow-100',
+    하: 'bg-green-50 text-green-600 border-green-100',
   };
 
   return (
-    <div className="border-[var(--color-gray-light)] rounded-lg p-8 bg-white">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold mb-5 text-gray-800">{quiz.title}</h3>
-        <span
-          className={`px-3 py-2 rounded-full text-m ${
-            quiz.difficultyLevel === '상'
-              ? 'bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]'
-              : quiz.difficultyLevel === '중'
-                ? 'bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]'
-                : 'bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]'
-          }`}
+    <div>
+      <div className="group relative flex flex-col justify-between p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-in-out">
+        {/* 상단 */}
+        <div className="flex justify-between items-start mb-4">
+          <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-lg">
+            {quiz.quizCategory.name}
+          </span>
+          <span
+            className={`px-2 py-1 text-xs font-bold border rounded-md ${difficultyStyles[quiz.difficultyLevel as keyof typeof difficultyStyles]}`}
+          >
+            {quiz.difficultyLevel}
+          </span>
+        </div>
+
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+            {quiz.title}
+          </h3>
+        </div>
+
+        <button
+          className="w-full py-3 px-4 bg-gray-50 text-gray-900 font-semibold rounded-xl group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+          onClick={() => setIsPopupOpen(true)}
         >
-          {quiz.difficultyLevel}
-        </span>
+          <span>시작하기</span>
+          <svg
+            className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
+          </svg>
+        </button>
       </div>
-
-      <span className="p-2 border border-[var(--color-gray-light)] text-m rounded-full">
-        {quiz.quizCategory.name}
-      </span>
-
-      <button
-        className="w-full bg-[var(--color-primary)] hover:bg-blue-600 text-white text-xl py-2 rounded-md transition mt-15"
-        onClick={handleStartQuiz}
-      >
-        시작하기
-      </button>
-
-      <QuizTypeSelectPopup quiz={quiz} isOpen={isPopupOpen} onClose={handleCancel} />
+      <QuizTypeSelectPopup quiz={quiz} isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
     </div>
   );
 }
