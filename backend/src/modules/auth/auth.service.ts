@@ -173,4 +173,13 @@ export class AuthService {
       refreshToken: newRefreshToken,
     };
   }
+
+  // refreshToken의 JWT 서명 검증
+  verifyRefreshToken(token: string): JwtPayload {
+    try {
+      return this.jwtService.verify<JwtPayload>(token);
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
+  }
 }
