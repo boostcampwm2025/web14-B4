@@ -7,6 +7,7 @@ import { MAX_SPEECH_TEXT_LENGTH } from '@/constants/speech.constants';
 import { postSpeechTextAnswer } from '@/services/apis/speechesApi';
 import { ApiError } from '@/services/http/errors';
 import { toast } from 'react-toastify';
+import { useQuizStore } from '@/store/quizStore';
 
 interface Props {
   quizId: number;
@@ -14,6 +15,8 @@ interface Props {
 
 export default function TextAnswer({ quizId }: Props) {
   const router = useRouter();
+  const { setSolvedQuizId } = useQuizStore();
+
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -23,7 +26,8 @@ export default function TextAnswer({ quizId }: Props) {
     if (!isValid || isSubmitting) return;
 
     try {
-      await postSpeechTextAnswer(quizId, text);
+      const { solvedQuizId } = await postSpeechTextAnswer(quizId, text);
+      setSolvedQuizId(solvedQuizId);
 
       router.push(`/checklist/main-quiz/${quizId}`);
     } catch (e) {
