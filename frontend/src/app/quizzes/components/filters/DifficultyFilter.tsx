@@ -8,18 +8,16 @@ interface DifficultyFilterProps {
 const LEVEL_ALL = '전체';
 const DIFFICULTY_LEVELS = [LEVEL_ALL, '상', '중', '하'] as const;
 
-/** * UX 전문가 제안: 각 난이도의 성격에 맞는 컬러 매칭
- * 활성 상태일 때의 배경과 텍스트 색상을 정의합니다.
- */
 const DIFFICULTY_COLOR_CLASS: Record<string, string> = {
-  전체: 'bg-blue-600 text-white shadow-md', // 중립적인 다크 그레이/블루
-  상: 'bg-rose-500 text-white shadow-md', // 경고/도전의 레드
-  중: 'bg-amber-400 text-white shadow-md', // 집중의 옐로우/오렌지
-  하: 'bg-emerald-500 text-white shadow-md', // 통과/쉬움의 그린
+  전체: 'bg-blue-600 text-white shadow-md',
+  상: 'bg-rose-500 text-white shadow-md',
+  중: 'bg-amber-400 text-white shadow-md',
+  하: 'bg-emerald-500 text-white shadow-md',
 };
 
 const BUTTON_BASE_CLASS = 'px-6 py-2 rounded-full text-lg transition-all duration-300 ease-out';
-const BUTTON_INACTIVE_CLASS = 'text-gray-500 hover:bg-gray-200 hover:text-gray-700';
+const BUTTON_INACTIVE_CLASS =
+  'text-[var(--color-gray-dark)] hover:bg-[var(--color-gray-light)] hover:text-gray-700';
 
 export default function DifficultyFilter({ difficulty, category }: DifficultyFilterProps) {
   const currentParams = { category, difficulty };

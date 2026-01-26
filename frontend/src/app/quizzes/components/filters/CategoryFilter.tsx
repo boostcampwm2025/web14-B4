@@ -12,7 +12,7 @@ interface CategoryFilterProps {
   difficulty?: string;
 }
 
-const DIFFICULT_COMPONENT_WIDTH = 300;
+const DIFFICULT_COMPONENT_WIDTH = 400;
 const CATEGORY_BUTTON_WIDTH = 200;
 
 export default function CategoryFilter({
@@ -46,15 +46,15 @@ export default function CategoryFilter({
     cn(
       'flex items-center gap-2 px-4 py-2 rounded-lg text-lg transition-all duration-200 whitespace-nowrap',
       (target === '전체' ? !category : category === target)
-        ? 'bg-blue-500 text-white font-bold'
-        : 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-100',
+        ? 'bg-[var(--color-primary)] text-white font-bold'
+        : 'bg-white text-gray-700 border border-gray-200 hover:bg-[var(--color-gray-light)]',
     );
 
   const getCountStyle = (target: string) =>
     cn(
       'flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-full text-xs ml-auto',
       (target === '전체' ? !category : category === target)
-        ? 'bg-white text-blue-500'
+        ? 'bg-white text-[var(--color-primary)]'
         : 'bg-gray-100 text-gray-500',
     );
 
@@ -75,7 +75,7 @@ export default function CategoryFilter({
           <div className="relative w-45" ref={dropdownRef}>
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="flex items-center justify-between w-full px-4 py-2 bg-white border-2 border-blue-500 rounded-lg text-lg font-medium text-blue-600 cursor-pointer"
+              className="flex items-center justify-between w-full px-4 py-2 bg-white border-2 border-[var(--color-primary)] rounded-lg text-lg font-medium text-[var(--color-primary)] cursor-pointer"
             >
               <span>{activeCategory}</span>
               <span
@@ -94,13 +94,15 @@ export default function CategoryFilter({
                     param="category"
                     value={cat.name}
                     currentParams={currentParams}
-                    className="flex items-center px-4 py-3 hover:bg-blue-50 transition-colors border-b last:border-none"
+                    className="flex items-center px-4 py-3 hover:bg-[var(--color-accent-sky)] transition-colors border-b last:border-none"
                     onClick={() => setIsOpen(false)}
                   >
                     <span
                       className={cn(
                         'text-base',
-                        activeCategory === cat.name ? 'text-blue-600 font-bold' : 'text-gray-700',
+                        activeCategory === cat.name
+                          ? 'text-[var(--color-primary)] font-bold'
+                          : 'text-gray-700',
                       )}
                     >
                       {cat.name}
