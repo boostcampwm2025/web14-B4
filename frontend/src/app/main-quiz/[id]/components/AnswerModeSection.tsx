@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Recorder from '@/app/main-quiz/[id]/components/Recorder';
 import TextAnswer from '@/app/main-quiz/[id]/components/TextAnswer';
 import { Button } from '@/components/Button';
@@ -11,6 +12,53 @@ interface Props {
   quizId: number;
 }
 
+interface CardButtonProps {
+  iconSrc: string;
+  label: string;
+  onClick: () => void;
+}
+
+function CardButton({ iconSrc, label, onClick }: CardButtonProps) {
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(e) => e.key === 'Enter' && onClick()}
+      className="
+        group relative w-44 h-44 rounded-3xl
+        bg-white
+        border-2 border-[var(--color-primary)]
+        transition-all duration-300
+        hover:bg-[var(--color-accent-sky)]
+        active:scale-95
+        cursor-pointer
+        flex flex-col items-center justify-center gap-3
+      "
+    >
+      {/* hover 시 아이콘 배경 white */}
+      <div
+        className="
+          flex items-center justify-center
+          w-20 h-20 rounded-full
+          transition-colors duration-300
+          group-hover:bg-white
+        "
+      >
+        <Image
+          src={iconSrc}
+          alt={label}
+          width={55}
+          height={55}
+          className="transition-transform duration-300 group-hover:scale-110"
+        />
+      </div>
+
+      <span className="text-sm text-gray-800">{label}</span>
+    </div>
+  );
+}
+
 export default function AnswerModeSection({ quizId }: Props) {
   const [mode, setMode] = useState<AnswerMode | null>(null);
 
@@ -19,25 +67,19 @@ export default function AnswerModeSection({ quizId }: Props) {
 
   return (
     <>
-      {/* 모드 선택 전: 큰 CTA 버튼 */}
+      {/* 모드 선택 전: 카드 CTA */}
       {mode === null && (
-        <div className="flex flex-col items-center gap-4 pt-8">
-          <Button
-            size="cta"
-            variant="secondary"
-            className="w-[280px]"
+        <div className="flex justify-center gap-8 pt-10">
+          <CardButton
+            iconSrc="/icons/icon-recorder.svg"
+            label="음성으로 답변하기"
             onClick={() => setMode('voice')}
-          >
-            음성으로 답변하기
-          </Button>
-          <Button
-            size="cta"
-            variant="secondary"
-            className="w-[280px]"
+          />
+          <CardButton
+            iconSrc="/icons/icon-text.svg"
+            label="텍스트로 답변하기"
             onClick={() => setMode('text')}
-          >
-            텍스트로 답변하기
-          </Button>
+          />
         </div>
       )}
 
