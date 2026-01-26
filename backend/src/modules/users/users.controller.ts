@@ -6,6 +6,7 @@ import {
 } from './dto/users-request.dto';
 import {
   GetUserComprehensionsResponseDto,
+  GetUserSolvedStatisticsResponseDto,
   SaveImportanceResponseDto,
   SolvedQuizResponseDto,
 } from './dto/users-response.dto';
@@ -49,6 +50,13 @@ export class UsersController {
   async getSolvedComprehension(): Promise<GetUserComprehensionsResponseDto> {
     const result =
       await this.usersService.getUserSolvedQuizWithComprehension(TEST_USER_ID);
+    return result;
+  }
+
+  @Get('/solved-quizzes/statistics')
+  async getUserSolvedStatistics(): Promise<GetUserSolvedStatisticsResponseDto> {
+    const result =
+      await this.usersService.getUserSolvedStatistics(TEST_USER_ID);
     return result;
   }
 }
