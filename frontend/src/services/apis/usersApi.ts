@@ -1,3 +1,4 @@
+import { ComprehensionData, SolvedData } from '@/app/user/types/table';
 import { apiFetch } from '@/services/http/apiFetch';
 import type { Importance } from '@/types/solvedQuiz.types.ts';
 
@@ -10,6 +11,14 @@ export type SaveImportanceRequest = {
 export type SaveImportanceResponse = {
   solvedQuizId: number;
   importance: Importance;
+};
+
+export type GetUserComprehensionsResponse = {
+  comprehensionData: ComprehensionData[];
+};
+
+export type GetUserSolvedStatisticsResponse = {
+  solvedData: SolvedData[];
 };
 
 /**
@@ -36,4 +45,40 @@ export async function postImportance(req: SaveImportanceRequest): Promise<SaveIm
   }
 
   return { solvedQuizId, importance: data.importance };
+}
+
+/**
+ * 사용자의 푼 퀴즈별 이해도 조회
+ * - GET /users/solved-quizzes/category-comprehension
+ * - 응답: { comprehensionData }
+ */
+export async function getUserComprehensions(): Promise<GetUserComprehensionsResponse> {
+  const data = await apiFetch<GetUserComprehensionsResponse>(
+    '/users/solved-quizzes/category-comprehension',
+    {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    { message: '통계 데이터가 존재하지 않습니다.' },
+  );
+
+  return data;
+}
+
+/**
+ * 사용자의 푼 퀴즈별 진행도 조회
+ * - GET /users/solved-quizzes/statistics
+ * - 응답: { solvedData }
+ */
+export async function getUserSolvedStatistics(): Promise<GetUserSolvedStatisticsResponse> {
+  const data = await apiFetch<GetUserSolvedStatisticsResponse>(
+    '/users/solved-quizzes/statistics',
+    {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    },
+    { message: '통계 데이터가 존재하지 않습니다.' },
+  );
+
+  return data;
 }
