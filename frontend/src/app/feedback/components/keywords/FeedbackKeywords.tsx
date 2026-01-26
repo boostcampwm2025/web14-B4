@@ -19,15 +19,15 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
       <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100">
         {/* 상단 제목 */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-1 pb-4 border-b border-gray-50">
-          <h2 className="text-xl font-bold text-[var(--color-accent-navy)] flex items-center gap-2">
-            <span className="text-xl">🔠</span> 핵심 키워드 분석
+          <h2 className="text-xl font-bold text-[var(--color-accent-navy)] flex items-center gap-2 line-1">
+            <span className="text-xl/9">🔠</span> 핵심 키워드 분석
             {selectedKeyword && (
               <button
                 onClick={() => setSelectedKeyword(null)}
-                className="flex items-center gap-2 ml-5 px-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100 animate-fadeIn
+                className="flex items-center gap-2 ml-5 px-2 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors border border-blue-100 animate-fadeIn text-center align-middle py-1
                 cursor-pointer"
               >
-                <span className="text-base">✨</span> AI 총평 다시보기
+                <span className="text-base">✨</span> AI 피드백 다시보기
               </button>
             )}
           </h2>
