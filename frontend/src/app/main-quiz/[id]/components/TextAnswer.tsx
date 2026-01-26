@@ -62,6 +62,16 @@ export default function TextAnswer({ quizId }: Props) {
     }
   };
 
+  const handleExit = () => {
+    const confirmed = window.confirm('작성중인 답변이 저장되지 않습니다.\n정말 나가시겠습니까?');
+
+    if (!confirmed) {
+      return;
+    }
+
+    router.push('/');
+  };
+
   return (
     <div className="mx-auto w-full max-w-[720px] px-4">
       <div className="rounded-xl border border-gray-200 bg-white p-4">
@@ -81,17 +91,22 @@ export default function TextAnswer({ quizId }: Props) {
               최소 {MIN_SPEECH_TEXT_LENGTH}자 이상 입력해주세요.
             </p>
           )}
-          <div className="mt-1 flex items-center justify-between">
+          <div className="mt-1 flex items-center">
             <p className="text-sm text-gray-500">
               {trimmedLength}자 / {MAX_SPEECH_TEXT_LENGTH}자
             </p>
+          </div>
+          <div className="ml-auto flex gap-2">
             <Button
               size="fixed"
-              variant={isValid ? 'primary' : 'secondary'}
+              variant={'primary'}
               disabled={!isValid || isSubmitting}
               onClick={handleSubmit}
             >
               제출
+            </Button>
+            <Button size="fixed" variant="secondary" onClick={handleExit}>
+              나가기
             </Button>
           </div>
         </div>
