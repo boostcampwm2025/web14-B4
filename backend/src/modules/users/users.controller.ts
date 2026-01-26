@@ -8,6 +8,8 @@ import {
   SaveImportanceResponseDto,
   SolvedQuizResponseDto,
 } from './dto/users-response.dto';
+import { User } from 'src/datasources/entities/tb-user.entity';
+import { CurrentUser } from '../auth/decorator/current-user.decorator';
 
 const TEST_USER_ID = 1;
 
@@ -26,6 +28,7 @@ export class UsersController {
 
   @Post('importance')
   async saveImportance(
+    @CurrentUser() user: User,
     @Body() dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const result = await this.usersService.saveImportance(dto);
