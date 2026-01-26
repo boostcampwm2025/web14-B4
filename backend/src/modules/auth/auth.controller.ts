@@ -4,11 +4,13 @@ import { NaverLoginDto } from './dto/naver-login';
 import type { Response, Request } from 'express';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { Public } from './decorator/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login/naver')
   async loginNaver(
     @Body() dto: NaverLoginDto,
