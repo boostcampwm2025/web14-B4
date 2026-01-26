@@ -53,7 +53,12 @@ export default function Header() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              className="flex items-center justify-center w-10 h-10"
+              className={`
+                relative flex items-center justify-center w-10 h-10 rounded-full 
+                border border-gray-200 overflow-hidden transition-all duration-200 ease-in-out
+                hover:shadow-md hover:scale-105
+                ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary)] ring-offset-2 scale-105 shadow-md' : 'hover:ring-2 hover:ring-gray-200'}
+              `}
             >
               <Image
                 src="/default-profile.svg"
@@ -89,7 +94,7 @@ export default function Header() {
           </div>
         ) : (
           <Link
-            href="/auth/login"
+            href="/login"
             className="px-4 py-2 rounded-full bg-[var(--color-primary)] text-white text-sm font-semibold hover:bg-[var(--color-accent-sky)] transition-colors"
             draggable={false}
             onDragStart={(e) => e.preventDefault()}
