@@ -20,7 +20,10 @@ export default function QuizCard({ quiz }: QuizCardProps) {
 
   return (
     <div>
-      <div className="group relative flex flex-col justify-between p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-in-out">
+      <div
+        className="group relative p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-in-out h-50
+      flex flex-col justify-between "
+      >
         {/* 상단 */}
         <div className="flex justify-between items-start mb-4">
           <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-lg">
@@ -33,19 +36,19 @@ export default function QuizCard({ quiz }: QuizCardProps) {
           </span>
         </div>
 
-        <div className="mb-8">
+        <div className="h-17 shrink-0">
           <h3 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-[var(--color-primary)] transition-colors">
             {quiz.title}
           </h3>
         </div>
 
         <button
-          className="w-full py-3 px-4 bg-gray-50 text-gray-900 font-semibold rounded-xl group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+          className="w-full py-3 px-4 bg-blue-50 text-[var(--color-primary)] font-semibold rounded-xl group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
           onClick={() => setIsPopupOpen(true)}
         >
           <span>시작하기</span>
           <svg
-            className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+            className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
