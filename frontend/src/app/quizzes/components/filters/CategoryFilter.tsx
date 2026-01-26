@@ -64,8 +64,11 @@ export default function CategoryFilter({
   ];
 
   return (
-    <div className="flex flex-col min-w-[200px] items-end">
-      <div className="mb-1 right text-xl font-semibold">분야</div>
+    <div className="flex flex-col min-w-[200px] items-end flex-col gap-4">
+      <div className="flex items-center gap-2 ml-1">
+        <span className="text-sm font-bold tracking-wider text-gray-400">CATEGORY</span>
+        <div className="h-px flex-1 bg-gray-100"></div>
+      </div>
       <div className="mb-7">
         {isCompact ? (
           // 드롭다운
@@ -84,7 +87,7 @@ export default function CategoryFilter({
             </button>
 
             {isOpen && (
-              <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
+              <div className="absolute z-50 w-full mt-2 items-center bg-white border border-gray-200 rounded-lg shadow-xl max-h-60 overflow-y-auto">
                 {categories.map((cat) => (
                   <FilterLink
                     key={cat.id}
