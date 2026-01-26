@@ -1,3 +1,8 @@
+import {
+  MAX_USER_ANSWER_LENGTH,
+  MIN_USER_ANSWER_LENGTH,
+} from 'src/common/constants/speech.constant';
+
 export const ERROR_MESSAGES = {
   // 공통
   API_NOT_FOUND: {
@@ -52,14 +57,14 @@ export const ERROR_MESSAGES = {
   ANSWER_TOO_SHORT: {
     errorCode: 'ANSWER_TOO_SHORT',
     status: 400,
-    message: '답변이 너무 짧습니다. 50자 이상 답변해주세요.',
+    message: `답변이 너무 짧습니다. ${MIN_USER_ANSWER_LENGTH}자 이상 답변해주세요.`,
   },
 
   // 답변이 너무 긴 경우 푼 퀴즈에 저장하지 않고 오류 반환
   ANSWER_TOO_LONG: {
     errorCode: 'ANSWER_TOO_LONG',
     status: 400,
-    message: '답변이 너무 깁니다. 1500자 이하로 답변해주세요.',
+    message: `답변이 너무 깁니다. ${MAX_USER_ANSWER_LENGTH}자 이하로 답변해주세요.`,
   },
 
   // 외부 API 공통
