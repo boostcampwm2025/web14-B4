@@ -31,7 +31,7 @@ export class AuthController {
       maxAge: 60 * 60 * 1000,
     });
 
-    // UI 표시용으로 사용될 usename
+    // UI 표시용으로 사용될 username
     res.cookie('username', user.username, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
