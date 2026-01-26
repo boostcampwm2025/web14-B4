@@ -13,19 +13,10 @@ interface FilterLinkProps {
   };
   children: React.ReactNode;
   className?: string;
-
-  onClick?: () => void;
 }
 
 // Link 를 공용으로 사용하기 위한 컴포넌트
-export function FilterLink({
-  param,
-  value,
-  currentParams,
-  children,
-  className,
-  onClick,
-}: FilterLinkProps) {
+export function FilterLink({ param, value, currentParams, children, className }: FilterLinkProps) {
   const params = new URLSearchParams();
 
   Object.entries(currentParams).forEach(([key, val]) => {
@@ -38,10 +29,8 @@ export function FilterLink({
   const href = params.toString() ? `?${params.toString()}` : '/quizzes';
 
   return (
-    <div onClick={onClick}>
-      <Link href={href} className={className}>
-        {children}
-      </Link>
-    </div>
+    <Link href={href} className={className}>
+      {children}
+    </Link>
   );
 }
