@@ -1,4 +1,4 @@
-export class CreateSpeechTextResponseDto {
+export class CreateSpeechTextAnswerResponseDto {
   mainQuizId: number;
   solvedQuizId: number;
 

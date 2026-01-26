@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class CreateSpeechTextRequestDto {
+export class CreateSpeechTextAnswerRequestDto {
   @IsString()
   speechText: string;
 }
