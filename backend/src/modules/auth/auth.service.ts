@@ -145,20 +145,20 @@ export class AuthService {
   private async issueTokens(uuid: string) {
     const payload: JwtPayload = { sub: uuid };
 
-    const access_token = this.jwtService.sign(payload, { expiresIn: '1h' });
-    const refresh_token = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
 
     try {
       await this.redisClient.set(
         `RT:${uuid}`,
-        refresh_token,
+        refreshToken,
         'EX',
         60 * 60 * 24 * 7,
       );
     } catch {
       throw new BusinessException(ERROR_MESSAGES.TOKEN_UPDATE_FAILED);
     }
-    return { access_token, refresh_token };
+    return { accessToken, refreshToken };
   }
 
   // refreshToken의 JWT 서명 검증
