@@ -7,6 +7,22 @@ import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checkli
 import { BusinessException } from '../../common/exceptions/business.exception';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { Importance } from '../../datasources/entities/tb-solved-quiz.entity';
+import { Provider, User } from 'src/datasources/entities/tb-user.entity';
+
+// 테스트용 User 목 데이터
+const createMockUser = (userId: number): Partial<User> => ({
+  userId,
+  uuid: `test-uuid-${userId}`,
+  username: `testuser${userId}`,
+  level: '주니어',
+  interestArea: '백엔드',
+  provider: Provider.NAVER,
+  providerId: `kakao-${userId}`,
+  createdAt: new Date('2024-01-01'),
+  createdBy: userId,
+  updatedAt: new Date('2024-01-01'),
+  updatedBy: userId,
+});
 
 describe('UsersService.saveImportance', () => {
   let service: UsersService;
@@ -43,11 +59,34 @@ describe('UsersService.saveImportance', () => {
     service = moduleRef.get(UsersService);
   });
 
+  it('[오류] solvedQuiz가 없으면 SOLVED_QUIZ_NOT_FOUND를 던진다', async () => {
+    solvedQuizRepository.getById.mockResolvedValue(null);
+
+    await expect(
+      service.saveImportance(1, {
+        mainQuizId: 1,
+        solvedQuizId: 999,
+        importance: Importance.LOW,
+      }),
+    ).rejects.toEqual(
+      new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND),
+    );
+
+    expect(solvedQuizRepository.getById).toHaveBeenCalledWith(999);
+    expect(mainQuizRepository.findById).not.toHaveBeenCalled();
+    expect(solvedQuizRepository.updateImportance).not.toHaveBeenCalled();
+  });
+
   it('[오류] mainQuiz가 없으면 MAIN_QUIZ_NOT_FOUND를 던진다', async () => {
+    solvedQuizRepository.getById.mockResolvedValue({
+      solvedQuizId: 1,
+      user: createMockUser(1),
+      mainQuiz: { mainQuizId: 1 },
+    });
     mainQuizRepository.findById.mockResolvedValue(null);
 
     await expect(
-      service.saveImportance({
+      service.saveImportance(1, {
         mainQuizId: 1,
         solvedQuizId: 1,
         importance: Importance.HIGH,
@@ -57,7 +96,7 @@ describe('UsersService.saveImportance', () => {
     );
 
     expect(mainQuizRepository.findById).toHaveBeenCalledWith(1);
-    expect(solvedQuizRepository.getById).not.toHaveBeenCalled();
+    expect(solvedQuizRepository.getById).toHaveBeenCalledWith(1);
     expect(solvedQuizRepository.updateImportance).not.toHaveBeenCalled();
   });
 
@@ -66,7 +105,7 @@ describe('UsersService.saveImportance', () => {
     solvedQuizRepository.getById.mockResolvedValue(null);
 
     await expect(
-      service.saveImportance({
+      service.saveImportance(1, {
         mainQuizId: 1,
         solvedQuizId: 999,
         importance: Importance.LOW,
@@ -75,7 +114,7 @@ describe('UsersService.saveImportance', () => {
       new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND),
     );
 
-    expect(mainQuizRepository.findById).toHaveBeenCalledWith(1);
+    expect(mainQuizRepository.findById).not.toHaveBeenCalled();
     expect(solvedQuizRepository.getById).toHaveBeenCalledWith(999);
     expect(solvedQuizRepository.updateImportance).not.toHaveBeenCalled();
   });
@@ -85,10 +124,11 @@ describe('UsersService.saveImportance', () => {
     solvedQuizRepository.getById.mockResolvedValue({
       solvedQuizId: 1,
       mainQuiz: null,
+      user: createMockUser(1),
     });
 
     await expect(
-      service.saveImportance({
+      service.saveImportance(1, {
         mainQuizId: 1,
         solvedQuizId: 1,
         importance: Importance.NORMAL,
@@ -107,10 +147,11 @@ describe('UsersService.saveImportance', () => {
     solvedQuizRepository.getById.mockResolvedValue({
       solvedQuizId: 1,
       mainQuiz: { mainQuizId: '2' },
+      user: createMockUser(1),
     });
 
     await expect(
-      service.saveImportance({
+      service.saveImportance(1, {
         mainQuizId: 1,
         solvedQuizId: 1,
         importance: Importance.HIGH,
@@ -127,11 +168,12 @@ describe('UsersService.saveImportance', () => {
     solvedQuizRepository.getById.mockResolvedValue({
       solvedQuizId: 1,
       mainQuiz: { mainQuizId: 1 },
+      user: createMockUser(1),
     });
     solvedQuizRepository.updateImportance.mockResolvedValue({ affected: 0 });
 
     await expect(
-      service.saveImportance({
+      service.saveImportance(1, {
         mainQuizId: 1,
         solvedQuizId: 1,
         importance: Importance.LOW,
@@ -151,10 +193,11 @@ describe('UsersService.saveImportance', () => {
     solvedQuizRepository.getById.mockResolvedValue({
       solvedQuizId: 10,
       mainQuiz: { mainQuizId: 1 },
+      user: createMockUser(1),
     });
     solvedQuizRepository.updateImportance.mockResolvedValue({ affected: 1 });
 
-    const result = await service.saveImportance({
+    const result = await service.saveImportance(1, {
       mainQuizId: 1,
       solvedQuizId: 10,
       importance: Importance.HIGH,
