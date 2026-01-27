@@ -339,7 +339,7 @@ describe('QuizzesService', () => {
     });
 
     it('유저가 존재하면 중요도별로 분류된 퀴즈 데이터를 반환한다', async () => {
-      const mockUser: DeepPartial<User> = { userId: 1, email: 'test@test.com' };
+      const mockUser: DeepPartial<User> = { userId: 1 };
       userRepository.findById.mockResolvedValue(mockUser as User);
 
       const mockSolvedQuizzes: DeepPartial<SolvedQuiz>[] = [
@@ -413,7 +413,7 @@ describe('QuizzesService', () => {
     });
 
     it('푼 퀴즈 중, 중요도가 설정된 퀴즈가 없으면 빈 배열들을 반환한다', async () => {
-      const mockUser: DeepPartial<User> = { userId: 1, email: 'test@test.com' };
+      const mockUser: DeepPartial<User> = { userId: 1 };
       userRepository.findById.mockResolvedValue(mockUser as User);
 
       solvedQuizRepository.getImportanceByUserId.mockResolvedValue([]);
