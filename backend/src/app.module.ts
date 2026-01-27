@@ -31,7 +31,7 @@ import { JwtAuthGuard } from './modules/auth/guard/jwt-auth.guard';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DB_HOST'), // .env 파일에서 읽어옴
-        port: +configService.get('DB_PORT'),
+        port: Number(configService.get('DB_PORT')),
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),

@@ -1,21 +1,28 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   SaveImportanceRequestDto,
   SaveSolvedQuizRequestDto,
 } from './dto/users-request.dto';
 import {
+  GetUserComprehensionsResponseDto,
+  GetUserSolvedStatisticsResponseDto,
   SaveImportanceResponseDto,
   SolvedQuizResponseDto,
 } from './dto/users-response.dto';
 import { User } from 'src/datasources/entities/tb-user.entity';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
+import { QuizImportanceDataDto } from '../quizzes/dto/quiz-importance-response.dto';
+import { QuizzesService } from '../quizzes/quizzes.service';
 
 const TEST_USER_ID = 1;
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly quizzesService: QuizzesService,
+  ) {}
 
   @Post('solved-quizzes')
   async saveChecklistProgress(
@@ -32,6 +39,27 @@ export class UsersController {
     @Body() dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const result = await this.usersService.saveImportance(dto);
+    return result;
+  }
+
+  @Get('/solved-quizzes/importance')
+  async getSolvedImportance(): Promise<QuizImportanceDataDto> {
+    const result =
+      await this.quizzesService.getSolvedWithImportance(TEST_USER_ID);
+    return result;
+  }
+
+  @Get('/solved-quizzes/category-comprehension')
+  async getSolvedComprehension(): Promise<GetUserComprehensionsResponseDto> {
+    const result =
+      await this.usersService.getUserSolvedQuizWithComprehension(TEST_USER_ID);
+    return result;
+  }
+
+  @Get('/solved-quizzes/statistics')
+  async getUserSolvedStatistics(): Promise<GetUserSolvedStatisticsResponseDto> {
+    const result =
+      await this.usersService.getUserSolvedStatistics(TEST_USER_ID);
     return result;
   }
 }

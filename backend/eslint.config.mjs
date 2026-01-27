@@ -35,6 +35,13 @@ export default tseslint.config(
         varsIgnorePattern: '^_',
       }],
 
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
+      '@typescript-eslint/no-unsafe-member-access': 'warn',
+      '@typescript-eslint/no-unsafe-call': 'warn',
+      '@typescript-eslint/no-unsafe-return': 'warn',
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+
+
       // 일반 규칙
       'no-console': ['warn', { allow: ['warn', 'error'] }], 
       'prefer-const': 'error', 
