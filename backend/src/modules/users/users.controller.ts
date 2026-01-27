@@ -18,6 +18,7 @@ import { AuthService } from '../auth/auth.service';
 import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
 import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
 import type { Request, Response } from 'express';
+import { Public } from '../auth/decorator/public.decorator';
 @Controller('users')
 export class UsersController {
   constructor(
@@ -26,6 +27,7 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
+  @Public()
   @Post('solved-quizzes')
   async saveChecklistProgress(
     @OptionalCurrentUser() user: User | undefined,
