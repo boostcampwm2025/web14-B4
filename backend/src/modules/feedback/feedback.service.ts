@@ -25,6 +25,8 @@ import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
 } from 'src/common/constants/speech.constant';
+import { SolvedState } from 'src/datasources/entities/tb-solved-quiz.entity';
+import { Transactional } from 'typeorm-transactional';
 
 @Injectable()
 export class FeedbackService {
@@ -45,6 +47,7 @@ export class FeedbackService {
     this.genAI = new GoogleGenAI(apiKey);
   }
 
+  @Transactional()
   async generateAIFeedback(requestDto: CreateAIFeedbackRequestDto) {
     // 데이터 조회
     const {
@@ -80,6 +83,10 @@ export class FeedbackService {
     );
     const aiFeedback = await this.analyzeAnswer(userPromptText);
     await this.updateAiFeedback(requestDto.solvedQuizId, aiFeedback);
+    await this.solvedQuizRepository.updateSolvedState(
+      requestDto.solvedQuizId,
+      SolvedState.COMPLETED,
+    );
 
     const result = {
       solvedQuizDetail: {
