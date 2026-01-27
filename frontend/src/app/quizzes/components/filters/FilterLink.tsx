@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { DEFAULT_CATEGORY } from '@/constants/quizzes.constant';
 
 interface FilterLinkProps {
   /** 변경할 쿼리 파라미터 이름 */
@@ -23,7 +24,7 @@ export function FilterLink({ param, value, currentParams, children, className }:
     if (val) params.set(key, val);
   });
 
-  if (value === '전체') params.delete(param);
+  if (value === DEFAULT_CATEGORY) params.delete(param);
   else params.set(param, value);
 
   const href = params.toString() ? `?${params.toString()}` : '/quizzes';

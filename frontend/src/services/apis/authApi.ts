@@ -12,16 +12,16 @@ export async function loginWithNaver(code: string, state: string | null) {
 }
 
 export async function refreshAccessToken() {
-  const refreshToken = localStorage.getItem('refreshToken');
-
-  if (!refreshToken) {
-    throw new Error('리프레시 토큰이 없습니다.');
-  }
-
-  return await apiFetch<{ accessToken: string; refreshToken: string }>('/auth/refresh', {
+  return await apiFetch('/auth/refresh', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refreshToken }),
     skipAuth: true,
+  });
+}
+
+export async function logout() {
+  await apiFetch('/auth/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
   });
 }

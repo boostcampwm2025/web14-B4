@@ -17,6 +17,8 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { FeedbackModule } from './modules/feedback/feedback.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guard/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -29,11 +31,11 @@ import { AuthModule } from './modules/auth/auth.module';
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
         host: configService.get('DB_HOST'), // .env 파일에서 읽어옴
-        port: +configService.get('DB_PORT'),
+        port: Number(configService.get('DB_PORT')),
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
+        entities: [__dirname + '/datasources/entities/*.entity{.ts,.js}'],
         synchronize: false,
         dropSchema: false,
         extra: {
@@ -65,6 +67,7 @@ import { AuthModule } from './modules/auth/auth.module';
     { provide: APP_INTERCEPTOR, useClass: ApiResponseInterceptor },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
   ],
 })
 export class AppModule {}

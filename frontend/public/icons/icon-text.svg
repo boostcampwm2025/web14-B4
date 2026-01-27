@@ -1,0 +1,31 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="64"
+  height="64"
+  viewBox="0 0 64 64"
+  fill="none"
+>
+  <!-- background -->
+  <rect x="6" y="6" width="52" height="52" rx="14" fill="#d6e4fd" />
+
+  <!-- document outline (centered) -->
+  <path
+    d="M24 18H40L46 24V42C46 44.2091 44.2091 46 42 46H24C21.7909 46 20 44.2091 20 42V22C20 19.7909 21.7909 18 24 18Z"
+    stroke="#4278ff"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- folded corner -->
+  <path
+    d="M40 18V24H46"
+    stroke="#4278ff"
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- text lines -->
+  <path d="M26 28H40" stroke="#4278ff" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M26 33H38" stroke="#4278ff" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M26 38H36" stroke="#4278ff" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

@@ -1,10 +1,11 @@
 import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
 import { redirect } from 'next/navigation';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
-import FeedbackKeywords from '../../../../components/FeedbackKeywords';
+import FeedbackKeywords from '../../../../components/keywords/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
-import FeedbackComplements from '@/app/feedback/components/FeedbackComplements';
+import FeedbackComplements from '@/app/feedback/components/complements/FeedbackComplements';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
+import PreventBackNavigation from '@/components/PreventBackNavigation';
 
 type Props = {
   params: Promise<{
@@ -35,6 +36,7 @@ export default async function FeedbackPage({ params }: Props) {
 
   return (
     <main className="flex flex-col justify-center m-5">
+      <PreventBackNavigation />
       <FeedbackHeader
         content={solvedQuizDetail.content}
         category={solvedQuizDetail.quizCategory.name}

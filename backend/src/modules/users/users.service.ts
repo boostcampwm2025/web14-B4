@@ -6,13 +6,19 @@ import {
   SaveSolvedQuizRequestDto,
 } from './dto/users-request.dto';
 import { Transactional } from 'typeorm-transactional';
-import { SaveImportanceResponseDto } from './dto/users-response.dto';
+import {
+  GetUserComprehensionsResponseDto,
+  GetUserSolvedStatisticsResponseDto,
+  SaveImportanceResponseDto,
+} from './dto/users-response.dto';
 import { ChecklistItemRepository } from 'src/datasources/repositories/tb-checklist-item.repository';
 import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklist-progress.entity';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
 import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
+import { BadRequestException } from '@nestjs/common';
+import { SolvedState } from 'src/datasources/entities/tb-solved-quiz.entity';
 
 @Injectable()
 export class UsersService {
@@ -103,18 +109,22 @@ export class UsersService {
   }
 
   async saveImportance(
+    userId: number,
     dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const { mainQuizId, solvedQuizId, importance } = dto;
 
-    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
-    if (!mainQuiz) {
-      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
-    }
-
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
     if (!solvedQuiz) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
+    }
+    if (solvedQuiz.user.userId !== userId) {
+      throw new BadRequestException(ERROR_MESSAGES.ACCESS_DENIED);
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
     }
 
     // 무결성 검증
@@ -127,10 +137,12 @@ export class UsersService {
       );
     }
 
-    const result = await this.solvedQuizRepository.updateImportance(
-      solvedQuizId,
-      importance,
-    );
+    const result =
+      await this.solvedQuizRepository.updateImportanceAndSolvedState(
+        solvedQuizId,
+        importance,
+        SolvedState.COMPLETED,
+      );
 
     // 처리 중 삭제 등으로 인해 실제로 업데이트된 행이 없는 경우 방어
     if (result.affected !== 1) {
@@ -153,5 +165,30 @@ export class UsersService {
         '해당 solved quiz의 체크리스트가 존재하지 않습니다.',
       );
     return userChecklistProgress;
+  }
+
+  /**
+   * 푼 퀴즈에 대한 카테고리별 이해도 통계
+   * @param userId 유저 아이디
+   * @returns 푼 퀴즈에 대한 카테고리별 이해도 및 평균값
+   */
+  async getUserSolvedQuizWithComprehension(
+    userId: number,
+  ): Promise<GetUserComprehensionsResponseDto> {
+    // TODO 유저 존재여부 판별
+
+    const solvedQuizCategoryStatistics =
+      await this.solvedQuizRepository.getComprehensionStatistics(userId);
+    return new GetUserComprehensionsResponseDto(solvedQuizCategoryStatistics);
+  }
+
+  async getUserSolvedStatistics(
+    userId: number,
+  ): Promise<GetUserSolvedStatisticsResponseDto> {
+    // TODO 유저 정보 확인
+
+    const solvedData =
+      await this.solvedQuizRepository.getSolvedQuizStatistics(userId);
+    return new GetUserSolvedStatisticsResponseDto(solvedData);
   }
 }

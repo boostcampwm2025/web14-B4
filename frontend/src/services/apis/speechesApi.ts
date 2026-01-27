@@ -17,6 +17,11 @@ export type UpdateSpeechTextResponse = {
   speechText: string;
 };
 
+export type CreateSpeechTextAnswerResponse = {
+  mainQuizId: number;
+  solvedQuizId: number;
+};
+
 /**
  * 음성 파일을 STT 변환 API로 전송
  * - POST /speeches/stt
@@ -88,6 +93,33 @@ export async function updateSpeechText(
       }),
     },
     { message: '음성 텍스트 수정 응답 데이터가 없습니다.' },
+  );
+
+  return data;
+}
+
+/**
+ * 말하기 연습 텍스트 답변을 서버에 저장(insert)한다
+ * - POST /speeches/text/{mainQuizId}
+ * @param mainQuizId 말하기 퀴즈 ID
+ * @param speechText 사용자가 입력한 텍스트 답변
+ */
+export async function postSpeechTextAnswer(
+  mainQuizId: number,
+  speechText: string,
+): Promise<CreateSpeechTextAnswerResponse> {
+  const data = await apiFetch<CreateSpeechTextAnswerResponse>(
+    `/speeches/text/${mainQuizId}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        speechText,
+      }),
+    },
+    { message: '텍스트 답변 저장 응답 데이터가 없습니다.' },
   );
 
   return data;
