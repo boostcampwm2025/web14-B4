@@ -10,7 +10,7 @@ import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
 import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
-import PermissionConsentModal from './permission/PermissionConsentModal';
+import CombinedPermissionConsentModal from './permission/CombinedPermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
@@ -20,6 +20,7 @@ import RecorderTimer from './RecorderTimer';
 
 interface AudioRecorderProps {
   quizId: number;
+  onSwitchToTextMode: () => void;
 }
 
 export type RecordStatus =
@@ -28,12 +29,11 @@ export type RecordStatus =
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
 
-export default function Recorder({ quizId }: AudioRecorderProps) {
+export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderProps) {
   const router = useRouter();
   const { setSolvedQuizId } = useQuizStore();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
-  const [isCameraConsentOpen, setIsCameraConsentOpen] = useState(true);
 
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
   const timer = useRecorderTimer();
@@ -77,25 +77,27 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
     denyPermission: denyVideoPermission,
   } = useVideoManager();
 
-  // 여기 권한 부분을 별도로 뺄 수 있어보임
-  const handleConsentAgree = async () => {
+  // 통합 권한 동의 처리
+  const handleConsentAgree = async (micChecked: boolean, cameraChecked: boolean) => {
     setIsConsentOpen(false);
-    await requestPermission();
+
+    // 선택된 권한 요청
+    if (micChecked) {
+      await requestPermission();
+    }
+    if (cameraChecked) {
+      await requestVideoPermission();
+    }
+
+    // 아무것도 선택 안했을 때 (추후 기능 추가)
+    if (!micChecked && !cameraChecked) {
+      // TODO: 아무것도 선택 안했을 때 처리
+    }
   };
 
   const handleConsentDeny = () => {
     setIsConsentOpen(false);
-    denyPermission();
-  };
-
-  const handleCameraConsentAgree = async () => {
-    setIsCameraConsentOpen(false);
-    await requestVideoPermission();
-  };
-
-  const handleCameraConsentDeny = () => {
-    setIsCameraConsentOpen(false);
-    denyVideoPermission();
+    onSwitchToTextMode();
   };
 
   // 선택한 카메라로 스트림 시작
@@ -343,32 +345,15 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
         />
       )}
 
-      {/* 마이크 권한 안내 팝업창 */}
-      <PermissionConsentModal
+      {/* 통합 권한 안내 팝업창 */}
+      <CombinedPermissionConsentModal
         isOpen={isConsentOpen}
-        title="마이크 권한 안내"
-        descriptions={[
-          '말하기 답변을 녹음하여 STT 변환 후 피드백을 제공하려면 마이크 권한이 필요합니다.',
-          '거부하면 말하기 연습 기능을 사용할 수 없습니다.',
-        ]}
         onDeny={handleConsentDeny}
         onAgree={handleConsentAgree}
       />
 
-      {/* 카메라 권한 안내 팝업창 */}
-      <PermissionConsentModal
-        isOpen={isCameraConsentOpen}
-        title="카메라 권한 안내"
-        descriptions={[
-          '말하기 답변을 녹음하며 모습을 촬영하기 위해서는 카메라 권한이 필요합니다.',
-          '거부하면 녹화 기능을 사용할 수 없습니다.',
-        ]}
-        onDeny={handleCameraConsentDeny}
-        onAgree={handleCameraConsentAgree}
-      />
-
       {/* 메인 컨텐츠: 좌우 레이아웃 */}
-      <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
+      <div className="px-12 py-5 md:px-16 md:py-16 lg:px-24 lg:py-10 xl:px-32 max-w-350">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           <div className="space-y-6 lg:col-span-3">
             <div className="relative aspect-video bg-gray-900 rounded-2xl overflow-hidden">
