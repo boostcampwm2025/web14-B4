@@ -12,6 +12,9 @@ import {
   WinstonModule,
 } from 'nest-winston';
 import * as winston from 'winston';
+import { Provider, User } from 'src/datasources/entities/tb-user.entity';
+import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
+import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
 
 type SolvedQuizEntity = {
   solvedQuizId: number;
@@ -59,6 +62,21 @@ const clearFetchMock = () => {
   delete g.fetch;
 };
 
+// 테스트용 User 목 데이터
+const createMockUser = (userId: number): Partial<User> => ({
+  userId,
+  uuid: `test-uuid-${userId}`,
+  username: `testuser${userId}`,
+  level: '주니어',
+  interestArea: '백엔드',
+  provider: Provider.NAVER,
+  providerId: `kakao-${userId}`,
+  createdAt: new Date('2024-01-01'),
+  createdBy: userId,
+  updatedAt: new Date('2024-01-01'),
+  updatedBy: userId,
+});
+
 describe('SpeechesService', () => {
   let service: SpeechesService;
 
@@ -71,6 +89,14 @@ describe('SpeechesService', () => {
     updateSpeechText: jest.fn(),
     getByQuizAndUser: jest.fn(),
     getById: jest.fn(),
+  };
+
+  const mockUserRepository = {
+    getById: jest.fn(),
+  };
+
+  const mockMainQuizRepository = {
+    findById: jest.fn(),
   };
 
   const mockAudioFile: Express.Multer.File = {
@@ -108,6 +134,14 @@ describe('SpeechesService', () => {
         {
           provide: SolvedQuizRepository,
           useValue: mockSolvedQuizRepository,
+        },
+        {
+          provide: UserRepository,
+          useValue: mockUserRepository,
+        },
+        {
+          provide: MainQuizRepository,
+          useValue: mockMainQuizRepository,
         },
         {
           provide: WINSTON_MODULE_NEST_PROVIDER,
@@ -272,6 +306,7 @@ describe('SpeechesService', () => {
         mainQuiz: { mainQuizId: 1 },
         solvedQuizId: 1,
         speechText: '수정된 음성 텍스트',
+        user: createMockUser(1),
       };
 
       mockSolvedQuizRepository.updateSpeechText.mockResolvedValue({
@@ -282,6 +317,7 @@ describe('SpeechesService', () => {
       const result: UpdateSpeechTextResult = await service.updateSpeechText(
         solvedQuizId,
         speechText,
+        1,
       );
 
       expect(result.mainQuizId).toBe(1);
@@ -290,14 +326,16 @@ describe('SpeechesService', () => {
     });
 
     it('수정된 답변이 빈 문자열이면 에러를 던진다', async () => {
-      await expect(service.updateSpeechText(solvedQuizId, '')).rejects.toThrow(
+      await expect(
+        service.updateSpeechText(solvedQuizId, '', 1),
+      ).rejects.toThrow(
         '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',
       );
     });
 
     it('수정된 답변이 공백만 있으면 에러를 던진다', async () => {
       await expect(
-        service.updateSpeechText(solvedQuizId, '   '),
+        service.updateSpeechText(solvedQuizId, '   ', 1),
       ).rejects.toThrow(
         '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',
       );
