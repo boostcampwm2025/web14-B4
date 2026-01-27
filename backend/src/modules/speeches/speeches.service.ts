@@ -228,6 +228,7 @@ export class SpeechesService {
     audioFile: Express.Multer.File,
     mainQuizId: number,
     userId: number,
+    clientMeta?: { userAgent?: string },
   ): Promise<SttResponseDto> {
     this.checkValidation(audioFile);
 
@@ -237,6 +238,9 @@ export class SpeechesService {
     const result = await this.fetchClovaSpeechLong(url, secretKey, formData, {
       mainQuizId,
       size: audioFile.size,
+      userAgent: clientMeta?.userAgent,
+      originalname: audioFile.originalname,
+      mimetype: audioFile.mimetype,
     });
 
     const sttText = typeof result.text === 'string' ? result.text.trim() : '';
@@ -316,6 +320,9 @@ export class SpeechesService {
     meta: {
       mainQuizId: number;
       size: number;
+      userAgent?: string;
+      originalname?: string;
+      mimetype?: string;
     },
   ): Promise<ClovaSpeechLongSyncResponse> {
     const startedAt = Date.now();
@@ -338,7 +345,7 @@ export class SpeechesService {
         // CLOVA API가 반환하는 오류 메시지 로깅
         logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', err, {
           ...meta,
-          durationMs,
+          durationMs: `${durationMs}ms`,
         });
 
         // 인증 실패(Authentication Failed), 권한 없음(Permission Denied)

@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   ParseIntPipe,
+  Req,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SpeechesService } from './speeches.service';
@@ -30,30 +31,36 @@ export class SpeechesController {
   constructor(private readonly speechesService: SpeechesService) {}
 
   @Post('stt')
-  @UseInterceptors(FileInterceptor('audio'))
+  @UseInterceptors(
+    FileInterceptor('audio', {
+      limits: { fileSize: AUDIOFILE_MAX_SIZE_BYTES },
+    }),
+  )
   async clovaLongStt(
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
+    @Req() req: Request,
   ): Promise<SttResponseDto> {
     if (!recordFile) {
       throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
+    const userAgent = req.headers['user-agent'];
+
     const result = await this.speechesService.clovaSpeechLongStt(
       recordFile,
       mainQuizId,
       TEST_USER_ID,
+      {
+        userAgent: typeof userAgent === 'string' ? userAgent : undefined,
+      },
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
   }
 
   @Post('stt-csr')
-  @UseInterceptors(
-    FileInterceptor('audio', {
-      limits: { fileSize: AUDIOFILE_MAX_SIZE_BYTES },
-    }),
-  )
+  @UseInterceptors(FileInterceptor('audio'))
   async csrSpeechToText(
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
