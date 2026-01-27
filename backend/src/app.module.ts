@@ -33,7 +33,7 @@ import { AuthModule } from './modules/auth/auth.module';
         username: configService.get('DB_USERNAME'),
         password: configService.get('DB_PASSWORD'),
         database: configService.get('DB_DATABASE'),
-        entities: [__dirname + 'datasources/entities/*.entity{.ts,.js}'],
+        entities: [__dirname + '/datasources/entities/*.entity{.ts,.js}'],
         synchronize: false,
         dropSchema: false,
         extra: {

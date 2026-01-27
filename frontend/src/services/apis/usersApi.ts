@@ -1,4 +1,5 @@
 import { ComprehensionData, SolvedData } from '@/app/user/types/table';
+import { ImportanceData, ImportanceItem } from '@/app/user/types/importanceItem';
 import { apiFetch } from '@/services/http/apiFetch';
 import type { Importance } from '@/types/solvedQuiz.types.ts';
 
@@ -87,6 +88,37 @@ export async function getUserSolvedStatistics(): Promise<GetUserSolvedStatistics
     ...data,
     solvedData: filteredSolvedData,
   };
+}
 
-  return data;
+ * 사용자가 푼 문제들의 중요도 값들을 서버에서 받아온다.
+ * - GET /users/solved-quizzes/importance
+ * @return : ImportanceData
+ */
+export async function fetchSolvedImportance(): Promise<ImportanceData> {
+  const data = await apiFetch<ImportanceData>('/users/solved-quizzes/importance', {
+    method: 'GET',
+  });
+
+  // id 타입 string -> number 변환 처리
+  try {
+    const convertItem = (item: ImportanceItem) => ({
+      ...item,
+      solvedQuizId:
+        typeof item.solvedQuizId === 'string' ? Number(item.solvedQuizId) : item.solvedQuizId,
+      mainQuizId: typeof item.mainQuizId === 'string' ? Number(item.mainQuizId) : item.mainQuizId,
+    });
+
+    const converted: ImportanceData = {
+      high: Array.isArray(data.high) ? data.high.map(convertItem) : [],
+      normal: Array.isArray(data.normal) ? data.normal.map(convertItem) : [],
+      low: Array.isArray(data.low) ? data.low.map(convertItem) : [],
+    };
+
+    return converted;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error('중요도 데이터 타입 변환 중 오류가 발생했습니다.');
+  }
 }
