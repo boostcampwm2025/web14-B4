@@ -19,6 +19,7 @@ import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.dec
 import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
 import type { Request, Response } from 'express';
 import { Public } from '../auth/decorator/public.decorator';
+
 @Controller('users')
 export class UsersController {
   constructor(
