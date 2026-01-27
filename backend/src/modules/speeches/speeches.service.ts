@@ -37,6 +37,14 @@ type ClovaSpeechLongSyncResponse = {
   confidence?: string; // 변환 정확도
 };
 
+type ParsedUserAgent = {
+  raw: string;
+  browser: 'Chrome' | 'Edge' | 'Safari' | 'Firefox' | 'Unknown';
+  browserVersion?: string;
+  os: 'Windows' | 'macOS' | 'iOS' | 'Android' | 'Linux' | 'Unknown';
+  osVersion?: string;
+};
+
 // TODO : 추가로 처리해야할 예외
 /* 답변 텍스트가 너무 짧은 경우, 예외 처리.
    해당 예외를 추가하지 않은 이유: 테스트 및 데모 시에 짧은 텍스트가 들어올 수 있기 때문에 해당 예외는 추후에 추가 예정.
@@ -235,12 +243,17 @@ export class SpeechesService {
     const { url, secretKey, language } = this.getClovaSpeechLongConfig();
     const formData = this.buildFormData(audioFile, language);
 
+    const ua = this.parseUserAgent(clientMeta?.userAgent);
+
     const result = await this.fetchClovaSpeechLong(url, secretKey, formData, {
       mainQuizId,
       size: audioFile.size,
-      userAgent: clientMeta?.userAgent,
       originalname: audioFile.originalname,
       mimetype: audioFile.mimetype,
+      browser: ua?.browser,
+      browserVersion: ua?.browserVersion,
+      os: ua?.os,
+      osVersion: ua?.osVersion,
     });
 
     const sttText = typeof result.text === 'string' ? result.text.trim() : '';
@@ -320,9 +333,12 @@ export class SpeechesService {
     meta: {
       mainQuizId: number;
       size: number;
-      userAgent?: string;
       originalname?: string;
       mimetype?: string;
+      browser?: string;
+      browserVersion?: string;
+      os?: string;
+      osVersion?: string;
     },
   ): Promise<ClovaSpeechLongSyncResponse> {
     const startedAt = Date.now();
@@ -420,6 +436,74 @@ export class SpeechesService {
 
       throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
+  }
+
+  private parseUserAgent(userAgent?: string): ParsedUserAgent | undefined {
+    if (!userAgent) {
+      return undefined;
+    }
+
+    let browser: ParsedUserAgent['browser'] = 'Unknown';
+    let browserVersion: string | undefined;
+
+    let os: ParsedUserAgent['os'] = 'Unknown';
+    let osVersion: string | undefined;
+
+    const windows = userAgent.match(/Windows NT ([\d.]+)/);
+    if (windows) {
+      os = 'Windows';
+      osVersion = windows[1];
+    }
+
+    const android = userAgent.match(/Android ([\d.]+)/);
+    if (android) {
+      os = 'Android';
+      osVersion = android[1];
+    }
+
+    const ios = userAgent.match(/iPhone OS ([\d_]+)/);
+    if (ios) {
+      os = 'iOS';
+      osVersion = ios[1].replace(/_/g, '.');
+    }
+
+    const mac = userAgent.match(/Mac OS X ([\d_]+)/);
+    if (mac && os === 'Unknown') {
+      os = 'macOS';
+      osVersion = mac[1].replace(/_/g, '.');
+    }
+
+    const edge = userAgent.match(/Edg\/([\d.]+)/);
+    if (edge) {
+      browser = 'Edge';
+      browserVersion = edge[1];
+    }
+
+    const chrome = userAgent.match(/Chrome\/([\d.]+)/);
+    if (chrome && browser === 'Unknown') {
+      browser = 'Chrome';
+      browserVersion = chrome[1];
+    }
+
+    const firefox = userAgent.match(/Firefox\/([\d.]+)/);
+    if (firefox) {
+      browser = 'Firefox';
+      browserVersion = firefox[1];
+    }
+
+    const safari = userAgent.match(/Version\/([\d.]+).*Safari/);
+    if (safari && !userAgent.includes('Chrome/')) {
+      browser = 'Safari';
+      browserVersion = safari[1];
+    }
+
+    return {
+      raw: userAgent,
+      browser,
+      browserVersion,
+      os,
+      osVersion,
+    };
   }
 
   async createSpeechText(dto: {
