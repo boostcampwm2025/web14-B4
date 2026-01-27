@@ -36,3 +36,41 @@ export function getRecorderConfig(): RecorderConfig {
     fileExtension: 'webm',
   };
 }
+
+// 녹음 파일 config
+export function getAudioRecorderConfig(): RecorderConfig {
+  const mimeTypes = [
+    { type: 'audio/webm;codecs=opus', ext: 'webm' },
+    { type: 'audio/webm', ext: 'webm' },
+    { type: 'audio/ogg;codecs=opus', ext: 'ogg' },
+    { type: 'audio/ogg', ext: 'ogg' },
+    { type: 'audio/mp4', ext: 'm4a' },
+  ];
+
+  for (const { type, ext } of mimeTypes) {
+    if (MediaRecorder.isTypeSupported(type)) {
+      return { mimeType: type, fileExtension: ext };
+    }
+  }
+
+  return { mimeType: '', fileExtension: 'webm' };
+}
+
+export function getAudioExtension(mimeType: string): string {
+  const normalized = mimeType.split(';')[0].trim();
+
+  switch (normalized) {
+    case 'audio/webm':
+      return 'webm';
+    case 'audio/ogg':
+      return 'ogg';
+    case 'audio/mp4':
+      return 'm4a';
+    default:
+      return 'webm';
+  }
+}
+
+export function buildAudioFilename(extension: string): string {
+  return `audio.${extension}`;
+}
