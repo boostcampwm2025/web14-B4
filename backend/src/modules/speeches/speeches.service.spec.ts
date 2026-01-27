@@ -313,7 +313,7 @@ describe('SpeechesService', () => {
         affected: 1,
       });
       mockSolvedQuizRepository.getById.mockResolvedValue(mockUpdatedSolvedQuiz);
-
+      mockMainQuizRepository.findById.mockResolvedValue(1);
       const result: UpdateSpeechTextResult = await service.updateSpeechText(
         solvedQuizId,
         speechText,
