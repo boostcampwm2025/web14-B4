@@ -12,6 +12,7 @@ export enum Provider {
   KAKAO = 'KAKAO',
   NAVER = 'NAVER',
   GOOGLE = 'GOOGLE',
+  GUEST = 'GUEST',
 }
 
 @Entity('tb_user')
