@@ -38,9 +38,9 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
             <p className="w-full text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
               Keywords 클릭 시, 설명을 확인할 수 있어요
             </p>
-            {keywords.map((keyword, idx) => (
+            {keywords.map((keyword) => (
               <KeywordButton
-                key={idx}
+                key={keyword.text}
                 keyword={keyword}
                 isSelected={selectedKeyword === keyword}
                 onClick={() => setSelectedKeyword((prev) => (prev === keyword ? null : keyword))}
