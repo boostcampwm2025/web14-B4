@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/keywords/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
-import FeedbackComplements from '@/app/feedback/components/FeedbackComplements';
+import FeedbackComplements from '@/app/feedback/components/complements/FeedbackComplements';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 
 type Props = {
