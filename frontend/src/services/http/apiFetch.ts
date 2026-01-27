@@ -46,10 +46,22 @@ export async function apiFetch<T>(
   let res: Response;
   const { skipAuth, ...fetchInit } = init || {};
 
+  // SSR 환경에서는 next/headers의 cookies()로 쿠키를 직접 전달 (동적 import 필수)
+  let cookieHeader: string | undefined;
+  if (!isClient) {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    cookieHeader = cookieStore.toString();
+  }
+
   try {
     res = await fetch(`${API_BASE}${path}`, {
       ...fetchInit,
       credentials: 'include',
+      headers: {
+        ...fetchInit?.headers,
+        ...(cookieHeader && { Cookie: cookieHeader }),
+      },
     });
   } catch {
     // 네트워크 단에서 죽는 케이스(서버 응답 자체가 없음)

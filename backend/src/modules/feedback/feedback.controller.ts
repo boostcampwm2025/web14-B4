@@ -8,7 +8,9 @@ import {
   ParseIntPipe,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
+import { Public } from '../auth/decorator/public.decorator';
 
+@Public()
 @Controller('feedback')
 export class FeedbackController {
   constructor(private readonly feedbackService: FeedbackService) {}

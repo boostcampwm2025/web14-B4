@@ -17,6 +17,8 @@ import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
 import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
+import { BadRequestException } from '@nestjs/common';
+import { SolvedState } from 'src/datasources/entities/tb-solved-quiz.entity';
 
 @Injectable()
 export class UsersService {
@@ -107,18 +109,22 @@ export class UsersService {
   }
 
   async saveImportance(
+    userId: number,
     dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const { mainQuizId, solvedQuizId, importance } = dto;
 
-    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
-    if (!mainQuiz) {
-      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
-    }
-
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
     if (!solvedQuiz) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
+    }
+    if (solvedQuiz.user.userId !== userId) {
+      throw new BadRequestException(ERROR_MESSAGES.ACCESS_DENIED);
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
     }
 
     // 무결성 검증
@@ -131,10 +137,12 @@ export class UsersService {
       );
     }
 
-    const result = await this.solvedQuizRepository.updateImportance(
-      solvedQuizId,
-      importance,
-    );
+    const result =
+      await this.solvedQuizRepository.updateImportanceAndSolvedState(
+        solvedQuizId,
+        importance,
+        SolvedState.COMPLETED,
+      );
 
     // 처리 중 삭제 등으로 인해 실제로 업데이트된 행이 없는 경우 방어
     if (result.affected !== 1) {

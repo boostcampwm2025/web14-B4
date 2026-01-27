@@ -107,12 +107,28 @@ export class SpeechesService {
    * 음성 텍스트를 수정한다.
    * @param solvedQuizId : 풀었던 퀴즈 id
    * @param speechText : 사용자가 수정한 녹음 텍스트
+   * @param userId : 사용자 id
    * @returns : 저장된 녹음 텍스트 정보
    */
   async updateSpeechText(
     solvedQuizId: number,
     speechText: string,
+    userId: number,
   ): Promise<{ mainQuizId: number; solvedQuizId: number; speechText: string }> {
+    const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
+    if (!solvedQuiz || solvedQuiz.user?.userId !== userId) {
+      throw new BadRequestException(
+        '잘못된 요청입니다. 해당 기록에 대한 권한이 없습니다.',
+      );
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(
+      solvedQuiz.mainQuiz.mainQuizId,
+    );
+    if (!mainQuiz) {
+      throw new BadRequestException('존재하지 않는 퀴즈에 대한 기록입니다.');
+    }
+
     if (!speechText || speechText.trim().length === 0) {
       throw new BadRequestException(
         '수정된 답변 내용이 비어있습니다. 내용을 입력해주세요.',

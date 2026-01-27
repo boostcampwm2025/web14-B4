@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DeepPartial, Repository, DataSource } from 'typeorm';
-import { SolvedQuiz, Importance } from '../entities/tb-solved-quiz.entity';
+import {
+  SolvedQuiz,
+  Importance,
+  SolvedState,
+} from '../entities/tb-solved-quiz.entity';
 import { UpdateResult } from 'typeorm/browser';
 import { InjectRepository } from '@nestjs/typeorm';
 import { z } from 'zod';
@@ -121,6 +125,17 @@ export class SolvedQuizRepository {
     importance: Importance,
   ): Promise<UpdateResult> {
     return await this.repository.update(solvedQuizId, { importance });
+  }
+
+  async updateImportanceAndSolvedState(
+    solvedQuizId: number,
+    importance: Importance,
+    solvedState: SolvedState,
+  ): Promise<UpdateResult> {
+    return await this.repository.update(solvedQuizId, {
+      importance,
+      solvedState,
+    });
   }
 
   async getImportanceByUserId(userId: number): Promise<SolvedQuiz[]> {

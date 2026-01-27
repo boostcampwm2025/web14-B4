@@ -113,6 +113,16 @@ export class AuthService {
     };
   }
 
+  async createGuestUser(): Promise<User> {
+    const guestUuid = uuidv4();
+    const guestUser = new User();
+    guestUser.uuid = guestUuid;
+    guestUser.username = `guest_${guestUuid.substring(0, 8)}`;
+    guestUser.provider = Provider.GUEST;
+    guestUser.createdBy = 0;
+    return await this.userRepository.createUser(guestUser);
+  }
+
   async refresh(refreshToken: string) {
     let payload: JwtPayload;
     // JWT 서명 검증
