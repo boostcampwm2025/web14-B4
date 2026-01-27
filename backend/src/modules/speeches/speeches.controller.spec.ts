@@ -72,7 +72,7 @@ describe('SpeechesController', () => {
       const undefinedFile: Express.Multer.File | undefined = undefined;
 
       await expect(
-        controller.csrSpeechToText(undefinedFile!, mainQuizId),
+        controller.csrSpeechToText(undefinedFile, mainQuizId),
       ).rejects.toThrow(BadRequestException);
       expect(mockSpeechesService.csrSpeechToText).not.toHaveBeenCalled();
     });
