@@ -15,7 +15,6 @@ import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { QuizImportanceDataDto } from '../quizzes/dto/quiz-importance-response.dto';
 import { QuizzesService } from '../quizzes/quizzes.service';
 import { AuthService } from '../auth/auth.service';
-import { Public } from '../auth/decorator/public.decorator';
 import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
 import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
 import type { Request, Response } from 'express';
@@ -27,7 +26,6 @@ export class UsersController {
     private readonly authService: AuthService,
   ) {}
 
-  @Public()
   @Post('solved-quizzes')
   async saveChecklistProgress(
     @OptionalCurrentUser() user: User | undefined,
