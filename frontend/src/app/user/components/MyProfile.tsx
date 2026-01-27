@@ -63,7 +63,7 @@ export default function MyProfile({ user }: UserProfileProps) {
           </div>
 
           {/* 관심 분야 */}
-          {user.interests.length > 0 && (
+          {user.interests?.length > 0 && (
             <div>
               <div className="flex flex-wrap gap-2">
                 {user.interests.map((interest, index) => (
