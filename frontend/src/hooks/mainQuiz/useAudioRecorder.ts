@@ -99,7 +99,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       }
     };
 
-    recorder.onstop = () => {
+    recorder.onstop = async () => {
       const actualMimeType = recorder.mimeType || config.mimeType || 'audio/webm';
       const extension = getAudioExtension(actualMimeType);
       const filename = buildAudioFilename(extension);
@@ -113,7 +113,19 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
         동일여부: (config.mimeType || '') === (recorder.mimeType || ''),
       });
 
+      // 구버전 크롬에서 onstop이 ondataavailable 마지막 flush보다 먼저 올 수 있어 한 틱 대기
+      if (audioChunksRef.current.length === 0) {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+
       const blob = new Blob(audioChunksRef.current, { type: actualMimeType });
+
+      // TODO 임시코드 삭제필요: 크롬 13x에서 blob.size가 작거나 0이면 flush/마무리 문제 가능성 큼
+      console.log('[AUDIO][Recorder] chunks/blob.size:', {
+        chunks: audioChunksRef.current.length,
+        size: blob.size,
+      });
+
       setAudioBlob(blob);
       setAudioManifest({
         mimeType: actualMimeType,
@@ -128,14 +140,28 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
       // 녹음 완료 콜백
       params?.onRecorded?.(blob, url);
+
+      // 스트림 종료는 stop 직후가 아니라 onstop 이후에 수행 (파일 마무리 깨지는 것 방지)
+      cleanupStream();
     };
 
     recorder.start();
   };
 
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    cleanupStream();
+    const recorder = mediaRecorderRef.current;
+    if (!recorder) {
+      return;
+    }
+
+    // stop 전에 한 번 강제로 flush 요청 (마지막 데이터 누락 방지)
+    try {
+      recorder.requestData();
+    } catch {
+      // ignore
+    }
+
+    recorder.stop();
   };
 
   useEffect(() => {
