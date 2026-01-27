@@ -20,6 +20,7 @@ import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { CreateSpeechTextAnswerRequestDto } from './dto/CreateSpeechTextAnswerRequest.dto';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
+import { AUDIOFILE_MAX_SIZE_BYTES } from './speeches.constants';
 
 // TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
 const TEST_USER_ID = 1;
@@ -48,7 +49,11 @@ export class SpeechesController {
   }
 
   @Post('stt-csr')
-  @UseInterceptors(FileInterceptor('audio'))
+  @UseInterceptors(
+    FileInterceptor('audio', {
+      limits: { fileSize: AUDIOFILE_MAX_SIZE_BYTES },
+    }),
+  )
   async csrSpeechToText(
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,

@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
-import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
+import {
+  allowedMimeTypes,
+  CLOVA_STT,
+  AUDIOFILE_MAX_SIZE_BYTES,
+} from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
@@ -204,8 +208,6 @@ export class SpeechesService {
 
   /* 녹음 파일의 유효성 검사 */
   private checkValidation(recordFile: Express.Multer.File): void {
-    const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
-
     if (!recordFile || !recordFile.buffer)
       throw new BadRequestException('유효하지 않는 녹음 파일입니다.');
 
@@ -214,7 +216,7 @@ export class SpeechesService {
         `지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`,
       );
 
-    if (recordFile.buffer.length > MAX_SIZE_BYTES) {
+    if (recordFile.buffer.length > AUDIOFILE_MAX_SIZE_BYTES) {
       throw new PayloadTooLargeException(
         '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
       );
@@ -297,9 +299,11 @@ export class SpeechesService {
     const form = new FormData();
 
     const blob = new Blob([new Uint8Array(audioFile.buffer)], {
-      type: audioFile.mimetype || 'audio/webm',
+      type: audioFile.mimetype,
     });
-    form.append('media', blob, audioFile.originalname || 'audio.webm');
+    const filename =
+      audioFile.mimetype === 'audio/wav' ? 'audio.wav' : 'audio.webm';
+    form.append('media', blob, audioFile.originalname || filename);
     form.append('params', JSON.stringify(params));
 
     return form;
