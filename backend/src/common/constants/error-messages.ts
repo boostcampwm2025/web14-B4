@@ -30,6 +30,11 @@ export const ERROR_MESSAGES = {
     status: 404,
     message: '해당 유저를 찾을 수 없습니다.',
   },
+  DATA_VALIDATION_FAILED: {
+    errorCode: 'DATA_VALIDATION_FAILED',
+    status: 500,
+    message: '데이터 형식 오류로 조회에 실패했습니다',
+  },
   // 테이블에서 말하기 연습 관련 데이터를 찾을 수 없는경우
   MAIN_QUIZ_NOT_FOUND: {
     errorCode: 'MAIN_QUIZ_NOT_FOUND',
