@@ -78,6 +78,7 @@ export class AuthController {
     return { success: true };
   }
 
+  @Public()
   @Post('logout')
   async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies['refreshToken'] as string | undefined;
@@ -91,6 +92,7 @@ export class AuthController {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.clearCookie('username');
+    clearGuestUserIdCookie(res);
 
     return { success: true };
   }
