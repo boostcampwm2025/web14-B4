@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { getUserComprehensions, getUserSolvedStatistics } from '@/services/apis/usersApi';
 import QuizStatisticsSection from './components/QuizStatisticsSection';
 import MyProfile, { mockUserData } from './components/MyProfile';
-import ImportanceBoard from './components/importanceGroup/ImportanceBoard'; 
+import ImportanceBoard from './components/importanceGroup/ImportanceBoard';
 
 export default async function Page() {
   const [comprehensionResponse, solvedQuizResponse] = await Promise.all([
