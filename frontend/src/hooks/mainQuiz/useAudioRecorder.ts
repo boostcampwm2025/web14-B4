@@ -82,6 +82,10 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     audioStreamRef.current = stream;
 
     const config = getAudioRecorderConfig();
+
+    // TODO 임시코드 삭제필요: 요청한 mimeType 로그
+    console.log('[AUDIO][Recorder] 요청 mimeType:', config.mimeType || '(none)');
+
     const recorder = new MediaRecorder(
       stream,
       config.mimeType ? { mimeType: config.mimeType } : undefined,
@@ -99,6 +103,15 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       const actualMimeType = recorder.mimeType || config.mimeType || 'audio/webm';
       const extension = getAudioExtension(actualMimeType);
       const filename = buildAudioFilename(extension);
+
+      // TODO 임시코드 삭제필요: 실제 mimeType 로그 + 비교 로그
+      console.log('[AUDIO][Recorder] 실제 mimeType:', recorder.mimeType || '(empty)');
+      console.log('[AUDIO][Recorder] 요청 vs 실제 mimeType 비교:', {
+        요청: config.mimeType || '(none)',
+        실제: recorder.mimeType || '(empty)',
+        최종사용: actualMimeType,
+        동일여부: (config.mimeType || '') === (recorder.mimeType || ''),
+      });
 
       const blob = new Blob(audioChunksRef.current, { type: actualMimeType });
       setAudioBlob(blob);
