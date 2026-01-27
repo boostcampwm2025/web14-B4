@@ -17,7 +17,7 @@ import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
 import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
-
+import { BadRequestException } from '@nestjs/common';
 @Injectable()
 export class UsersService {
   constructor(
@@ -107,18 +107,22 @@ export class UsersService {
   }
 
   async saveImportance(
+    userId: number,
     dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
     const { mainQuizId, solvedQuizId, importance } = dto;
 
-    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
-    if (!mainQuiz) {
-      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
-    }
-
     const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
     if (!solvedQuiz) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
+    }
+    if (solvedQuiz.user.userId !== userId) {
+      throw new BadRequestException('해당 기록에 대한 권한이 없습니다.');
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
     }
 
     // 무결성 검증

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   SaveImportanceRequestDto,
@@ -14,22 +14,34 @@ import { User } from 'src/datasources/entities/tb-user.entity';
 import { CurrentUser } from '../auth/decorator/current-user.decorator';
 import { QuizImportanceDataDto } from '../quizzes/dto/quiz-importance-response.dto';
 import { QuizzesService } from '../quizzes/quizzes.service';
-
-const TEST_USER_ID = 1;
-
+import { AuthService } from '../auth/auth.service';
+import { Public } from '../auth/decorator/public.decorator';
+import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
+import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
+import type { Request, Response } from 'express';
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
     private readonly quizzesService: QuizzesService,
+    private readonly authService: AuthService,
   ) {}
 
+  @Public()
   @Post('solved-quizzes')
   async saveChecklistProgress(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Body() dto: SaveSolvedQuizRequestDto,
   ): Promise<SolvedQuizResponseDto> {
-    // TODO 로그인 된 userId를 받아 주입하도록 함.
-    const result = await this.usersService.saveSolvedQuiz(TEST_USER_ID, dto);
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+    const result = await this.usersService.saveSolvedQuiz(userId, dto);
     return result;
   }
 
@@ -38,28 +50,35 @@ export class UsersController {
     @CurrentUser() user: User,
     @Body() dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
-    const result = await this.usersService.saveImportance(dto);
+    const result = await this.usersService.saveImportance(user.userId, dto);
     return result;
   }
 
   @Get('/solved-quizzes/importance')
-  async getSolvedImportance(): Promise<QuizImportanceDataDto> {
-    const result =
-      await this.quizzesService.getSolvedWithImportance(TEST_USER_ID);
+  async getSolvedImportance(
+    @CurrentUser() user: User,
+  ): Promise<QuizImportanceDataDto> {
+    const result = await this.quizzesService.getSolvedWithImportance(
+      user.userId,
+    );
     return result;
   }
 
   @Get('/solved-quizzes/category-comprehension')
-  async getSolvedComprehension(): Promise<GetUserComprehensionsResponseDto> {
-    const result =
-      await this.usersService.getUserSolvedQuizWithComprehension(TEST_USER_ID);
+  async getSolvedComprehension(
+    @CurrentUser() user: User,
+  ): Promise<GetUserComprehensionsResponseDto> {
+    const result = await this.usersService.getUserSolvedQuizWithComprehension(
+      user.userId,
+    );
     return result;
   }
 
   @Get('/solved-quizzes/statistics')
-  async getUserSolvedStatistics(): Promise<GetUserSolvedStatisticsResponseDto> {
-    const result =
-      await this.usersService.getUserSolvedStatistics(TEST_USER_ID);
+  async getUserSolvedStatistics(
+    @CurrentUser() user: User,
+  ): Promise<GetUserSolvedStatisticsResponseDto> {
+    const result = await this.usersService.getUserSolvedStatistics(user.userId);
     return result;
   }
 }
