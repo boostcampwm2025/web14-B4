@@ -45,6 +45,7 @@ export default function MultipleQuizContainer({ multipleQuizzesInfo }: Container
       <ProgressBar current={quizIndex} total={multipleQuizzesInfo.totalCount} />
 
       <MultipleChoiceQuiz
+        key={quizIndex}
         multipleChoiceQuizzes={multipleQuizzesInfo.multipleChoices}
         quizNumber={quizIndex}
       />

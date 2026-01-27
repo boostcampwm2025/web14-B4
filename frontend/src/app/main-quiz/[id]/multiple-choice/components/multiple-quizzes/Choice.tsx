@@ -1,9 +1,4 @@
 import { MultipleChoiceOption } from '@/types/multipleChoice.types';
-import { useState } from 'react';
-
-interface ChoiceProps {
-  optionInfo: MultipleChoiceOption;
-}
 
 const defaultClass =
   'bg-white border-[var(--color-gray-light)] text-gray-800 hover:border-[var(--color-primary)] hover:bg-[var(--color-accent-sky)] hover:-translate-y-[2px]';
@@ -12,27 +7,21 @@ const correctClass =
 const wrongClass =
   'bg-red-500 border-red-500 text-white shadow-[0_10px_20px_rgba(239,68,68,0.3)] shake';
 
-export default function Choice({ optionInfo }: ChoiceProps) {
-  const [selected, setSelected] = useState(false);
+interface ChoiceProps {
+  optionInfo: MultipleChoiceOption;
+  isSelected: boolean;
+  onSelect: () => void;
+}
 
+export default function Choice({ optionInfo, isSelected, onSelect }: ChoiceProps) {
   const selectedClass = optionInfo.isCorrect ? correctClass : wrongClass;
-
-  const handleClick = () => {
-    setSelected(true);
-
-    if (!optionInfo.isCorrect) {
-      setTimeout(() => {
-        setSelected(false);
-      }, 500);
-    }
-  };
 
   return (
     <button
       type="button"
-      onClick={handleClick}
+      onClick={onSelect}
       className={`relative text-left text-base cursor-pointer w-150 h-16 px-6 rounded-4xl border-3 transition-all duration-200 ease-in-out ${
-        selected ? selectedClass : defaultClass
+        isSelected ? selectedClass : defaultClass
       }`}
     >
       {optionInfo.option ?? '선택지 내용이 없습니다'}
