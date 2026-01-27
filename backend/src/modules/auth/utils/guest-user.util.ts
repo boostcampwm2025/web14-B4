@@ -33,3 +33,8 @@ export async function getOrCreateGuestUserId(
   });
   return guestUser.userId;
 }
+
+// guestUserId 쿠키 삭제
+export function clearGuestUserIdCookie(res: Response): void {
+  res.clearCookie(GUEST_USER_COOKIE_NAME);
+}
