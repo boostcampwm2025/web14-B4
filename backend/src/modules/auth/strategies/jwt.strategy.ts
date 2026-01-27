@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { BusinessException } from 'src/common/exceptions/business.exception';
+import { Request } from 'express';
 
 interface JwtPayload {
   sub: string; // uuid
@@ -17,8 +18,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly userRepository: UserRepository,
   ) {
     super({
-      // 헤더의 Bearer Token에서 JWT를 추출
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      // 쿠키에서 JWT를 추출
+      jwtFromRequest: (req: Request) => {
+        if (!req || !req.cookies) return null;
+        return req.cookies['accessToken'] as string;
+      },
       // 만료된 토큰은 자동으로 401 에러 거부
       ignoreExpiration: false,
       // 토큰 서명 검증용 비밀키

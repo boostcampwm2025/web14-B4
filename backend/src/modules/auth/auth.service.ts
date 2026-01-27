@@ -102,20 +102,10 @@ export class AuthService {
       user = await this.userRepository.createUser(user);
     }
 
-    const payload = { sub: user.uuid };
-    const newAccessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
-    const newRefreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
-
-    await this.redisClient.set(
-      `RT:${user.uuid}`,
-      newRefreshToken,
-      'EX',
-      60 * 60 * 24 * 7,
-    );
+    const tokens = await this.issueTokens(user.uuid);
 
     return {
-      accessToken: newAccessToken,
-      refreshToken: newRefreshToken,
+      ...tokens,
       user: {
         uuid: user.uuid,
         username: user.username,
@@ -124,37 +114,64 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    let payload: JwtPayload;
+    // JWT 서명 검증
     try {
-      const payload = this.jwtService.verify<JwtPayload>(refreshToken);
-      const uuid = payload.sub;
-
-      const redisRt = await this.redisClient.get(`RT:${uuid}`);
-
-      if (!redisRt || redisRt !== refreshToken) {
-        throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
-      }
-
-      const newPayload: JwtPayload = { sub: uuid };
-      const newAccessToken = this.jwtService.sign(newPayload, {
-        expiresIn: '1h',
-      });
-      const newRefreshToken = this.jwtService.sign(newPayload, {
-        expiresIn: '7d',
-      });
-
-      await this.redisClient.set(
-        `RT:${uuid}`,
-        newRefreshToken,
-        'EX',
-        60 * 60 * 24 * 7,
-      );
-
-      return {
-        accessToken: newAccessToken,
-        refreshToken: newRefreshToken,
-      };
+      payload = this.jwtService.verify<JwtPayload>(refreshToken);
     } catch {
       throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
     }
+
+    const uuid = payload.sub;
+
+    // Redis 조회
+    let redisRt: string | null;
+    try {
+      redisRt = await this.redisClient.get(`RT:${uuid}`);
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.SERVICE_UNAVAILABLE);
+    }
+
+    // 토큰 비교
+    if (!redisRt || redisRt !== refreshToken) {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
+
+    // 새 토큰 발급
+    return this.issueTokens(uuid);
+  }
+
+  // 토큰 발급 및 Redis 저장
+  private async issueTokens(uuid: string) {
+    const payload: JwtPayload = { sub: uuid };
+
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
+    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+
+    try {
+      await this.redisClient.set(
+        `RT:${uuid}`,
+        refreshToken,
+        'EX',
+        60 * 60 * 24 * 7,
+      );
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.TOKEN_UPDATE_FAILED);
+    }
+    return { accessToken, refreshToken };
+  }
+
+  // refreshToken의 JWT 서명 검증
+  verifyRefreshToken(token: string): JwtPayload {
+    try {
+      return this.jwtService.verify<JwtPayload>(token);
+    } catch {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
+  }
+
+  // 로그아웃 메서드 추가
+  async logout(uuid: string): Promise<void> {
+    await this.redisClient.del(`RT:${uuid}`);
   }
 }
