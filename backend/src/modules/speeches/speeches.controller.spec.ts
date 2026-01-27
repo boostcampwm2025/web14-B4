@@ -212,6 +212,7 @@ describe('SpeechesController', () => {
       expect(mockSpeechesService.updateSpeechText).toHaveBeenCalledWith(
         updateDto.solvedQuizId,
         updateDto.speechText,
+        1,
       );
     });
 
