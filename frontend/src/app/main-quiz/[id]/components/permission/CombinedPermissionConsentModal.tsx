@@ -66,11 +66,15 @@ export default function CombinedPermissionConsentModal({
           </label>
         </div>
 
+        <div className={`text-sm h-5 ${micChecked ? 'invisible' : 'text-red-600 visible '}`}>
+          마이크 권한을 허용해주세요.
+        </div>
+
         <div className="flex justify-end gap-2">
           <Button variant="secondary" size="fixed" onClick={onDeny}>
             거부
           </Button>
-          <Button variant="primary" size="fixed" onClick={handleAgree}>
+          <Button variant="primary" size="fixed" onClick={handleAgree} disabled={!micChecked}>
             확인
           </Button>
         </div>

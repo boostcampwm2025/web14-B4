@@ -20,6 +20,7 @@ import RecorderTimer from './RecorderTimer';
 
 interface AudioRecorderProps {
   quizId: number;
+  onSwitchToTextMode: () => void;
 }
 
 export type RecordStatus =
@@ -28,7 +29,7 @@ export type RecordStatus =
   | 'recorded' // 녹음 완료
   | 'submitting'; // 제출 중
 
-export default function Recorder({ quizId }: AudioRecorderProps) {
+export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderProps) {
   const router = useRouter();
   const { setSolvedQuizId } = useQuizStore();
 
@@ -96,7 +97,7 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
 
   const handleConsentDeny = () => {
     setIsConsentOpen(false);
-    // TODO: 거부 시 처리
+    onSwitchToTextMode();
   };
 
   // 선택한 카메라로 스트림 시작

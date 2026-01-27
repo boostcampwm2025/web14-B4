@@ -109,7 +109,11 @@ export default function AnswerModeSection({ quizId }: Props) {
 
           <div className="pt-6 flex justify-center">
             {modeLabel && <p className="sr-only">{modeLabel}</p>}
-            {mode === 'voice' ? <Recorder quizId={quizId} /> : <TextAnswer quizId={quizId} />}
+            {mode === 'voice' ? (
+              <Recorder quizId={quizId} onSwitchToTextMode={() => setMode('text')} />
+            ) : (
+              <TextAnswer quizId={quizId} />
+            )}
           </div>
         </>
       )}
