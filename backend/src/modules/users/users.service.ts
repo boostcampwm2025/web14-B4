@@ -117,7 +117,7 @@ export class UsersService {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
     if (solvedQuiz.user.userId !== userId) {
-      throw new BadRequestException('해당 기록에 대한 권한이 없습니다.');
+      throw new BadRequestException(ERROR_MESSAGES.ACCESS_DENIED);
     }
 
     const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
