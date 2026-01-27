@@ -119,9 +119,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     // 그외 엣지/최신 버전 크롬 처리
     const config = getAudioRecorderConfig();
 
-    // TODO 임시코드 삭제필요: 요청한 mimeType 로그
-    console.log('[AUDIO][Recorder] 요청 mimeType:', config.mimeType || '(none)');
-
     const recorder = new MediaRecorder(
       stream,
       config.mimeType ? { mimeType: config.mimeType } : undefined,
@@ -140,15 +137,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       const extension = getAudioExtension(actualMimeType);
       const filename = buildAudioFilename(extension);
 
-      // TODO 임시코드 삭제필요: 실제 mimeType 로그 + 비교 로그
-      console.log('[AUDIO][Recorder] 실제 mimeType:', recorder.mimeType || '(empty)');
-      console.log('[AUDIO][Recorder] 요청 vs 실제 mimeType 비교:', {
-        요청: config.mimeType || '(none)',
-        실제: recorder.mimeType || '(empty)',
-        최종사용: actualMimeType,
-        동일여부: (config.mimeType || '') === (recorder.mimeType || ''),
-      });
-
       // 구버전 크롬에서 onstop이 ondataavailable 마지막 flush보다 먼저 올 수 있어 한 틱 대기
       if (audioChunksRef.current.length === 0) {
         await new Promise((resolve) => setTimeout(resolve, 0));
@@ -158,9 +146,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
       // 녹음 실패 케이스
       if (blob.size === 0) {
-        // TODO 임시코드 삭제필요
-        console.error('[AUDIO][Recorder] 녹음 결과가 비어있음. 재녹음 필요');
-
         // 내부 상태 정리
         audioChunksRef.current = [];
         cleanupStream();
@@ -171,12 +156,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
         return;
       }
-
-      // TODO 임시코드 삭제필요: 크롬 13x에서 blob.size가 작거나 0이면 flush/마무리 문제 가능성 큼
-      console.log('[AUDIO][Recorder] chunks/blob.size:', {
-        chunks: audioChunksRef.current.length,
-        size: blob.size,
-      });
 
       setAudioBlob(blob);
       setAudioManifest({
@@ -218,9 +197,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
       // 녹음 실패 케이스 (Safari에서 0바이트로 떨어질 때 방어)
       if (blob.size === 0) {
-        // TODO 임시코드 삭제필요
-        console.error('[AUDIO][Recorder] 녹음 결과가 비어있음. 재녹음 필요');
-
         // 내부 상태 정리
         cleanupStream();
         cleanupUrl();
