@@ -36,7 +36,7 @@ export function ComprehensionTableRow({ item }: ComprehensionTableRowProps) {
       <TableCell className="font-medium">{item.category}</TableCell>
       <TableCell className="text-center">{item.totalSolved}개</TableCell>
       <TableCell className="text-center text-green-600 font-semibold">{item.high}</TableCell>
-      <TableCell className="text-center text-yellow-600 font-semibold">{item.medium}</TableCell>
+      <TableCell className="text-center text-yellow-600 font-semibold">{item.normal}</TableCell>
       <TableCell className="text-center text-red-600 font-semibold">{item.low}</TableCell>
       <TableCell>
         <div className="flex items-center gap-3">
