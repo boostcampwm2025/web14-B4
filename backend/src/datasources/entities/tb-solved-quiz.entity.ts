@@ -59,7 +59,8 @@ export class SolvedQuiz {
     name: 'importance',
     type: 'enum',
     enum: Importance,
-    nullable: true,
+    nullable: false,
+    default: Importance.NORMAL,
   })
   importance?: Importance;
 
