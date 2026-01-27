@@ -12,7 +12,9 @@ import {
   DifficultyLevel,
 } from '../../datasources/entities/tb-main-quiz.entity';
 import { MultipleChoicesResponseDto } from './dto/quiz-response.dto';
+import { Public } from '../auth/decorator/public.decorator';
 
+@Public()
 @Controller('quizzes')
 export class QuizzesController {
   constructor(private readonly quizService: QuizzesService) {}

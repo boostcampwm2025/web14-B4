@@ -18,3 +18,10 @@ export async function refreshAccessToken() {
     skipAuth: true,
   });
 }
+
+export async function logout() {
+  await apiFetch('/auth/logout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+  });
+}
