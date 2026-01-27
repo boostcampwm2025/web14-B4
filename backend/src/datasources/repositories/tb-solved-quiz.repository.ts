@@ -203,7 +203,6 @@ export class SolvedQuizRepository {
           FROM tb_solved_quiz
           WHERE user_id = $1
             AND solved_state = 'COMPLETED'
-            AND comprehension_level IS NOT NULL
           ORDER BY main_quiz_id, created_at DESC
       )
       SELECT
