@@ -1,3 +1,5 @@
+import { Importance } from '@/types/solvedQuiz.types';
+
 export interface IncludedKeyword {
   keyword: string;
   isIncluded: boolean;
@@ -30,6 +32,7 @@ export interface SolvedQuizDetail {
     checklistCount: number;
     checkedCount: number;
   };
+  importance: Importance;
 }
 
 export interface GetAIFeedbackResponseDto {

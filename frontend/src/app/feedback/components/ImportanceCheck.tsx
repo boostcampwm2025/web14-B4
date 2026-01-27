@@ -36,11 +36,12 @@ type Props = {
   userName: string;
   mainQuizId: number;
   solvedQuizId: number;
+  importance: Importance;
 };
 
-export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId }: Props) {
+export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, importance }: Props) {
   const router = useRouter();
-  const [selected, setSelected] = useState<Importance | null>('NORMAL');
+  const [selected, setSelected] = useState<Importance | null>(importance);
   const [isSaving, setIsSaving] = useState(false);
 
   const handleRetry = () => {

@@ -55,6 +55,7 @@ export default async function FeedbackPage({ params }: Props) {
         userName={USER_NAME}
         mainQuizId={solvedQuizDetail.mainQuizId}
         solvedQuizId={Number(solvedQuizId)}
+        importance={solvedQuizDetail.importance}
       />
     </main>
   );
