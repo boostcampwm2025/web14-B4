@@ -49,11 +49,12 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
 
-  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
-    onRecorded: () => {
-      setStatus('recorded');
-    },
-  });
+  const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
+    useAudioRecorder({
+      onRecorded: () => {
+        setStatus('recorded');
+      },
+    });
 
   const {
     micStatus,
@@ -279,7 +280,7 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
   };
 
   const handleSubmit = async () => {
-    if (!audioBlob) {
+    if (!audioBlob || !audioManifest) {
       return;
     }
 
@@ -294,7 +295,11 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
     setStatus('submitting');
 
     try {
-      const { solvedQuizId } = await postSpeechesStt(quizId, audioBlob);
+      const { solvedQuizId } = await postSpeechesStt(quizId, {
+        blob: audioBlob,
+        filename: audioManifest.filename,
+        mimeType: audioManifest.mimeType,
+      });
       setSolvedQuizId(solvedQuizId);
 
       stopCamera();
