@@ -23,7 +23,7 @@ const GRADE_CONFIG = {
 };
 
 export default function MyProfile({ user }: UserProfileProps) {
-  const gradeInfo = GRADE_CONFIG[user.grade];
+  const gradeInfo = GRADE_CONFIG[user.grade] || GRADE_CONFIG.bronze;
 
   const handleEdit = () => {
     alert('프로필 수정');
