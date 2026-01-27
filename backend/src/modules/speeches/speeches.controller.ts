@@ -9,6 +9,8 @@ import {
   Param,
   Patch,
   ParseIntPipe,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { SpeechesService } from './speeches.service';
@@ -20,17 +22,26 @@ import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { CreateSpeechTextAnswerRequestDto } from './dto/CreateSpeechTextAnswerRequest.dto';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
-
-// TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
-const TEST_USER_ID = 1;
-
+import { Public } from '../auth/decorator/public.decorator';
+import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
+import { User } from 'src/datasources/entities/tb-user.entity';
+import type { Request, Response } from 'express';
+import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
+import { AuthService } from '../auth/auth.service';
+@Public()
 @Controller('speeches')
 export class SpeechesController {
-  constructor(private readonly speechesService: SpeechesService) {}
+  constructor(
+    private readonly speechesService: SpeechesService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('stt')
   @UseInterceptors(FileInterceptor('audio'))
   async clovaLongStt(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<SttResponseDto> {
@@ -38,10 +49,17 @@ export class SpeechesController {
       throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+
     const result = await this.speechesService.clovaSpeechLongStt(
       recordFile,
       mainQuizId,
-      TEST_USER_ID,
+      userId,
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
@@ -50,6 +68,9 @@ export class SpeechesController {
   @Post('stt-csr')
   @UseInterceptors(FileInterceptor('audio'))
   async csrSpeechToText(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @UploadedFile() recordFile: Express.Multer.File,
     @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<SttResponseDto> {
@@ -57,10 +78,17 @@ export class SpeechesController {
       throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
     }
 
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+
     const result = await this.speechesService.csrSpeechToText(
       recordFile,
       mainQuizId,
-      TEST_USER_ID,
+      userId,
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);
@@ -68,14 +96,23 @@ export class SpeechesController {
 
   @Patch(':mainQuizId')
   async updateSpeechText(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
     @Body() updateSpeechTextRequestDto: UpdateSpeechTextRequestDto,
   ): Promise<UpdateSpeechTextResponseDto> {
-    // TODO : mainQuizId 로 mainQuiz record조회 후 유효한지 확인
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
 
     const result = await this.speechesService.updateSpeechText(
       updateSpeechTextRequestDto.solvedQuizId,
       updateSpeechTextRequestDto.speechText,
+      userId,
     );
 
     return new UpdateSpeechTextResponseDto(
@@ -87,11 +124,20 @@ export class SpeechesController {
 
   @Get(':mainQuizId')
   async getSpeechesByMainQuizId(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
   ): Promise<GetSpeechesResponseDto> {
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
     const solvedQuizzes = await this.speechesService.getByQuizAndUser(
       mainQuizId,
-      TEST_USER_ID,
+      userId,
     );
 
     const speechItems = solvedQuizzes.map(
@@ -107,11 +153,20 @@ export class SpeechesController {
   }
   @Post('text/:mainQuizId')
   async createSpeechText(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
     @Body() body: CreateSpeechTextAnswerRequestDto,
   ): Promise<CreateSpeechTextAnswerResponseDto> {
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
     const result = await this.speechesService.createSpeechText({
-      userId: TEST_USER_ID,
+      userId,
       mainQuizId,
       speechText: body.speechText,
     });

@@ -5,7 +5,7 @@ import type { Response, Request } from 'express';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { Public } from './decorator/public.decorator';
-
+import { clearGuestUserIdCookie } from './utils/guest-user.util';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -41,7 +41,10 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    return { sucess: true };
+    // 게스트 쿠키 삭제
+    clearGuestUserIdCookie(res);
+
+    return { success: true };
   }
 
   @Public()
@@ -89,6 +92,7 @@ export class AuthController {
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
     res.clearCookie('username');
+    clearGuestUserIdCookie(res);
 
     return { success: true };
   }

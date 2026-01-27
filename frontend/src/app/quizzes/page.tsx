@@ -3,6 +3,7 @@ import QuizPageServer from './components/QuizPageServer';
 import ErrorToast from './components/ErrorToast';
 import { fetchAllQuizzes } from '@/services/apis/quizApi';
 import { filterQuizzesByParams, calculateCategoryCounts } from './utils/serverFilters';
+import { cookies } from 'next/headers';
 
 interface PageProps {
   searchParams: Promise<{
@@ -14,6 +15,11 @@ interface PageProps {
 export default async function Page({ searchParams }: PageProps) {
   const params = await searchParams;
   const { category, difficulty } = params;
+
+  // 쿠키에서 username 가져오기
+  const cookieStore = await cookies();
+  const usernameCookie = cookieStore.get('username')?.value;
+  const username = usernameCookie ? decodeURIComponent(usernameCookie) : '게스트';
 
   // 1. 전체 퀴즈 데이터 fetch (캐시 1시간)
   const allQuizzes = await fetchAllQuizzes();
@@ -33,6 +39,7 @@ export default async function Page({ searchParams }: PageProps) {
           categories={categoryCounts}
           category={category}
           difficulty={difficulty}
+          username={username}
         />
       </Suspense>
     </>

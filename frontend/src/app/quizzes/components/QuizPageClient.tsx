@@ -9,6 +9,7 @@ interface QuizPageServerProps {
   categories: CategoryCountsResponseDto;
   category?: string;
   difficulty?: string;
+  username: string;
 }
 
 export default function QuizPageServer({
@@ -16,10 +17,11 @@ export default function QuizPageServer({
   categories,
   category,
   difficulty,
+  username,
 }: QuizPageServerProps) {
   return (
     <main className="mx-auto p-10 bg-[var(--color-bg-default)]">
-      <QuizHeader userName="철수" />
+      <QuizHeader username={username} />
 
       <div className="flex justify-between items-center">
         <DifficultyFilter difficulty={difficulty} category={category} />

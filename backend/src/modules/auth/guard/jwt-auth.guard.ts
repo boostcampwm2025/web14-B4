@@ -1,6 +1,5 @@
 import { Injectable, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { Observable } from 'rxjs';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { Reflector } from '@nestjs/core';
@@ -13,32 +12,40 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    // @Public 데코레이터 체크
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
-    // Public이면 인증 스킵
-    if (isPublic) {
-      return true;
+    try {
+      // 토큰이 있다면 검증하여 req.user에 유저 정보를 담음
+      return (await super.canActivate(context)) as boolean;
+    } catch (err) {
+      // Public인데 토큰이 없거나 유효하지 않은 경우 에러를 던지지 않고 통과시킴
+      if (isPublic) return true;
+      throw err; // Public이 아니면 기존대로 에러 발생
     }
-    return super.canActivate(context);
   }
 
+  // 토큰 검증 결과 처리: @Public()이면 null 허용, 아니면 401 예외 발생
   handleRequest<TUser = unknown>(
     err: unknown,
-    user: unknown,
+    user: TUser,
     info: unknown,
+    context: ExecutionContext,
   ): TUser {
-    // 실패하면 에러 발생
-    if (err || !user || info) {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
+    if (err || !user) {
+      if (isPublic) {
+        return null as TUser;
+      }
       throw new BusinessException(ERROR_MESSAGES.ACCESS_DENIED);
     }
-    // 성공하면 user 반환
-    return user as TUser;
+    return user;
   }
 }
