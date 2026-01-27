@@ -6,6 +6,7 @@ import HexagonChart from './components/charts/HexagonChart';
 import MyProfile, { mockUserData } from './components/MyProfile';
 import TabSwitch, { Tab } from './components/TabSwitch';
 import { BasicTable } from './components/tables/BasicTable';
+import ImportanceBoard from './components/importanceGroup/ImportanceBoard';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<Tab>('understanding');
@@ -134,27 +135,20 @@ export default function Page() {
           {/* 분야별 이해도 탭 */}
           {activeTab === 'understanding' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-              <div>
-                <HexagonChart comprehensionData={comprehensionData} />
-              </div>
-              <div>
-                <BasicTable type="comprehension" data={comprehensionData} />
-              </div>
+              <HexagonChart comprehensionData={comprehensionData} />
+              <BasicTable type="comprehension" data={comprehensionData} />
             </div>
           )}
 
           {/* 지금까지 푼 문제 탭 */}
           {activeTab === 'solved' && (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-center">
-              <div>
-                <DonutChart solvedData={solvedData} />
-              </div>
-              <div>
-                <BasicTable type="solved" data={solvedData} />
-              </div>
+              <DonutChart solvedData={solvedData} />
+              <BasicTable type="solved" data={solvedData} />
             </div>
           )}
         </div>
+        <ImportanceBoard />
       </div>
     </div>
   );
