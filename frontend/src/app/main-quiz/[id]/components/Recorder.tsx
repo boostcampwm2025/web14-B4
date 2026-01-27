@@ -51,7 +51,13 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
 
   const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
     useAudioRecorder({
-      onRecorded: () => {
+      onRecorded: (blob) => {
+        if (!blob) {
+          setMessage('녹음에 실패했습니다. 다시 시도해주세요.');
+          setStatus('idle');
+          return;
+        }
+
         setStatus('recorded');
       },
     });

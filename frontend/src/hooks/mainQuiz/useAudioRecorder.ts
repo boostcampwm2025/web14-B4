@@ -8,7 +8,7 @@ type StartRecordingParams = {
 };
 
 type UseAudioRecorderParams = {
-  onRecorded?: (blob: Blob, url: string) => void;
+  onRecorded?: (result: { blob: Blob; url: string } | null) => void;
 };
 
 type RecordingManifest = {
@@ -120,6 +120,22 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
       const blob = new Blob(audioChunksRef.current, { type: actualMimeType });
 
+      // 녹음 실패 케이스
+      if (blob.size === 0) {
+        // TODO 임시코드 삭제필요
+        console.error('[AUDIO][Recorder] 녹음 결과가 비어있음. 재녹음 필요');
+
+        // 내부 상태 정리
+        audioChunksRef.current = [];
+        cleanupStream();
+        cleanupUrl();
+
+        // 상위 컴포넌트에 녹음 실패 신호 전달
+        params?.onRecorded?.(null);
+
+        return;
+      }
+
       // TODO 임시코드 삭제필요: 크롬 13x에서 blob.size가 작거나 0이면 flush/마무리 문제 가능성 큼
       console.log('[AUDIO][Recorder] chunks/blob.size:', {
         chunks: audioChunksRef.current.length,
@@ -139,7 +155,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       setAudioUrl(url);
 
       // 녹음 완료 콜백
-      params?.onRecorded?.(blob, url);
+      params?.onRecorded?.({ blob, url });
 
       // 스트림 종료는 stop 직후가 아니라 onstop 이후에 수행 (파일 마무리 깨지는 것 방지)
       cleanupStream();
@@ -151,6 +167,11 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
   const stopRecording = () => {
     const recorder = mediaRecorderRef.current;
     if (!recorder) {
+      return;
+    }
+
+    // 녹음 중일 때만 stop
+    if (recorder.state !== 'recording') {
       return;
     }
 
