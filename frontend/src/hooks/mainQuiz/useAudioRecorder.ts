@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
+import { buildAudioFilename, getAudioExtension, getAudioRecorderConfig } from '@/utils/recorder';
 
 type StartRecordingParams = {
   deviceId?: string;
@@ -8,6 +9,12 @@ type StartRecordingParams = {
 
 type UseAudioRecorderParams = {
   onRecorded?: (blob: Blob, url: string) => void;
+};
+
+type RecordingManifest = {
+  mimeType: string;
+  extension: string;
+  filename: string;
 };
 
 export function useAudioRecorder(params?: UseAudioRecorderParams) {
@@ -18,6 +25,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioManifest, setAudioManifest] = useState<RecordingManifest | null>(null);
 
   // 오디오 스트림 종료
   const cleanupStream = () => {
@@ -54,12 +62,14 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     audioChunksRef.current = [];
     setAudioUrl(null);
     setAudioBlob(null);
+    setAudioManifest(null);
   };
 
   const startRecording = async (startParams?: StartRecordingParams) => {
     // 기존 결과 정리
     audioChunksRef.current = [];
     setAudioBlob(null);
+    setAudioManifest(null);
     cleanupUrl();
     setAudioUrl(null);
 
@@ -71,17 +81,32 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     audioStreamRef.current = stream;
 
-    const recorder = new MediaRecorder(stream);
+    const config = getAudioRecorderConfig();
+    const recorder = new MediaRecorder(
+      stream,
+      config.mimeType ? { mimeType: config.mimeType } : undefined,
+    );
     mediaRecorderRef.current = recorder;
 
     // 녹음 데이터 수집
     recorder.ondataavailable = (e) => {
-      audioChunksRef.current.push(e.data);
+      if (e.data.size > 0) {
+        audioChunksRef.current.push(e.data);
+      }
     };
 
     recorder.onstop = () => {
-      const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      const actualMimeType = recorder.mimeType || config.mimeType || 'audio/webm';
+      const extension = getAudioExtension(actualMimeType);
+      const filename = buildAudioFilename(extension);
+
+      const blob = new Blob(audioChunksRef.current, { type: actualMimeType });
       setAudioBlob(blob);
+      setAudioManifest({
+        mimeType: actualMimeType,
+        extension,
+        filename,
+      });
 
       // 브라우저에서 재생 가능한 URL 생성
       const url = URL.createObjectURL(blob);
@@ -113,6 +138,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
   return {
     audioUrl,
     audioBlob,
+    audioManifest,
     startRecording,
     stopRecording,
     resetRecording,
