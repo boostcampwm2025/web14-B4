@@ -269,9 +269,9 @@ export default function Recorder({ quizId }: AudioRecorderProps) {
     }
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     setMessage(null);
-    stopRecording();
+    await stopRecording();
     stopVideoRecording();
     stopCamera();
     timer.stopTimer();

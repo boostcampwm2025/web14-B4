@@ -74,3 +74,27 @@ export function getAudioExtension(mimeType: string): string {
 export function buildAudioFilename(extension: string): string {
   return `audio.${extension}`;
 }
+
+export type RecorderType = 'RECORD_RTC_WAV' | 'NATIVE_WEBM';
+
+export function getRecorderType(): RecorderType {
+  const ua = navigator.userAgent.toLowerCase();
+
+  const isIOS = /ipad|iphone|ipod/.test(ua);
+
+  // Safari 판별(Chrome/Edge 제외)
+  const isSafari = ua.includes('safari') && !ua.includes('chrome') && !ua.includes('edg');
+
+  const isEdge = ua.includes('edg');
+
+  // 크롬 버전 추출 (Edge 제외)
+  const chromeVersionMatch = !isEdge ? ua.match(/chrome\/(\d+)/) : null;
+  const chromeVersion = chromeVersionMatch ? parseInt(chromeVersionMatch[1], 10) : null;
+
+  // 사파리(iOS 포함)거나 크롬 139 이하는 WAV (RecorderRTC)
+  if (isSafari || isIOS || (chromeVersion !== null && chromeVersion <= 139)) {
+    return 'RECORD_RTC_WAV';
+  }
+
+  return 'NATIVE_WEBM';
+}

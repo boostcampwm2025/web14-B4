@@ -1,7 +1,13 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { buildAudioFilename, getAudioExtension, getAudioRecorderConfig } from '@/utils/recorder';
+import {
+  buildAudioFilename,
+  getAudioExtension,
+  getAudioRecorderConfig,
+  getRecorderType,
+} from '@/utils/recorder';
+import RecordRTC from 'recordrtc';
 
 type StartRecordingParams = {
   deviceId?: string;
@@ -27,6 +33,9 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
   const [audioManifest, setAudioManifest] = useState<RecordingManifest | null>(null);
 
+  const recordRtcRef = useRef<RecordRTC | null>(null);
+  const recorderTypeRef = useRef<'RECORD_RTC_WAV' | 'NATIVE_WEBM' | null>(null);
+
   // 오디오 스트림 종료
   const cleanupStream = () => {
     audioStreamRef.current?.getTracks().forEach((t) => t.stop());
@@ -43,6 +52,10 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       }
     }
     mediaRecorderRef.current = null;
+
+    // RecordRTC 사용 중이면 ref 정리(실제 stop은 stopRecording에서 처리)
+    recordRtcRef.current = null;
+    recorderTypeRef.current = null;
   };
 
   // URL 정리
@@ -81,6 +94,29 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     audioStreamRef.current = stream;
 
+    const recorderType = getRecorderType();
+    recorderTypeRef.current = recorderType;
+
+    // Safari/구버전 Chrome이면 RecordRTC(WAV) 사용
+    if (recorderType === 'RECORD_RTC_WAV') {
+      const RecordRTC = (await import('recordrtc')).default;
+
+      // 녹음 시작
+      const recordRtc = new RecordRTC(stream, {
+        type: 'audio',
+        mimeType: 'audio/wav',
+        numberOfAudioChannels: 1,
+        recorderType: RecordRTC.StereoAudioRecorder,
+        desiredSampRate: 16000, // 16kHz (용량 절감)
+        bufferSize: 16384, // 버퍼 사이즈 (성능/안정성 관련)
+      });
+
+      recordRtcRef.current = recordRtc;
+      recordRtc.startRecording();
+      return;
+    }
+
+    // 그외 엣지/최신 버전 크롬 처리
     const config = getAudioRecorderConfig();
 
     // TODO 임시코드 삭제필요: 요청한 mimeType 로그
@@ -164,7 +200,60 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     recorder.start();
   };
 
-  const stopRecording = () => {
+  const stopRecording = async () => {
+    // RecordRTC(WAV) 경로 stop 처리 추가 (Safari/구버전 Chrome)
+    if (recorderTypeRef.current === 'RECORD_RTC_WAV') {
+      const recordRtc = recordRtcRef.current;
+      if (!recordRtc) {
+        cleanupStream();
+        return;
+      }
+
+      await new Promise<void>((resolve) => {
+        recordRtc.stopRecording(() => resolve());
+      });
+
+      const blob = recordRtc.getBlob();
+      recordRtcRef.current = null;
+
+      // 녹음 실패 케이스 (Safari에서 0바이트로 떨어질 때 방어)
+      if (blob.size === 0) {
+        // TODO 임시코드 삭제필요
+        console.error('[AUDIO][Recorder] 녹음 결과가 비어있음. 재녹음 필요');
+
+        // 내부 상태 정리
+        cleanupStream();
+        cleanupUrl();
+
+        // 상위 컴포넌트에 녹음 실패 신호 전달
+        params?.onRecorded?.(null);
+        return;
+      }
+
+      const actualMimeType = 'audio/wav';
+      const extension = 'wav';
+      const filename = buildAudioFilename(extension);
+
+      setAudioBlob(blob);
+      setAudioManifest({
+        mimeType: actualMimeType,
+        extension,
+        filename,
+      });
+
+      // 브라우저에서 재생 가능한 URL 생성
+      const url = URL.createObjectURL(blob);
+      audioUrlRef.current = url;
+      setAudioUrl(url);
+
+      // 녹음 완료 콜백
+      params?.onRecorded?.({ blob, url });
+
+      cleanupStream();
+      return;
+    }
+
+    // 기존 MediaRecorder(webm) stop
     const recorder = mediaRecorderRef.current;
     if (!recorder) {
       return;
