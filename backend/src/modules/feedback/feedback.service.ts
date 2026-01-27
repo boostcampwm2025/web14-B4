@@ -241,6 +241,7 @@ export class FeedbackService {
         keywords: mainQuiz.keywords,
         difficultyLevel: mainQuiz.difficultyLevel,
         userChecklistProgress: this.toChecklistResponse(checklistInSolvedQuiz),
+        importance: solvedQuiz.importance,
       },
       aiFeedbackResult: solvedQuiz.aiFeedback,
     };
