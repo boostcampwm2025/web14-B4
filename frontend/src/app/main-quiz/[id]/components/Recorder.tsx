@@ -53,7 +53,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     useAudioRecorder({
       onRecorded: (blob) => {
         if (!blob) {
-          setMessage('녹음에 실패했습니다. 다시 시도해주세요.');
+          setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
           setStatus('idle');
           return;
         }
