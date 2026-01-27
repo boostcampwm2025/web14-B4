@@ -1,8 +1,8 @@
+import { MultipleChoiceOption } from '@/types/multipleChoice.types';
 import { useState } from 'react';
 
 interface ChoiceProps {
-  text?: string;
-  isCorrect: boolean;
+  optionInfo: MultipleChoiceOption;
 }
 
 const defaultClass =
@@ -12,15 +12,15 @@ const correctClass =
 const wrongClass =
   'bg-red-500 border-red-500 text-white shadow-[0_10px_20px_rgba(239,68,68,0.3)] shake';
 
-export default function Choice({ text = '선택지 내용이 없습니다', isCorrect }: ChoiceProps) {
+export default function Choice({ optionInfo }: ChoiceProps) {
   const [selected, setSelected] = useState(false);
 
-  const selectedClass = isCorrect ? correctClass : wrongClass;
+  const selectedClass = optionInfo.isCorrect ? correctClass : wrongClass;
 
   const handleClick = () => {
     setSelected(true);
 
-    if (!isCorrect) {
+    if (!optionInfo.isCorrect) {
       setTimeout(() => {
         setSelected(false);
       }, 500);
@@ -35,7 +35,7 @@ export default function Choice({ text = '선택지 내용이 없습니다', isCo
         selected ? selectedClass : defaultClass
       }`}
     >
-      {text}
+      {optionInfo.option ?? '선택지 내용이 없습니다'}
     </button>
   );
 }
