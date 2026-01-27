@@ -21,9 +21,10 @@ import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
-import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
-
-const MIN_USER_ANSWER_LENGTH = 50;
+import {
+  MAX_USER_ANSWER_LENGTH,
+  MIN_USER_ANSWER_LENGTH,
+} from 'src/common/constants/speech.constant';
 
 @Injectable()
 export class FeedbackService {

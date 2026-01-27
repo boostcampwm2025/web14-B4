@@ -18,6 +18,8 @@ import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.d
 import { GetSpeechesResponseDto } from './dto/GetSpeechesResponseDto.dto';
 import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
+import { CreateSpeechTextAnswerRequestDto } from './dto/CreateSpeechTextAnswerRequest.dto';
+import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
 
 // TODO : 추후 쿠키를 통해 사용자를 식별할 예정. 임시값으로 USER_ID 1 을 사용
 const TEST_USER_ID = 1;
@@ -102,5 +104,18 @@ export class SpeechesController {
     );
 
     return new GetSpeechesResponseDto(mainQuizId, speechItems);
+  }
+  @Post('text/:mainQuizId')
+  async createSpeechText(
+    @Param('mainQuizId', ParseIntPipe) mainQuizId: number,
+    @Body() body: CreateSpeechTextAnswerRequestDto,
+  ): Promise<CreateSpeechTextAnswerResponseDto> {
+    const result = await this.speechesService.createSpeechText({
+      userId: TEST_USER_ID,
+      mainQuizId,
+      speechText: body.speechText,
+    });
+
+    return result;
   }
 }
