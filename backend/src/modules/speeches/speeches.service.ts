@@ -16,6 +16,13 @@ import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
+import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
+import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.repository';
+import {
+  MAX_USER_ANSWER_LENGTH,
+  MIN_USER_ANSWER_LENGTH,
+} from 'src/common/constants/speech.constant';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -35,6 +42,8 @@ export class SpeechesService {
   constructor(
     private configService: ConfigService,
     private solvedQuizRepository: SolvedQuizRepository,
+    private readonly userRepository: UserRepository,
+    private readonly mainQuizRepository: MainQuizRepository,
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
@@ -400,5 +409,42 @@ export class SpeechesService {
 
       throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
+  }
+
+  async createSpeechText(dto: {
+    userId: number;
+    mainQuizId: number;
+    speechText: string;
+  }): Promise<CreateSpeechTextAnswerResponseDto> {
+    const { userId, mainQuizId, speechText } = dto;
+
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+
+    const mainQuiz = await this.mainQuizRepository.findById(mainQuizId);
+    if (!mainQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.MAIN_QUIZ_NOT_FOUND);
+    }
+
+    if (speechText.length > MAX_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_LONG);
+    }
+
+    if (!speechText || speechText.trim().length < MIN_USER_ANSWER_LENGTH) {
+      throw new BusinessException(ERROR_MESSAGES.ANSWER_TOO_SHORT);
+    }
+
+    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
+      user: { userId },
+      mainQuiz: { mainQuizId },
+      speechText: speechText,
+    });
+
+    return new CreateSpeechTextAnswerResponseDto({
+      mainQuizId,
+      solvedQuizId: solvedQuiz.solvedQuizId,
+    });
   }
 }

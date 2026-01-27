@@ -3,6 +3,7 @@
 import { Quiz } from '@/app/quizzes/types/quiz';
 import { useState } from 'react';
 import QuizTypeSelectPopup from '../QuizTypeSelectPopup';
+import { DIFFICULTY_STYLES } from '@/constants/quizzes.constant';
 
 interface QuizCardProps {
   quiz: Quiz;
@@ -10,42 +11,52 @@ interface QuizCardProps {
 
 export default function QuizCard({ quiz }: QuizCardProps) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const handleStartQuiz = () => {
-    setIsPopupOpen(true);
-  };
-  const handleCancel = () => {
-    setIsPopupOpen(false);
-  };
 
   return (
-    <div className="border-[var(--color-gray-light)] rounded-lg p-8 bg-white">
-      <div className="flex justify-between items-center">
-        <h3 className="text-2xl font-bold mb-5 text-gray-800">{quiz.title}</h3>
-        <span
-          className={`px-3 py-2 rounded-full text-m ${
-            quiz.difficultyLevel === '상'
-              ? 'bg-[var(--color-difficulty-high-bg)] text-[var(--color-difficulty-high-text)]'
-              : quiz.difficultyLevel === '중'
-                ? 'bg-[var(--color-difficulty-mid-bg)] text-[var(--color-difficulty-mid-text)]'
-                : 'bg-[var(--color-difficulty-low-bg)] text-[var(--color-difficulty-low-text)]'
-          }`}
-        >
-          {quiz.difficultyLevel}
-        </span>
-      </div>
-
-      <span className="p-2 border border-[var(--color-gray-light)] text-m rounded-full">
-        {quiz.quizCategory.name}
-      </span>
-
-      <button
-        className="w-full bg-[var(--color-primary)] hover:bg-blue-600 text-white text-xl py-2 rounded-md transition mt-15"
-        onClick={handleStartQuiz}
+    <div>
+      <div
+        className="group relative p-6 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 ease-in-out h-50
+      flex flex-col justify-between "
       >
-        시작하기
-      </button>
+        {/* 상단 */}
+        <div className="flex justify-between items-start mb-4">
+          <span className="px-3 py-1 text-xs font-medium text-gray-500 bg-gray-50 border border-gray-200 rounded-lg">
+            {quiz.quizCategory.name}
+          </span>
+          <span
+            className={`px-2 py-1 text-xs font-bold border rounded-md ${DIFFICULTY_STYLES[quiz.difficultyLevel as keyof typeof DIFFICULTY_STYLES]}`}
+          >
+            {quiz.difficultyLevel}
+          </span>
+        </div>
 
-      <QuizTypeSelectPopup quiz={quiz} isOpen={isPopupOpen} onClose={handleCancel} />
+        <div className="h-17 shrink-0">
+          <h3 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-[var(--color-primary)] transition-colors">
+            {quiz.title}
+          </h3>
+        </div>
+
+        <button
+          className="w-full py-3 px-4 bg-blue-50 text-[var(--color-primary)] font-semibold rounded-xl group-hover:bg-[var(--color-primary)] group-hover:text-white transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+          onClick={() => setIsPopupOpen(true)}
+        >
+          <span>시작하기</span>
+          <svg
+            className="w-4 h-4 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M13 7l5 5m0 0l-5 5m5-5H6"
+            />
+          </svg>
+        </button>
+      </div>
+      <QuizTypeSelectPopup quiz={quiz} isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
     </div>
   );
 }

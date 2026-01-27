@@ -1,17 +1,15 @@
+'use client';
+
 import { CategoryCountsResponseDto } from '../../types/quiz';
 import { FilterLink } from './FilterLink';
-
-interface Category {
-  id: number;
-  name: string;
-  count: number;
-}
+import { cn } from '@/lib/utils';
+import { useWindowSize } from '@/hooks/mainQuiz/window/useWindowSize';
+import CategoryDropdown from './CategoryDropdown';
+import { DEFAULT_CATEGORY, LAYOUT } from '@/constants/quizzes.constant';
 
 interface CategoryFilterProps {
   categoriesData?: CategoryCountsResponseDto;
-  /** 현재 선택된 카테고리 */
   category?: string;
-  /** 현재 선택된 난이도 (쿼리 유지용) */
   difficulty?: string;
 }
 
@@ -20,59 +18,66 @@ export default function CategoryFilter({
   category,
   difficulty,
 }: CategoryFilterProps) {
-  const currentParams = { category, difficulty };
+  const { width } = useWindowSize();
 
-  const isActive = (target: string) => (target === '전체' ? !category : category === target);
+  const isCompact =
+    width <
+    LAYOUT.DIFFICULTY_COMPONENT_WIDTH +
+      (categoriesData?.categories.length ?? 0) * LAYOUT.CATEGORY_BUTTON_WIDTH;
+
+  const currentParams = { category, difficulty };
+  const activeCategory = category || DEFAULT_CATEGORY;
 
   const getButtonStyle = (target: string) =>
-    isActive(target)
-      ? 'flex items-center gap-2 px-3 py-2 bg-[var(--color-primary)] text-white rounded-lg text-lg'
-      : 'flex items-center gap-2 px-3 py-2 bg-white text-black rounded-lg text-lg hover:bg-gray-200';
+    cn(
+      'flex items-center gap-2 px-4 py-2 rounded-lg text-lg transition-all duration-200 whitespace-nowrap',
+      (target === '전체' ? !category : category === target)
+        ? 'bg-[var(--color-primary)] text-white font-bold'
+        : 'bg-white text-gray-700 border border-gray-200 hover:bg-[var(--color-gray-light)]',
+    );
 
   const getCountStyle = (target: string) =>
-    isActive(target) ? 'bg-white text-black' : 'bg-[var(--color-gray-light)] text-black';
+    cn(
+      'flex items-center justify-center min-w-[24px] h-6 px-1.5 rounded-full text-xs ml-auto',
+      (target === '전체' ? !category : category === target)
+        ? 'bg-white text-[var(--color-primary)]'
+        : 'bg-gray-100 text-gray-500',
+    );
+
+  const categories = [
+    { id: 0, name: DEFAULT_CATEGORY, count: categoriesData?.totalCount || 0 },
+    ...(categoriesData?.categories || []),
+  ];
 
   return (
-    <div className="flex flex-col">
-      <div className="mb-3 text-xl font-semibold">분야</div>
-
-      <div className="flex gap-2 mb-8 flex-wrap">
-        {/* 전체 */}
-        <FilterLink
-          param="category"
-          value="전체"
-          currentParams={currentParams}
-          className={getButtonStyle('전체')}
-        >
-          <span>전체</span>
-          <span
-            className={`flex items-center justify-center w-7 h-7 rounded-full text-sm ${getCountStyle(
-              '전체',
-            )}`}
-          >
-            {categoriesData?.totalCount}
-          </span>
-        </FilterLink>
-
-        {/* 개별 카테고리 */}
-        {categoriesData?.categories.map((cat) => (
-          <FilterLink
-            key={cat.id}
-            param="category"
-            value={cat.name}
+    <div className="flex flex-col min-w-50 items-end gap-4">
+      <div className="flex items-center gap-2 ml-1">
+        <span className="text-sm font-bold tracking-wider text-gray-400">CATEGORY</span>
+        <div className="h-px flex-1 bg-gray-100"></div>
+      </div>
+      <div className="mb-7">
+        {isCompact ? (
+          <CategoryDropdown
+            categories={categories}
+            activeCategory={activeCategory}
             currentParams={currentParams}
-            className={getButtonStyle(cat.name)}
-          >
-            <span>{cat.name}</span>
-            <span
-              className={`flex items-center justify-center w-7 h-7 rounded-full text-sm ${getCountStyle(
-                cat.name,
-              )}`}
-            >
-              {cat.count}
-            </span>
-          </FilterLink>
-        ))}
+          />
+        ) : (
+          <div className="flex gap-2 flex-wrap">
+            {categories.map((cat) => (
+              <FilterLink
+                key={cat.id}
+                param="category"
+                value={cat.name}
+                currentParams={currentParams}
+                className={getButtonStyle(cat.name)}
+              >
+                <span>{cat.name}</span>
+                <span className={getCountStyle(cat.name)}>{cat.count}</span>
+              </FilterLink>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
