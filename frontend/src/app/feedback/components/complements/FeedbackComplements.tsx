@@ -21,7 +21,7 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
               🌱
             </div>
             <h2 className="text-xl font-bold tracking-tight text-slate-900">
-              나의 답변에서 <span className="text-blue-600">보완해볼 포인트</span>
+              나의 답변에서 <span className="text-(--color-accent-navy)">보완해볼 포인트</span>
             </h2>
           </div>
         </div>
