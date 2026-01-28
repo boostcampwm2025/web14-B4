@@ -22,7 +22,7 @@ export default function ErrorToast() {
     if (!message) return;
 
     toast.error(message);
-    window.history.replaceState({}, '', '/quizzes');
+    window.history.replaceState({}, '', window.location.pathname);
   }, [searchParams]);
 
   return null;
