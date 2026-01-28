@@ -1,4 +1,3 @@
-import Recorder from '@/app/main-quiz/[id]/components/Recorder';
 import { fetchQuiz } from '@/services/apis/quizApi';
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
 import AnswerModeSection from './components/AnswerModeSection';
@@ -13,9 +12,10 @@ export default async function MainQuizPage({ params }: PageProps) {
   const quiz = await fetchQuiz(quizId);
 
   return (
-    <main>
-      <div className="flex justify-center pt-16 pb-8">
+    <main className="pb-10">
+      <div className="flex justify-center pt-5 pb-4">
         <QuizInfoBadge
+          size="sm"
           quizCategoryName={quiz.quizCategory.name}
           difficultyLevel={quiz.difficultyLevel}
         />
