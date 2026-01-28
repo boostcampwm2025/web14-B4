@@ -113,6 +113,11 @@ export class AuthService {
     };
   }
 
+  // uuid로 사용자 조회
+  async findUserByUuid(uuid: string): Promise<User | null> {
+    return await this.userRepository.findByUuid(uuid);
+  }
+
   async createGuestUser(): Promise<User> {
     const guestUuid = uuidv4();
     const guestUser = new User();
