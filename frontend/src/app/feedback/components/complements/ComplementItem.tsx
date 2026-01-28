@@ -13,7 +13,7 @@ type ComplementItemProps = {
 export default function ComplementItem({ item, idx, isExpanded, onToggle }: ComplementItemProps) {
   return (
     <article
-      className={`relative overflow-hidden rounded-2xl border transition-all duration-500 ${
+      className={`group relative overflow-hidden rounded-2xl border transition-all duration-500 ${
         isExpanded
           ? 'border-blue-200 bg-blue-50/40 shadow-[0_8px_20px_-6px_rgba(37,99,235,0.1)]'
           : 'border-slate-100 bg-white hover:border-blue-100 hover:bg-slate-50/50'
@@ -23,7 +23,7 @@ export default function ComplementItem({ item, idx, isExpanded, onToggle }: Comp
         onClick={onToggle}
         className="flex w-full items-center justify-between p-5 text-left cursor-pointer"
       >
-        <div className="group flex items-center gap-5">
+        <div className="flex items-center gap-5">
           <span
             className={`flex h-8 w-8 items-center justify-center rounded-lg text-sm font-black transition-all ${
               isExpanded ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-400'
