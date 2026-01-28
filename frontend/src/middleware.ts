@@ -13,7 +13,7 @@ export function middleware(request: NextRequest) {
 
   // 미인증 사용자가 로그인 및 리포트 페이지 접근 시
   if (!isAuthenticated && request.nextUrl.pathname.startsWith('/user')) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/?error=auth_required', request.url));
   }
 
   return NextResponse.next();
