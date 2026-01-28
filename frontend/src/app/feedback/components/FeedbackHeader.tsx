@@ -23,7 +23,7 @@ export default function FeedbackHeader({
         <div className="flex justify-center mb-4">
           <QuizInfoBadge quizCategoryName={category} difficultyLevel={difficultyLevel} size="sm" />
         </div>
-        <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap">
+        <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap mb-4">
           {content}
         </h1>
         <div className="text-center space-y-4 mb-8">
