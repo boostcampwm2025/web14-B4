@@ -39,8 +39,6 @@ export class UsersService {
     mainQuizId: number,
     solvedQuizId: number,
   ) {
-    // TODO userId 존재 여부 체크
-
     const userChecklist =
       await this.checklistItemRepository.getUserChecklistItems(
         userId,
