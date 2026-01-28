@@ -56,8 +56,6 @@ export class UsersService {
 
   @Transactional()
   async saveSolvedQuiz(userId: number, dto: SaveSolvedQuizRequestDto) {
-    // TODO userId 존재 여부 체크
-
     // mainQuiz와 체크리스트 아이템 존재 여부 확인
     const mainQuiz = await this.mainQuizRepository.findById(dto.mainQuizId);
 
