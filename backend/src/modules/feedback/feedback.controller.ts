@@ -24,7 +24,6 @@ export class FeedbackController {
   @Get('/:solvedQuizId')
   async getAIFeedbackResult(
     @Param('solvedQuizId', ParseIntPipe) solvedQuizId: number,
-    // TODO: 추후에 로그인/회원가입 기능 구현 시에 로그인한 사용자 정보를 받아와 서비스로 전달
   ) {
     return this.feedbackService.getAIFeedback(solvedQuizId);
   }
