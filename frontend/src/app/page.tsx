@@ -43,7 +43,7 @@ export default function Home() {
         <button
           type="button"
           onClick={handleNaverLogin}
-          className="inline-block transition-transform hover:scale-105 p-0 bg-transparent"
+          className="inline-block transition-transform hover:scale-105 p-0 bg-transparent cursor-pointer"
         >
           <Image
             src="/naver-login.svg"
