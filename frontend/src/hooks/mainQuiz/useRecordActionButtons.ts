@@ -17,6 +17,7 @@ type Params = {
   onStop: () => void;
   onRetry: () => void;
   onSubmit: () => void;
+  onExit: () => void;
 };
 
 export function useRecordActionButtons({
@@ -26,6 +27,7 @@ export function useRecordActionButtons({
   onStop,
   onRetry,
   onSubmit,
+  onExit,
 }: Params) {
   const router = useRouter();
 
@@ -41,7 +43,7 @@ export function useRecordActionButtons({
         {
           label: '나가기',
           variant: 'secondary',
-          onClick: () => router.push('/'),
+          onClick: onExit,
         },
       ],
 
@@ -54,7 +56,7 @@ export function useRecordActionButtons({
         {
           label: '나가기',
           variant: 'secondary',
-          onClick: () => router.push('/'),
+          onClick: onExit,
         },
       ],
 
@@ -72,7 +74,7 @@ export function useRecordActionButtons({
         {
           label: '나가기',
           variant: 'secondary',
-          onClick: () => router.push('/'),
+          onClick: onExit,
         },
       ],
 
@@ -94,7 +96,7 @@ export function useRecordActionButtons({
         },
       ],
     }),
-    [canRecord, onStart, onStop, onRetry, onSubmit, router],
+    [canRecord, onStart, onStop, onRetry, onSubmit, onExit, router],
   );
 
   return actionButtonsByStatus[recordStatus];

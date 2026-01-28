@@ -64,7 +64,7 @@ export default function TextAnswer({ quizId }: Props) {
 
   const handleExit = () => {
     const confirmed = window.confirm(
-      '작성중인 답변이 저장되지 않습니다.\n퀴즈 목록 페이지로 나가시겠습니까?',
+      '작성중인 답변이 제출되지 않았습니다.\n퀴즈 목록 페이지로 나가시겠습니까?',
     );
 
     if (!confirmed) {

@@ -287,6 +287,18 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     setMessage(null);
   };
 
+  const handleExit = () => {
+    const confirmed = window.confirm(
+      '작성중인 답변이 제출되지 않았습니다.\n퀴즈 목록 페이지로 나가시겠습니까?',
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    router.push('/quizzes');
+  };
+
   const handleSubmit = async () => {
     if (!audioBlob || !audioManifest) {
       return;
@@ -331,6 +343,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     onStop: handleStop,
     onRetry: handleRetry,
     onSubmit: handleSubmit,
+    onExit: handleExit,
   });
 
   const isSubmitting = recordStatus === 'submitting';
