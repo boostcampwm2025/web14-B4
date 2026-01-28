@@ -12,17 +12,17 @@ import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 import { Button } from '@/components/Button';
 
-interface ChecklistSessionProps {
+interface ChecklistSectionProps {
   mainQuizId: number;
   initialSpeechItem: SpeechItemDto;
   initialChecklistItems: ChecklistItem[];
 }
 
-export default function ChecklistSession({
+export default function ChecklistSection({
   mainQuizId,
   initialSpeechItem,
   initialChecklistItems,
-}: ChecklistSessionProps) {
+}: ChecklistSectionProps) {
   const router = useRouter();
   const {
     solvedQuizId,
