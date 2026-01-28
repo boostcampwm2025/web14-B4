@@ -18,7 +18,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)] border border-gray-100">
         {/* 상단 제목 */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-1 pb-4 border-b border-gray-50">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-50">
           <h2 className="text-xl font-bold text-[var(--color-accent-navy)] flex items-center gap-2 line-1">
             <span className="text-xl/9">🔠</span> 핵심 키워드 분석
             {selectedKeyword && (
