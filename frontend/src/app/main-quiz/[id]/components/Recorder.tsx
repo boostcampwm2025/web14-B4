@@ -49,11 +49,18 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
 
-  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
-    onRecorded: () => {
-      setStatus('recorded');
-    },
-  });
+  const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
+    useAudioRecorder({
+      onRecorded: (blob) => {
+        if (!blob) {
+          setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
+          setStatus('idle');
+          return;
+        }
+
+        setStatus('recorded');
+      },
+    });
 
   const {
     micStatus,
@@ -264,9 +271,9 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     }
   };
 
-  const handleStop = () => {
+  const handleStop = async () => {
     setMessage(null);
-    stopRecording();
+    await stopRecording();
     stopVideoRecording();
     stopCamera();
     timer.stopTimer();
@@ -281,7 +288,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   };
 
   const handleSubmit = async () => {
-    if (!audioBlob) {
+    if (!audioBlob || !audioManifest) {
       return;
     }
 
@@ -296,7 +303,11 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     setStatus('submitting');
 
     try {
-      const { solvedQuizId } = await postSpeechesStt(quizId, audioBlob);
+      const { solvedQuizId } = await postSpeechesStt(quizId, {
+        blob: audioBlob,
+        filename: audioManifest.filename,
+        mimeType: audioManifest.mimeType,
+      });
       setSolvedQuizId(solvedQuizId);
 
       stopCamera();

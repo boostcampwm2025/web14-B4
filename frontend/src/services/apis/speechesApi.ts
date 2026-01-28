@@ -22,21 +22,24 @@ export type CreateSpeechTextAnswerResponse = {
   solvedQuizId: number;
 };
 
+type UploadAudio = {
+  blob: Blob;
+  filename: string;
+  mimeType: string;
+};
+
 /**
  * 음성 파일을 STT 변환 API로 전송
  * - POST /speeches/stt
  * - form-data key: audio, filename: audio.webm
  * - 응답: { solvedQuizId, text }
  */
-export async function postSpeechesStt(mainQuizId: number, audioBlob: Blob): Promise<SttResult> {
+export async function postSpeechesStt(mainQuizId: number, audio: UploadAudio): Promise<SttResult> {
   const formData = new FormData();
-  formData.append(
-    'audio',
-    new File([audioBlob], 'audio.webm', {
-      type: audioBlob.type || 'audio/webm',
-    }),
-  );
+  const audioFile = new File([audio.blob], audio.filename, { type: audio.mimeType });
+  formData.append('audio', audioFile, audioFile.name);
   formData.append('mainQuizId', mainQuizId.toString());
+  formData.append('mimeType', audio.mimeType);
 
   const data = await apiFetch<SttResult>(
     '/speeches/stt',

@@ -22,6 +22,14 @@ jest.mock('@google/genai', () => ({
   })),
 }));
 
+jest.mock('typeorm-transactional', () => ({
+  Transactional:
+    () => (target: any, propertyKey: string, descriptor: PropertyDescriptor) =>
+      descriptor,
+  initializeTransactionalContext: jest.fn(),
+  addTransactionalDataSource: jest.fn(),
+}));
+
 describe('FeedbackService', () => {
   let service: FeedbackService;
   // Use plain mock objects to avoid unbound-method lint issues
@@ -30,6 +38,7 @@ describe('FeedbackService', () => {
   };
   const solvedQuizRepositoryMock = {
     updateAiFeedback: jest.fn(),
+    updateSolvedState: jest.fn(),
   };
   const speechesServiceMock = {
     getSolvedQuizInfo: jest.fn(),

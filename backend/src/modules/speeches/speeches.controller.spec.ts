@@ -9,6 +9,25 @@ import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { UpdateSpeechTextRequestDto } from './dto/UpdateSpeechTextRequestDto.dto';
 import { UpdateSpeechTextResponseDto } from './dto/UpdateSpeechTextResponseDto.dto';
 import { GetSpeechesResponseDto } from './dto/GetSpeechesResponseDto.dto';
+import { AuthService } from '../auth/auth.service';
+import { Provider } from 'src/datasources/entities/tb-user.entity';
+import { Request, Response } from 'express';
+
+// 테스트용 User 목 데이터
+const createMockUser = (userId: number) => ({
+  userId,
+  uuid: `test-uuid-${userId}`,
+  username: `testuser${userId}`,
+  level: '주니어',
+  interestArea: '백엔드',
+  provider: Provider.NAVER,
+  providerId: `kakao-${userId}`,
+  createdAt: new Date('2024-01-01'),
+  createdBy: userId,
+  updatedAt: new Date('2024-01-01'),
+  updatedBy: userId,
+  solvedQuizzes: [],
+});
 
 describe('SpeechesController', () => {
   let controller: SpeechesController;
@@ -17,7 +36,18 @@ describe('SpeechesController', () => {
     csrSpeechToText: jest.fn(),
     updateSpeechText: jest.fn(),
     getByQuizAndUser: jest.fn(),
+    getSpeechesByMainQuizId: jest.fn(),
   };
+
+  const mockAuthService = {
+    validateUser: jest.fn(),
+    login: jest.fn(),
+  };
+
+  const mockRequest = {} as Request;
+  const mockResponse = {
+    cookie: jest.fn(),
+  } as unknown as Response;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,6 +56,10 @@ describe('SpeechesController', () => {
         {
           provide: SpeechesService,
           useValue: mockSpeechesService,
+        },
+        {
+          provide: AuthService,
+          useValue: mockAuthService,
         },
       ],
     }).compile();
@@ -54,6 +88,9 @@ describe('SpeechesController', () => {
       mockSpeechesService.csrSpeechToText.mockResolvedValue(serviceResult);
 
       const result: SttResponseDto = await controller.csrSpeechToText(
+        createMockUser(1),
+        mockRequest,
+        mockResponse,
         mockAudioFile,
         mainQuizId,
       );
@@ -69,10 +106,14 @@ describe('SpeechesController', () => {
     });
 
     it('음성 파일이 제공되지 않으면 BadRequestException을 던진다', async () => {
-      const undefinedFile: Express.Multer.File | undefined = undefined;
-
       await expect(
-        controller.csrSpeechToText(undefinedFile, mainQuizId),
+        controller.csrSpeechToText(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          undefined as unknown as Express.Multer.File,
+          mainQuizId,
+        ),
       ).rejects.toThrow(BadRequestException);
       expect(mockSpeechesService.csrSpeechToText).not.toHaveBeenCalled();
     });
@@ -81,7 +122,13 @@ describe('SpeechesController', () => {
       const nullFile: Express.Multer.File | null = null;
 
       await expect(
-        controller.csrSpeechToText(nullFile!, mainQuizId),
+        controller.csrSpeechToText(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          nullFile!,
+          mainQuizId,
+        ),
       ).rejects.toThrow(BadRequestException);
       expect(mockSpeechesService.csrSpeechToText).not.toHaveBeenCalled();
     });
@@ -93,7 +140,13 @@ describe('SpeechesController', () => {
       mockSpeechesService.csrSpeechToText.mockRejectedValue(error);
 
       await expect(
-        controller.csrSpeechToText(mockAudioFile, mainQuizId),
+        controller.csrSpeechToText(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mockAudioFile,
+          mainQuizId,
+        ),
       ).rejects.toThrow(error);
     });
 
@@ -110,6 +163,9 @@ describe('SpeechesController', () => {
       mockSpeechesService.csrSpeechToText.mockResolvedValue(serviceResult);
 
       const result: SttResponseDto = await controller.csrSpeechToText(
+        createMockUser(1),
+        mockRequest,
+        mockResponse,
         mp3File,
         mainQuizId,
       );
@@ -141,7 +197,13 @@ describe('SpeechesController', () => {
       mockSpeechesService.updateSpeechText.mockResolvedValue(serviceResult);
 
       const result: UpdateSpeechTextResponseDto =
-        await controller.updateSpeechText(mainQuizId, updateDto);
+        await controller.updateSpeechText(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+          updateDto,
+        );
 
       expect(result).toBeInstanceOf(UpdateSpeechTextResponseDto);
       expect(result.mainQuizId).toBe(1);
@@ -150,6 +212,7 @@ describe('SpeechesController', () => {
       expect(mockSpeechesService.updateSpeechText).toHaveBeenCalledWith(
         updateDto.solvedQuizId,
         updateDto.speechText,
+        1,
       );
     });
 
@@ -163,7 +226,13 @@ describe('SpeechesController', () => {
       mockSpeechesService.updateSpeechText.mockRejectedValue(error);
 
       await expect(
-        controller.updateSpeechText(mainQuizId, updateDto),
+        controller.updateSpeechText(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+          updateDto,
+        ),
       ).rejects.toThrow(error);
     });
   });
@@ -192,7 +261,12 @@ describe('SpeechesController', () => {
       mockSpeechesService.getByQuizAndUser.mockResolvedValue(mockSolvedQuizzes);
 
       const result: GetSpeechesResponseDto =
-        await controller.getSpeechesByMainQuizId(mainQuizId);
+        await controller.getSpeechesByMainQuizId(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+        );
 
       expect(result).toBeInstanceOf(GetSpeechesResponseDto);
       expect(result.quizId).toBe(mainQuizId);
@@ -210,7 +284,12 @@ describe('SpeechesController', () => {
       mockSpeechesService.getByQuizAndUser.mockResolvedValue([]);
 
       const result: GetSpeechesResponseDto =
-        await controller.getSpeechesByMainQuizId(mainQuizId);
+        await controller.getSpeechesByMainQuizId(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+        );
 
       expect(result).toBeInstanceOf(GetSpeechesResponseDto);
       expect(result.quizId).toBe(mainQuizId);
@@ -223,7 +302,12 @@ describe('SpeechesController', () => {
       mockSpeechesService.getByQuizAndUser.mockRejectedValue(error);
 
       await expect(
-        controller.getSpeechesByMainQuizId(mainQuizId),
+        controller.getSpeechesByMainQuizId(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+        ),
       ).rejects.toThrow(error);
     });
 
@@ -243,7 +327,12 @@ describe('SpeechesController', () => {
       mockSpeechesService.getByQuizAndUser.mockResolvedValue(mockSolvedQuizzes);
 
       const result: GetSpeechesResponseDto =
-        await controller.getSpeechesByMainQuizId(mainQuizId);
+        await controller.getSpeechesByMainQuizId(
+          createMockUser(1),
+          mockRequest,
+          mockResponse,
+          mainQuizId,
+        );
 
       expect(result.speeches[0].solvedQuizId).toBe(100);
       expect(result.speeches[0].speechText).toBe('테스트 음성');

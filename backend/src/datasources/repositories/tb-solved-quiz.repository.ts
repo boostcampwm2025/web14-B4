@@ -127,13 +127,11 @@ export class SolvedQuizRepository {
     return await this.repository.update(solvedQuizId, { importance });
   }
 
-  async updateImportanceAndSolvedState(
+  async updateSolvedState(
     solvedQuizId: number,
-    importance: Importance,
     solvedState: SolvedState,
   ): Promise<UpdateResult> {
     return await this.repository.update(solvedQuizId, {
-      importance,
       solvedState,
     });
   }
