@@ -17,19 +17,21 @@ export default function FeedbackQuestions({ questions }: { questions: string[] }
           </div>
         </div>
 
-        {/* 질문 리스트 영역 */}
         <ul className="grid grid-cols-1 gap-4">
           {questions.map((question, idx) => (
             <li
               key={idx}
-              className="group flex items-start gap-4 p-4 rounded-xl border border-transparent bg-(--color-gray-light)/20 hover:bg-white hover:border-(--color-accent-sky) hover:shadow-sm transition-all duration-300"
+              className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-5 transition-all duration-500 hover:border-blue-100 hover:bg-slate-50/50 hover:shadow-[0_8px_20px_-6px_rgba(37,99,235,0.1)] cursor-default"
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-(--color-accent-sky) text-[12px] font-bold text-(--color-primary) group-hover:bg-(--color-accent-sky) group-hover:text-(--color-accent-navy) transition-colors">
-                Q{idx + 1}
-              </span>
-              <p className="text-md leading-relaxed text-(--color-gray-dark) group-hover:text-black transition-colors">
-                {question}
-              </p>
+              <div className="flex items-center gap-5">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-sm font-black text-slate-400 transition-all group-hover:bg-blue-600 group-hover:text-white">
+                  {idx + 1}
+                </span>
+
+                <p className="text-md font-medium text-slate-700 transition-all duration-200 group-hover:text-blue-700 group-hover:font-bold">
+                  {question}
+                </p>
+              </div>
             </li>
           ))}
         </ul>
