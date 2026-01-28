@@ -9,7 +9,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
-import { allowedMimeTypes, CLOVA_STT } from './speeches.constants';
+import {
+  allowedMimeTypes,
+  CLOVA_STT,
+  AUDIOFILE_MAX_SIZE_BYTES,
+} from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
@@ -31,6 +35,14 @@ type ClovaSpeechLongSyncResponse = {
   result?: 'COMPLETED' | 'FAILED' | (string & {});
   message?: string; // 성공시 "Succeeded"
   confidence?: string; // 변환 정확도
+};
+
+type ParsedUserAgent = {
+  raw: string;
+  browser: 'Chrome' | 'Edge' | 'Safari' | 'Firefox' | 'Unknown';
+  browserVersion?: string;
+  os: 'Windows' | 'macOS' | 'iOS' | 'Android' | 'Linux' | 'Unknown';
+  osVersion?: string;
 };
 
 // TODO : 추가로 처리해야할 예외
@@ -220,8 +232,6 @@ export class SpeechesService {
 
   /* 녹음 파일의 유효성 검사 */
   private checkValidation(recordFile: Express.Multer.File): void {
-    const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5MB
-
     if (!recordFile || !recordFile.buffer)
       throw new BadRequestException('유효하지 않는 녹음 파일입니다.');
 
@@ -230,7 +240,7 @@ export class SpeechesService {
         `지원하지 않는 녹음 파일입니다: ${recordFile.mimetype}`,
       );
 
-    if (recordFile.buffer.length > MAX_SIZE_BYTES) {
+    if (recordFile.buffer.length > AUDIOFILE_MAX_SIZE_BYTES) {
       throw new PayloadTooLargeException(
         '변환하기에 너무 큰 녹음 용량 파일입니다. 3분 내로 녹음해주세요.',
       );
@@ -242,15 +252,24 @@ export class SpeechesService {
     audioFile: Express.Multer.File,
     mainQuizId: number,
     userId: number,
+    clientMeta?: { userAgent?: string },
   ): Promise<SttResponseDto> {
     this.checkValidation(audioFile);
 
     const { url, secretKey, language } = this.getClovaSpeechLongConfig();
     const formData = this.buildFormData(audioFile, language);
 
+    const ua = this.parseUserAgent(clientMeta?.userAgent);
+
     const result = await this.fetchClovaSpeechLong(url, secretKey, formData, {
       mainQuizId,
       size: audioFile.size,
+      originalname: audioFile.originalname,
+      mimetype: audioFile.mimetype,
+      browser: ua?.browser,
+      browserVersion: ua?.browserVersion,
+      os: ua?.os,
+      osVersion: ua?.osVersion,
     });
 
     const sttText = typeof result.text === 'string' ? result.text.trim() : '';
@@ -313,9 +332,11 @@ export class SpeechesService {
     const form = new FormData();
 
     const blob = new Blob([new Uint8Array(audioFile.buffer)], {
-      type: audioFile.mimetype || 'audio/webm',
+      type: audioFile.mimetype,
     });
-    form.append('media', blob, audioFile.originalname || 'audio.webm');
+    const filename =
+      audioFile.mimetype === 'audio/wav' ? 'audio.wav' : 'audio.webm';
+    form.append('media', blob, audioFile.originalname || filename);
     form.append('params', JSON.stringify(params));
 
     return form;
@@ -328,6 +349,12 @@ export class SpeechesService {
     meta: {
       mainQuizId: number;
       size: number;
+      originalname?: string;
+      mimetype?: string;
+      browser?: string;
+      browserVersion?: string;
+      os?: string;
+      osVersion?: string;
     },
   ): Promise<ClovaSpeechLongSyncResponse> {
     const startedAt = Date.now();
@@ -350,7 +377,7 @@ export class SpeechesService {
         // CLOVA API가 반환하는 오류 메시지 로깅
         logExternalApiError(this.logger, 'CLOVA', '[STT API Error]', err, {
           ...meta,
-          durationMs,
+          durationMs: `${durationMs}ms`,
         });
 
         // 인증 실패(Authentication Failed), 권한 없음(Permission Denied)
@@ -425,6 +452,74 @@ export class SpeechesService {
 
       throw new BusinessException(ERROR_MESSAGES.EXTERNAL_API_SERVER_ERROR);
     }
+  }
+
+  private parseUserAgent(userAgent?: string): ParsedUserAgent | undefined {
+    if (!userAgent) {
+      return undefined;
+    }
+
+    let browser: ParsedUserAgent['browser'] = 'Unknown';
+    let browserVersion: string | undefined;
+
+    let os: ParsedUserAgent['os'] = 'Unknown';
+    let osVersion: string | undefined;
+
+    const windows = userAgent.match(/Windows NT ([\d.]+)/);
+    if (windows) {
+      os = 'Windows';
+      osVersion = windows[1];
+    }
+
+    const android = userAgent.match(/Android ([\d.]+)/);
+    if (android) {
+      os = 'Android';
+      osVersion = android[1];
+    }
+
+    const ios = userAgent.match(/iPhone OS ([\d_]+)/);
+    if (ios) {
+      os = 'iOS';
+      osVersion = ios[1].replace(/_/g, '.');
+    }
+
+    const mac = userAgent.match(/Mac OS X ([\d_]+)/);
+    if (mac && os === 'Unknown') {
+      os = 'macOS';
+      osVersion = mac[1].replace(/_/g, '.');
+    }
+
+    const edge = userAgent.match(/Edg\/([\d.]+)/);
+    if (edge) {
+      browser = 'Edge';
+      browserVersion = edge[1];
+    }
+
+    const chrome = userAgent.match(/Chrome\/([\d.]+)/);
+    if (chrome && browser === 'Unknown') {
+      browser = 'Chrome';
+      browserVersion = chrome[1];
+    }
+
+    const firefox = userAgent.match(/Firefox\/([\d.]+)/);
+    if (firefox) {
+      browser = 'Firefox';
+      browserVersion = firefox[1];
+    }
+
+    const safari = userAgent.match(/Version\/([\d.]+).*Safari/);
+    if (safari && !userAgent.includes('Chrome/')) {
+      browser = 'Safari';
+      browserVersion = safari[1];
+    }
+
+    return {
+      raw: userAgent,
+      browser,
+      browserVersion,
+      os,
+      osVersion,
+    };
   }
 
   async createSpeechText(dto: {
