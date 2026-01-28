@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { QueryDeepPartialEntity, Repository } from 'typeorm';
 import { UserChecklistProgress } from '../entities/tb-user-checklist-progress.entity';
 
 @Injectable()
@@ -47,9 +47,12 @@ export class UserChecklistProgressRepository {
         isChecked: item.isChecked,
         checkedAt: item.isChecked ? new Date() : null,
       }),
-    );
+    ) as QueryDeepPartialEntity<UserChecklistProgress>[];
 
-    await this.repository.save(entities);
+    await this.repository.upsert(entities, {
+      conflictPaths: ['user', 'checklistItem', 'solvedQuiz'],
+      skipUpdateIfNoValuesChanged: true,
+    });
   }
 
   // solved quiz의 체크리스트를 가져온다
