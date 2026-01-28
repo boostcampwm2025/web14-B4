@@ -10,8 +10,6 @@ export type QuizEntryMode = (typeof QUIZ_ENTRY_MODES)[keyof typeof QUIZ_ENTRY_MO
 
 export const QUIZ_TYPE_OPTIONS = [
   { key: QUIZ_ENTRY_MODES.MULTIPLE, title: '객관식', desc: '객관식 퀴즈 풀고나서 메인퀴즈 풀기' },
-  { key: QUIZ_ENTRY_MODES.SUBJECTIVE, title: '주관식', desc: '주관식 퀴즈 풀고나서 메인퀴즈 풀기' },
-  { key: QUIZ_ENTRY_MODES.BOTH, title: '모두', desc: '객관식 및 주관식을 풀고 메인퀴즈' },
   { key: QUIZ_ENTRY_MODES.SKIP, title: '메인퀴즈', desc: '몸풀기 퀴즈 없이 바로 시작' },
 ] as const;
 

@@ -25,14 +25,6 @@ export default function QuizTypeSelectPopup({ quiz, isOpen, onClose }: QuizTypeS
         router.push(`/main-quiz/${quiz.mainQuizId}/multiple-choice`);
         break;
 
-      case QUIZ_ENTRY_MODES.SUBJECTIVE:
-        alert(MESSAGES.NOT_IMPLEMENTED);
-        break;
-
-      case QUIZ_ENTRY_MODES.BOTH:
-        alert(MESSAGES.NOT_IMPLEMENTED);
-        break;
-
       case QUIZ_ENTRY_MODES.SKIP:
         router.push(`/main-quiz/${quiz.mainQuizId}`);
         break;
@@ -56,7 +48,10 @@ export default function QuizTypeSelectPopup({ quiz, isOpen, onClose }: QuizTypeS
           </p>
         </div>
 
-        <div className="grid grid-cols-4 gap-8" onClick={(e) => e.stopPropagation()}>
+        <div
+          className="grid grid-cols-2 gap-8 justify-items-center"
+          onClick={(e) => e.stopPropagation()}
+        >
           {QUIZ_TYPE_OPTIONS.map((o) => (
             <button
               key={o.key}
