@@ -21,7 +21,7 @@ export default function ComplementItem({ item, idx, isExpanded, onToggle }: Comp
     >
       <button
         onClick={onToggle}
-        className="flex w-full items-center justify-between p-6 text-left cursor-pointer"
+        className="flex w-full items-center justify-between p-5 text-left cursor-pointer"
       >
         <div className="flex items-center gap-5">
           <span
@@ -31,7 +31,7 @@ export default function ComplementItem({ item, idx, isExpanded, onToggle }: Comp
           >
             {idx + 1}
           </span>
-          <h3 className={`text-lg font-bold ${isExpanded ? 'text-blue-700' : 'text-slate-700'}`}>
+          <h3 className={`text-md font-bold ${isExpanded ? 'text-blue-700' : 'text-slate-700'}`}>
             {item.title}
           </h3>
         </div>
