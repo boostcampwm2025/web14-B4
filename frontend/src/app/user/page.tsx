@@ -11,7 +11,7 @@ export default async function Page() {
   // accessToken이 없으면 로그인 페이지로 리다이렉트
   const accessToken = cookieStore.get('accessToken')?.value;
   if (!accessToken) {
-    redirect('/quizzes?authRequired=true');
+    redirect('/quizzes?error=auth_required');
   }
 
   const username = cookieStore.get('username')?.value || '사용자';

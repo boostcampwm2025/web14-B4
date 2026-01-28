@@ -22,7 +22,7 @@ export default async function FeedbackPage({ params }: Props) {
     data = await fetchAIFeedbackResult(Number(solvedQuizId));
   } catch (error) {
     if (error instanceof ApiError && error.status === 403) {
-      redirect('/quizzes?accessDenied=true');
+      redirect('/quizzes?error=access_denied');
     }
     redirect('/quizzes?error=not_found');
   }
