@@ -170,8 +170,6 @@ export class UsersService {
   async getUserSolvedQuizWithComprehension(
     userId: number,
   ): Promise<GetUserComprehensionsResponseDto> {
-    // TODO 유저 존재여부 판별
-
     const solvedQuizCategoryStatistics =
       await this.solvedQuizRepository.getComprehensionStatistics(userId);
     return new GetUserComprehensionsResponseDto(solvedQuizCategoryStatistics);
