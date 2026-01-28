@@ -26,7 +26,7 @@ export default function FeedbackHeader({
         <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap mb-4">
           {content}
         </h1>
-        <div className="text-center space-y-2 mb-8">
+        <div className="text-center space-y-2 mb-5">
           <div className="flex justify-start px-2">
             <div className="inline-block bg-[var(--color-primary)] text-white text-sm px-4 py-2 rounded-full mt-1">
               생각뽁뽁

@@ -20,7 +20,7 @@ export default function FeedbackComplement({ items }: { items: ComplementItem[] 
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl">
               🌱
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-lg font-bold tracking-tight text-slate-900">
               나의 답변에서 <span className="text-(--color-accent-navy)">보완해볼 포인트</span>
             </h2>
           </div>
