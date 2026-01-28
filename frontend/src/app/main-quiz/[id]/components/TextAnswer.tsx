@@ -119,7 +119,7 @@ export default function TextAnswer({ quizId }: Props) {
       <Popup
         isOpen={isPopupOpen}
         title="퀴즈 목록으로 이동하시겠습니까?"
-        description="작성중인 답변이 저장되지 않습니다."
+        description="작성중인 답변이 제출되지 않습니다."
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
