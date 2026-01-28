@@ -9,8 +9,9 @@ services:
     container_name: nestjs-backend
     environment:
       - NODE_ENV=production
+      - TZ=Asia/Seoul
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     networks:
       - app-network
     restart: unless-stopped
@@ -24,8 +25,9 @@ services:
       - .env.server
     container_name: nextjs-frontend
     environment:
-      - NODE_ENV=production 
+      - NODE_ENV=production
       - PORT=3000
+      - TZ=Asia/Seoul
     depends_on:
       - backend
     networks:
@@ -49,6 +51,8 @@ services:
     networks:
       - app-network
     restart: unless-stopped
+    environment:
+      - TZ=Asia/Seoul
 
 networks:
   app-network:
