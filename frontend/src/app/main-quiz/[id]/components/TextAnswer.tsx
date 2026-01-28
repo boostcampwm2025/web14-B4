@@ -8,6 +8,7 @@ import { postSpeechTextAnswer } from '@/services/apis/speechesApi';
 import { ApiError } from '@/services/http/errors';
 import { toast } from 'react-toastify';
 import { useQuizStore } from '@/store/quizStore';
+import Popup from '@/components/Popup';
 
 interface Props {
   quizId: number;
@@ -19,6 +20,7 @@ export default function TextAnswer({ quizId }: Props) {
 
   const [text, setText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const trimmedLength = useMemo(() => text.trim().length, [text]);
   const isValid = useMemo(() => trimmedLength >= MIN_SPEECH_TEXT_LENGTH, [trimmedLength]);
@@ -63,15 +65,16 @@ export default function TextAnswer({ quizId }: Props) {
   };
 
   const handleExit = () => {
-    const confirmed = window.confirm(
-      '작성중인 답변이 제출되지 않았습니다.\n퀴즈 목록 페이지로 나가시겠습니까?',
-    );
+    setIsPopupOpen(true);
+  };
 
-    if (!confirmed) {
-      return;
-    }
-
+  const handleConfirm = () => {
+    setIsPopupOpen(false);
     router.push('/quizzes');
+  };
+
+  const handleCancel = () => {
+    setIsPopupOpen(false);
   };
 
   return (
@@ -113,6 +116,13 @@ export default function TextAnswer({ quizId }: Props) {
           </div>
         </div>
       </div>
+      <Popup
+        isOpen={isPopupOpen}
+        title="퀴즈 목록으로 이동하시겠습니까?"
+        description="작성중인 답변이 저장되지 않습니다."
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 }
