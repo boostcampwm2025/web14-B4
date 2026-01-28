@@ -19,7 +19,7 @@ export default function ErrorToast() {
 
   useEffect(() => {
     if (searchParams.get('authRequired') === 'true') {
-      toast.error('리포트 열람을 하기 위해서는 로그인이 필요합니다.');
+      toast.error('리포트를 열람하기 위해서는 로그인이 필요합니다.');
       window.history.replaceState({}, '', '/quizzes');
     }
   }, [searchParams]);
