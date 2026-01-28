@@ -31,6 +31,7 @@ export default function ChecklistSection({
     actions: { requestAiFeedback },
   } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
+  const resetAnalyzing = useQuizStore((s) => s.resetAnalyzing);
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
   const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
@@ -51,6 +52,12 @@ export default function ChecklistSection({
       router.push(`/quizzes`);
     }
   }, [_hasHydrated, solvedQuizId, router]);
+
+  useEffect(() => {
+    return () => {
+      resetAnalyzing();
+    };
+  }, [resetAnalyzing]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
     setOptions((prev) =>
