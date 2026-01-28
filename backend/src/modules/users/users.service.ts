@@ -178,8 +178,6 @@ export class UsersService {
   async getUserSolvedStatistics(
     userId: number,
   ): Promise<GetUserSolvedStatisticsResponseDto> {
-    // TODO 유저 정보 확인
-
     const solvedData =
       await this.solvedQuizRepository.getSolvedQuizStatistics(userId);
     return new GetUserSolvedStatisticsResponseDto(solvedData);
