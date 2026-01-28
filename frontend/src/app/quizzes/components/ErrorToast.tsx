@@ -22,6 +22,10 @@ export default function ErrorToast() {
       toast.error('리포트를 열람하기 위해서는 로그인이 필요합니다.');
       window.history.replaceState({}, '', '/quizzes');
     }
+    if (searchParams.get('accessDenied') === 'true') {
+      toast.error('해당 리포트에 접근할 권한이 없습니다.');
+      window.history.replaceState({}, '', '/quizzes');
+    }
   }, [searchParams]);
 
   return null;

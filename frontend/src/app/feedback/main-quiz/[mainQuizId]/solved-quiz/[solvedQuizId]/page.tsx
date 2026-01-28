@@ -6,6 +6,7 @@ import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
 import FeedbackComplements from '@/app/feedback/components/complements/FeedbackComplements';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 import PreventBackNavigation from '@/components/PreventBackNavigation';
+import { ApiError } from '@/services/http/errors';
 
 type Props = {
   params: Promise<{
@@ -20,6 +21,9 @@ export default async function FeedbackPage({ params }: Props) {
   try {
     data = await fetchAIFeedbackResult(Number(solvedQuizId));
   } catch (error) {
+    if (error instanceof ApiError && error.status === 403) {
+      redirect('/quizzes?accessDenied=true');
+    }
     redirect('/quizzes?error=not_found');
   }
   const { solvedQuizDetail, aiFeedbackResult } = data;
