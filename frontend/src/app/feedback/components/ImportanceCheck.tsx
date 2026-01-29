@@ -143,8 +143,8 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
           다시 풀기
         </Button>
 
-        <Button variant="primary" size="fixed" onClick={handleFinish} disabled={!selected}>
-          끝내기
+        <Button variant="primary" size="cta" onClick={handleFinish} disabled={!selected}>
+          저장하고 다른 퀴즈 풀기
         </Button>
       </div>
     </section>
