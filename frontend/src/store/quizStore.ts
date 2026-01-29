@@ -12,6 +12,7 @@ interface QuizStore {
   clearSolvedQuizId: () => void;
   _hasHydrated: boolean;
   isAnalyzing: boolean;
+  resetAnalyzing: () => void;
   actions: {
     requestAiFeedback: (payload: SolvedQuizSubmitRequestDto) => Promise<boolean>;
   };
@@ -25,6 +26,7 @@ export const useQuizStore = create<QuizStore>()(
       clearSolvedQuizId: () => set({ solvedQuizId: null }),
 
       isAnalyzing: false,
+      resetAnalyzing: () => set({ isAnalyzing: false }),
       _hasHydrated: false,
 
       actions: {

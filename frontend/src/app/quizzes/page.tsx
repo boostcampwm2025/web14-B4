@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import QuizPageServer from './components/QuizPageServer';
-import ErrorToast from './components/ErrorToast';
 import { fetchAllQuizzes } from '@/services/apis/quizApi';
 import { filterQuizzesByParams, calculateCategoryCounts } from './utils/serverFilters';
 import { cookies } from 'next/headers';
@@ -32,7 +31,6 @@ export default async function Page({ searchParams }: PageProps) {
 
   return (
     <>
-      <ErrorToast />
       <Suspense fallback={null}>
         <QuizPageServer
           quizzes={filteredQuizzes}

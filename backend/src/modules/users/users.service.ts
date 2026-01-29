@@ -39,8 +39,6 @@ export class UsersService {
     mainQuizId: number,
     solvedQuizId: number,
   ) {
-    // TODO userId 존재 여부 체크
-
     const userChecklist =
       await this.checklistItemRepository.getUserChecklistItems(
         userId,
@@ -56,8 +54,6 @@ export class UsersService {
 
   @Transactional()
   async saveSolvedQuiz(userId: number, dto: SaveSolvedQuizRequestDto) {
-    // TODO userId 존재 여부 체크
-
     // mainQuiz와 체크리스트 아이템 존재 여부 확인
     const mainQuiz = await this.mainQuizRepository.findById(dto.mainQuizId);
 
@@ -172,8 +168,6 @@ export class UsersService {
   async getUserSolvedQuizWithComprehension(
     userId: number,
   ): Promise<GetUserComprehensionsResponseDto> {
-    // TODO 유저 존재여부 판별
-
     const solvedQuizCategoryStatistics =
       await this.solvedQuizRepository.getComprehensionStatistics(userId);
     return new GetUserComprehensionsResponseDto(solvedQuizCategoryStatistics);
@@ -182,8 +176,6 @@ export class UsersService {
   async getUserSolvedStatistics(
     userId: number,
   ): Promise<GetUserSolvedStatisticsResponseDto> {
-    // TODO 유저 정보 확인
-
     const solvedData =
       await this.solvedQuizRepository.getSolvedQuizStatistics(userId);
     return new GetUserSolvedStatisticsResponseDto(solvedData);

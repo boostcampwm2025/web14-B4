@@ -2,7 +2,7 @@
 
 import type { WinstonLogger } from 'nest-winston';
 
-type ExternalApiProvider = 'GEMINI' | 'CLOVA';
+type ExternalApiProvider = 'GEMINI' | 'CLOVA' | 'NAVER';
 type LogMeta = Record<string, unknown>; // 로그에 남길 메타데이터 추가 가능
 const MSG_MAX_LEN = 1000;
 
