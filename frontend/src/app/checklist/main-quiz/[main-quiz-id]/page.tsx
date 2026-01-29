@@ -3,7 +3,7 @@ import { getSpeechesByQuizId } from '@/services/apis/speechesApi';
 import dynamic from 'next/dynamic';
 
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
-import ChecklistSession from '../../components/ChecklistSection';
+import ChecklistSection from '../../components/ChecklistSection';
 
 export default async function ResultPage({
   params,
@@ -47,7 +47,7 @@ export default async function ResultPage({
         <h1 className="flex justify-center text-2xl font-semibold">{quiz.content}</h1>
       </div>
       {/* 상호작용 필요한 부분 - 클라이언트 컴포넌트 */}
-      <ChecklistSession
+      <ChecklistSection
         mainQuizId={mainQuizId}
         initialSpeechItem={initialSpeechItem}
         initialChecklistItems={initialChecklistItems}

@@ -83,9 +83,16 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
   return (
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
-        <h2 className="text-lg font-bold text-[var(--color-accent-navy)] mb-4 flex items-center gap-2">
-          🤓 {userName}님에게 얼마나 중요한 지식인가요?
-        </h2>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 pb-4 border-b border-gray-50">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl">
+              🤓
+            </div>
+            <h2 className="text-lg font-bold tracking-tight text-(--color-accent-navy)">
+              {userName}님에게 얼마나 중요한 지식인가요?
+            </h2>
+          </div>
+        </div>
 
         <div className="mt-5 flex flex-col items-center gap-10 sm:flex-row sm:items-start sm:justify-center sm:gap-16">
           {OPTIONS.map((opt) => {

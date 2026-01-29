@@ -93,6 +93,7 @@ export default function AnswerModeSection({ quizId }: Props) {
                 variant={mode === 'voice' ? 'primary' : 'secondary'}
                 onClick={() => setMode('voice')}
                 aria-pressed={mode === 'voice'}
+                className="w-40"
               >
                 음성 답변 모드
               </Button>
@@ -101,13 +102,14 @@ export default function AnswerModeSection({ quizId }: Props) {
                 variant={mode === 'text' ? 'primary' : 'secondary'}
                 onClick={() => setMode('text')}
                 aria-pressed={mode === 'text'}
+                className="w-40"
               >
                 텍스트 답변 모드
               </Button>
             </div>
           </div>
 
-          <div className="pt-6 flex justify-center">
+          <div className="pt-3 flex justify-center">
             {modeLabel && <p className="sr-only">{modeLabel}</p>}
             {mode === 'voice' ? (
               <Recorder quizId={quizId} onSwitchToTextMode={() => setMode('text')} />
