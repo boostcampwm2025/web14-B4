@@ -33,7 +33,10 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white p-5">
-      <h1 className="text-2xl font-bold text-center mb-8">나의 답변</h1>
+      <h1 className="text-2xl font-bold text-center mb-8">💬 나의 답변</h1>
+      <p className="text-base mb-4 text-gray-500">
+        다시 읽어보며 필요한 부분은 자유롭게 수정할 수 있어요 ✨
+      </p>
       <div className="mb-6">
         <textarea
           ref={textareaRef}
