@@ -57,7 +57,7 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
       return;
     }
 
-    const ok = window.confirm('말하기 연습을 종료하고 퀴즈 목록으로 이동합니다.');
+    const ok = window.confirm('피드백 확인을 마치고 퀴즈 목록으로 이동합니다.');
     if (!ok) {
       return;
     }
@@ -71,7 +71,6 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
         importance: selected,
       });
 
-      toast.success('말하기 연습을 종료하고 퀴즈 목록으로 이동합니다.');
       router.push('/quizzes');
     } catch (e) {
       toast.error('중요도 저장에 실패했습니다. 다시 시도해주세요.');
@@ -143,8 +142,8 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
           다시 풀기
         </Button>
 
-        <Button variant="primary" size="fixed" onClick={handleFinish} disabled={!selected}>
-          끝내기
+        <Button variant="primary" size="cta" onClick={handleFinish} disabled={!selected}>
+          저장하고 다른 퀴즈 풀기
         </Button>
       </div>
     </section>

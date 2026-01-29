@@ -46,12 +46,21 @@ export class UsersController {
     return result;
   }
 
+  @Public()
   @Post('importance')
   async saveImportance(
-    @CurrentUser() user: User,
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Body() dto: SaveImportanceRequestDto,
   ): Promise<SaveImportanceResponseDto> {
-    const result = await this.usersService.saveImportance(user.userId, dto);
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+    const result = await this.usersService.saveImportance(userId, dto);
     return result;
   }
 

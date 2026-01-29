@@ -14,12 +14,14 @@ import { Button } from '@/components/Button';
 
 interface ChecklistSectionProps {
   mainQuizId: number;
+  username: string;
   initialSpeechItem: SpeechItemDto;
   initialChecklistItems: ChecklistItem[];
 }
 
 export default function ChecklistSection({
   mainQuizId,
+  username,
   initialSpeechItem,
   initialChecklistItems,
 }: ChecklistSectionProps) {
@@ -30,7 +32,6 @@ export default function ChecklistSection({
     _hasHydrated,
     actions: { requestAiFeedback },
   } = useQuizStore();
-  const { clearSolvedQuizId } = useQuizStore();
   const resetAnalyzing = useQuizStore((s) => s.resetAnalyzing);
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
@@ -68,7 +69,6 @@ export default function ChecklistSection({
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
-      clearSolvedQuizId();
       router.push(`/main-quiz/${mainQuizId}`);
     } else {
       e.preventDefault();
@@ -132,7 +132,7 @@ export default function ChecklistSection({
         {/* 오른쪽: 다음 단계 체크리스트 */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-4 animate-fadeIn flex flex-col">
           <Checklist
-            username="철수"
+            username={username}
             selectedFeeling={selectedFeeling}
             options={options}
             onFeelingChange={setSelectedFeeling}
