@@ -1,6 +1,7 @@
 import { Controller, Post, Body, Res, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { NaverLoginDto } from './dto/naver-login';
+import { TestLoginDto } from './dto/test-login.dto';
 import type { Response, Request } from 'express';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
@@ -42,6 +43,46 @@ export class AuthController {
     });
 
     // 게스트 쿠키 삭제
+    clearGuestUserIdCookie(res);
+
+    return { success: true };
+  }
+
+  @Public()
+  @Post('login/test')
+  async loginTest(
+    @Body() dto: TestLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    // 개발 환경에서만 동작
+    if (process.env.NODE_ENV === 'production') {
+      throw new BusinessException(ERROR_MESSAGES.FORBIDDEN_ON_PRODUCTION);
+    }
+
+    const { accessToken, refreshToken, user } =
+      await this.authService.loginWithTest(dto);
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60 * 60 * 1000,
+    });
+
+    res.cookie('username', user.username, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
     clearGuestUserIdCookie(res);
 
     return { success: true };

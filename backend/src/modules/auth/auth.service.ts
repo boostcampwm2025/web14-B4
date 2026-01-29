@@ -4,6 +4,7 @@ import { UserRepository } from 'src/datasources/repositories/tb-user.repository'
 import { JwtService } from '@nestjs/jwt';
 import Redis from 'ioredis';
 import { NaverLoginDto } from './dto/naver-login';
+import { TestLoginDto } from './dto/test-login.dto';
 import { User, Provider } from 'src/datasources/entities/tb-user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { BusinessException } from 'src/common/exceptions/business.exception';
@@ -96,6 +97,36 @@ export class AuthService {
       user = new User();
       user.username = username;
       user.provider = Provider.NAVER;
+      user.providerId = providerId;
+      user.uuid = uuidv4();
+      user.createdBy = 0;
+      user = await this.userRepository.createUser(user);
+    }
+
+    const tokens = await this.issueTokens(user.uuid);
+
+    return {
+      ...tokens,
+      user: {
+        uuid: user.uuid,
+        username: user.username,
+      },
+    };
+  }
+
+  async loginWithTest(dto: TestLoginDto) {
+    const username = dto.username || 'test-user';
+    const providerId = 'test-user-id';
+
+    let user = await this.userRepository.findByProvider(
+      Provider.GUEST,
+      providerId,
+    );
+
+    if (!user) {
+      user = new User();
+      user.username = username;
+      user.provider = Provider.GUEST;
       user.providerId = providerId;
       user.uuid = uuidv4();
       user.createdBy = 0;

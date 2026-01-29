@@ -142,6 +142,9 @@ export class SolvedQuizRepository {
       .innerJoinAndSelect('sq.mainQuiz', 'mq')
       .innerJoinAndSelect('mq.quizCategory', 'qc')
       .where('sq.user_id = :userId', { userId })
+      .andWhere('sq.solved_state = :solvedState', {
+        solvedState: SolvedState.COMPLETED,
+      })
       .andWhere('sq.importance IS NOT NULL')
       .distinctOn(['sq.main_quiz_id'])
       .orderBy('sq.main_quiz_id')
