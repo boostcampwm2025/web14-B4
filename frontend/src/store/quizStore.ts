@@ -9,7 +9,6 @@ import {
 interface QuizStore {
   solvedQuizId: number | null;
   setSolvedQuizId: (id: number) => void;
-  clearSolvedQuizId: () => void;
   _hasHydrated: boolean;
   isAnalyzing: boolean;
   resetAnalyzing: () => void;
@@ -23,7 +22,6 @@ export const useQuizStore = create<QuizStore>()(
     (set, get) => ({
       solvedQuizId: null,
       setSolvedQuizId: (id: number) => set({ solvedQuizId: id }),
-      clearSolvedQuizId: () => set({ solvedQuizId: null }),
 
       isAnalyzing: false,
       resetAnalyzing: () => set({ isAnalyzing: false }),
