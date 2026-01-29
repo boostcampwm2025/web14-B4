@@ -33,7 +33,12 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white p-5">
-      <h1 className="text-2xl font-bold text-center mb-8">나의 답변</h1>
+      <h1 className="text-2xl font-bold text-center mb-8">💬 나의 답변</h1>
+      <p className="text-base mb-4 text-gray-500">
+        말하기로 답변한 내용은 자동으로 글자로 변환됩니다.
+        <br />
+        정확한 결과를 보고 싶다면 자유롭게 고쳐주세요 ✨
+      </p>
       <div className="mb-6">
         <textarea
           ref={textareaRef}

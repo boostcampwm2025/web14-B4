@@ -12,7 +12,7 @@ export const Checklist: React.FC<ChecklistProps> = ({
 }) => {
   return (
     <div className="w-full max-w-2xl mx-auto bg-white p-5">
-      <h1 className="text-2xl font-bold text-center mb-8">체크리스트</h1>
+      <h1 className="text-2xl font-bold text-center mb-8">📝 체크리스트</h1>
 
       <div className="mb-6">
         <h2 className="text-xl font-medium mb-2">{username}님,</h2>
