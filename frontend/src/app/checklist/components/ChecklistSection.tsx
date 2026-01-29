@@ -14,12 +14,14 @@ import { Button } from '@/components/Button';
 
 interface ChecklistSectionProps {
   mainQuizId: number;
+  username: string;
   initialSpeechItem: SpeechItemDto;
   initialChecklistItems: ChecklistItem[];
 }
 
 export default function ChecklistSection({
   mainQuizId,
+  username,
   initialSpeechItem,
   initialChecklistItems,
 }: ChecklistSectionProps) {
@@ -132,7 +134,7 @@ export default function ChecklistSection({
         {/* 오른쪽: 다음 단계 체크리스트 */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-4 animate-fadeIn flex flex-col">
           <Checklist
-            username="철수"
+            username={username}
             selectedFeeling={selectedFeeling}
             options={options}
             onFeelingChange={setSelectedFeeling}
