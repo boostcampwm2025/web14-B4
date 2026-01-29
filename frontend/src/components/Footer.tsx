@@ -8,8 +8,7 @@ export default function Footer() {
     <footer className="w-full border-t bg-[var(--color-bg-default)]">
       <div className="mx-auto flex h-14 max-w-screen-xl items-center justify-center px-4 text-sm">
         <div className="flex items-center gap-5">
-          <Image src="/logo.svg" alt="CS뽁뽁 로고" width={35} height={35} />
-          <span>© CS뽁뽁</span>
+          <span>© CS뽁뽁 - CS 개념을 말로 설명하며 스스로 사고하는 학습을 돕는 서비스</span>
 
           <Link
             href="https://github.com/boostcampwm2025/web14-B4"
