@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { User } from 'src/datasources/entities/tb-user.entity';
 import { AuthService } from '../auth.service';
 
-const GUEST_USER_COOKIE_NAME = 'guestUserId';
+const GUEST_USER_COOKIE_NAME = 'guestUser';
 const GUEST_USER_COOKIE_MAX_AGE = 24 * 60 * 60 * 1000;
 
 // 게스트 userId를 가져오거나 생성
@@ -17,15 +17,18 @@ export async function getOrCreateGuestUserId(
     return user.userId;
   }
 
-  // 쿠키에서 guestUserId 확인
-  const guestUserIdFromCookie = req.cookies[GUEST_USER_COOKIE_NAME];
-  if (guestUserIdFromCookie) {
-    return parseInt(guestUserIdFromCookie, 10);
+  // 쿠키에서 uuid 확인
+  const guestUuidFromCookie = req.cookies[GUEST_USER_COOKIE_NAME];
+  if (guestUuidFromCookie) {
+    const existingGuest = await authService.findUserByUuid(guestUuidFromCookie);
+    if (existingGuest) {
+      return existingGuest.userId;
+    }
   }
 
   // 게스트 User 생성 및 쿠키 저장
   const guestUser = await authService.createGuestUser();
-  res.cookie(GUEST_USER_COOKIE_NAME, guestUser.userId.toString(), {
+  res.cookie(GUEST_USER_COOKIE_NAME, guestUser.uuid, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',

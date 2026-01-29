@@ -217,9 +217,11 @@ export class FeedbackService {
       );
   }
 
-  async getAIFeedback(solvedQuizId: number) {
-    // TODO: 추후에 로그인/회원가입 기능 구현 시에 userID 인자로 받아서 본인 기록 맞는지 검증하는 로직 추가
-    const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
+  async getAIFeedback(solvedQuizId: number, userId: number) {
+    const solvedQuiz = await this.solvedQuizRepository.findByIdAndUserId(
+      solvedQuizId,
+      userId,
+    );
 
     if (!solvedQuiz) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
@@ -228,6 +230,7 @@ export class FeedbackService {
     if (!solvedQuiz.aiFeedback) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
     }
+
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
     const checklistInSolvedQuiz =
       await this.usersService.getUserChecklistProgress(solvedQuizId);

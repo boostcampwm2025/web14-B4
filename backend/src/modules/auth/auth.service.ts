@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { JwtService } from '@nestjs/jwt';
@@ -9,12 +9,17 @@ import { User, Provider } from 'src/datasources/entities/tb-user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import type { WinstonLogger } from 'nest-winston';
+import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 
 interface NaverTokenResponse {
-  access_token: string;
+  access_token?: string;
   refresh_token: string;
   token_type: string;
   expires_in: string;
+  error?: string;
+  error_description?: string;
 }
 
 interface NaverProfileResponse {
@@ -35,6 +40,8 @@ export class AuthService {
   private readonly redisClient: Redis;
 
   constructor(
+    @Inject(WINSTON_MODULE_NEST_PROVIDER)
+    private readonly logger: WinstonLogger,
     private readonly configService: ConfigService,
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
@@ -58,14 +65,22 @@ export class AuthService {
     }).toString();
 
     const tokenResponse = await fetch(`${tokenUrl}?${tokenParams}`);
-    if (!tokenResponse.ok) {
-      const errorData = (await tokenResponse.json()) as Record<string, unknown>;
-      console.error('Naver Token Error:', JSON.stringify(errorData));
-      // TODO logExternalApiError로 교체 예정
+    const tokenData = (await tokenResponse.json()) as NaverTokenResponse;
+    if (!tokenResponse.ok || tokenData.error) {
+      logExternalApiError(
+        this.logger,
+        'NAVER',
+        '[Naver Token Error]',
+        new Error(tokenData.error_description || 'Unknown OAuth Error'),
+        {
+          endpoint: 'token',
+          status: tokenResponse.status,
+          errorCode: tokenData.error,
+        },
+      );
       throw new BusinessException(ERROR_MESSAGES.NAVER_TOKEN_FAILED);
     }
 
-    const tokenData = (await tokenResponse.json()) as NaverTokenResponse;
     const accessToken = tokenData.access_token;
     if (!accessToken)
       throw new BusinessException(ERROR_MESSAGES.NAVER_TOKEN_FAILED);
@@ -142,6 +157,11 @@ export class AuthService {
         username: user.username,
       },
     };
+  }
+
+  // uuid로 사용자 조회
+  async findUserByUuid(uuid: string): Promise<User | null> {
+    return await this.userRepository.findByUuid(uuid);
   }
 
   async createGuestUser(): Promise<User> {

@@ -97,6 +97,16 @@ export class SolvedQuizRepository {
     });
   }
 
+  async findByIdAndUserId(
+    solvedQuizId: number,
+    userId: number,
+  ): Promise<SolvedQuiz | null> {
+    return await this.repository.findOne({
+      where: { solvedQuizId, user: { userId } },
+      relations: ['user', 'mainQuiz'],
+    });
+  }
+
   async getSpeechTextById(solvedQuizId: number): Promise<string | null> {
     const result = await this.repository.findOne({
       where: { solvedQuizId },

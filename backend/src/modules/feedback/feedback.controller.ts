@@ -6,14 +6,24 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Req,
+  Res,
 } from '@nestjs/common';
 import { FeedbackService } from './feedback.service';
 import { Public } from '../auth/decorator/public.decorator';
+import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
+import { User } from 'src/datasources/entities/tb-user.entity';
+import { getOrCreateGuestUserId } from '../auth/utils/guest-user.util';
+import { AuthService } from '../auth/auth.service';
+import type { Request, Response } from 'express';
 
 @Public()
 @Controller('feedback')
 export class FeedbackController {
-  constructor(private readonly feedbackService: FeedbackService) {}
+  constructor(
+    private readonly feedbackService: FeedbackService,
+    private readonly authService: AuthService,
+  ) {}
 
   @Post('/')
   async createAIFeedback(@Body() dto: CreateAIFeedbackRequestDto) {
@@ -23,9 +33,17 @@ export class FeedbackController {
 
   @Get('/:solvedQuizId')
   async getAIFeedbackResult(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
     @Param('solvedQuizId', ParseIntPipe) solvedQuizId: number,
-    // TODO: 추후에 로그인/회원가입 기능 구현 시에 로그인한 사용자 정보를 받아와 서비스로 전달
   ) {
-    return this.feedbackService.getAIFeedback(solvedQuizId);
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+    return this.feedbackService.getAIFeedback(solvedQuizId, userId);
   }
 }
