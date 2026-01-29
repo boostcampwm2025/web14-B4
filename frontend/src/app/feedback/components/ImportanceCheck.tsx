@@ -57,7 +57,7 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
       return;
     }
 
-    const ok = window.confirm('말하기 연습을 종료하고 퀴즈 목록으로 이동합니다.');
+    const ok = window.confirm('피드백 확인을 마치고 퀴즈 목록으로 이동합니다.');
     if (!ok) {
       return;
     }
