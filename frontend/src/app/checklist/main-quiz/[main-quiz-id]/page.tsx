@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
 import ChecklistSection from '../../components/ChecklistSection';
+import { cookies } from 'next/headers';
 
 export default async function ResultPage({
   params,
@@ -12,6 +13,11 @@ export default async function ResultPage({
 }) {
   const resolvedParams = await params;
   const mainQuizId = parseInt(resolvedParams['main-quiz-id'], 10);
+
+  // 쿠키에서 username 가져오기
+  const cookieStore = await cookies();
+  const usernameCookie = cookieStore.get('username')?.value;
+  const username = usernameCookie ? decodeURIComponent(usernameCookie) : '게스트';
 
   const quiz = await fetchQuiz(mainQuizId);
   // 서버에서 모든 데이터 병렬로 fetching
@@ -49,6 +55,7 @@ export default async function ResultPage({
       {/* 상호작용 필요한 부분 - 클라이언트 컴포넌트 */}
       <ChecklistSection
         mainQuizId={mainQuizId}
+        username={username}
         initialSpeechItem={initialSpeechItem}
         initialChecklistItems={initialChecklistItems}
       />
