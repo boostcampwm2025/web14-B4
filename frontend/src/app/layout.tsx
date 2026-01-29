@@ -2,6 +2,7 @@ import { ToastContainer } from 'react-toastify';
 import './globals.css';
 import ConditionalHeader from '@/components/ConditionalHeader';
 import ErrorToast from '@/components/ErrorToast';
+import Footer from '@/components/Footer';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 
@@ -27,6 +28,7 @@ export default function RootLayout({
           <ErrorToast />
         </Suspense>
         <main>{children}</main>
+        <Footer />
         <ToastContainer />
       </body>
     </html>
