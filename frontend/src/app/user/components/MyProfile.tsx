@@ -83,7 +83,7 @@ export default function MyProfile({ user }: UserProfileProps) {
         {
           <button
             onClick={handleEdit}
-            className="flex-shrink-0 rounded-full px-8 py-1 text-sm font-medium text-gray-500 bg-gray-50 hover:bg-gray-200 border border-gray-500 transition-colors"
+            className="flex-shrink-0 rounded-full px-8 py-1 text-sm font-medium text-gray-500 bg-gray-50 hover:bg-gray-200 border border-gray-500 transition-colors cursor-pointer"
           >
             내 정보 수정
           </button>
