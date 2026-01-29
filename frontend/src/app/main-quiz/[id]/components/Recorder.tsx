@@ -17,6 +17,7 @@ import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons'
 import RecordedVideo from './record/RecordedVideo';
 import { useRecorderTimer } from '@/hooks/mainQuiz/useRecorderTimer';
 import RecorderTimer from './RecorderTimer';
+import Popup from '@/components/Popup';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -48,6 +49,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
     useAudioRecorder({
@@ -287,6 +289,19 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     setMessage(null);
   };
 
+  const handleExit = () => {
+    setIsPopupOpen(true);
+  };
+
+  const handleConfirm = () => {
+    setIsPopupOpen(false);
+    router.push('/quizzes');
+  };
+
+  const handleCancel = () => {
+    setIsPopupOpen(false);
+  };
+
   const handleSubmit = async () => {
     if (!audioBlob || !audioManifest) {
       return;
@@ -331,6 +346,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     onStop: handleStop,
     onRetry: handleRetry,
     onSubmit: handleSubmit,
+    onExit: handleExit,
   });
 
   const isSubmitting = recordStatus === 'submitting';
@@ -436,6 +452,14 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
 
       {/* 녹화된 비디오 목록 - 하단에 중앙 배치 */}
       <RecordedVideo videoUrl={recordedVideoUrl} />
+
+      <Popup
+        isOpen={isPopupOpen}
+        title="퀴즈 목록으로 이동하시겠습니까?"
+        description="녹음중인 답변이 제출되지 않습니다."
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 }

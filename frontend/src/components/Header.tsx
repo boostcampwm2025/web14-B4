@@ -58,7 +58,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 flex justify-between items-center px-10 py-3 bg-white/80 backdrop-blur-md border-b border-[var(--color-gray-light)]">
       {/* 로고 영역 */}
       <Link
-        href="/"
+        href="/quizzes"
         className="flex items-center"
         draggable={false}
         onDragStart={(e) => e.preventDefault()}

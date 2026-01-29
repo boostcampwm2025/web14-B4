@@ -12,17 +12,17 @@ import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 import { Button } from '@/components/Button';
 
-interface ChecklistSessionProps {
+interface ChecklistSectionProps {
   mainQuizId: number;
   initialSpeechItem: SpeechItemDto;
   initialChecklistItems: ChecklistItem[];
 }
 
-export default function ChecklistSession({
+export default function ChecklistSection({
   mainQuizId,
   initialSpeechItem,
   initialChecklistItems,
-}: ChecklistSessionProps) {
+}: ChecklistSectionProps) {
   const router = useRouter();
   const {
     solvedQuizId,
@@ -31,6 +31,7 @@ export default function ChecklistSession({
     actions: { requestAiFeedback },
   } = useQuizStore();
   const { clearSolvedQuizId } = useQuizStore();
+  const resetAnalyzing = useQuizStore((s) => s.resetAnalyzing);
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
   const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
@@ -51,6 +52,12 @@ export default function ChecklistSession({
       router.push(`/quizzes`);
     }
   }, [_hasHydrated, solvedQuizId, router]);
+
+  useEffect(() => {
+    return () => {
+      resetAnalyzing();
+    };
+  }, [resetAnalyzing]);
 
   const handleOptionChange = (optionId: string, checked: boolean) => {
     setOptions((prev) =>
