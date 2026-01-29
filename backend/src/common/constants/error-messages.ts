@@ -122,6 +122,13 @@ export const ERROR_MESSAGES = {
     message: '접근 권한이 없습니다. 로그인 후 이용해주세요.',
   },
 
+  // 개발 환경에서만 접근 가능
+  FORBIDDEN_ON_PRODUCTION: {
+    errorCode: 'FORBIDDEN_ACCESS',
+    status: 403,
+    message: '배포 환경에서는 허용되지 않는 접근입니다.',
+  },
+
   // OAuth 및 인증 관련 에러
   NAVER_TOKEN_FAILED: {
     errorCode: 'NAVER_TOKEN_FAILED',

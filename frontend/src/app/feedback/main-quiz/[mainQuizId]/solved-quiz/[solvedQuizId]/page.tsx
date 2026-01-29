@@ -1,5 +1,6 @@
 import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
 import { redirect } from 'next/navigation';
+import { cookies } from 'next/headers';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '../../../../components/keywords/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
@@ -17,6 +18,12 @@ type Props = {
 
 export default async function FeedbackPage({ params }: Props) {
   const { solvedQuizId } = await params;
+
+  // 쿠키에서 username 가져오기
+  const cookieStore = await cookies();
+  const usernameCookie = cookieStore.get('username')?.value;
+  const username = usernameCookie ? decodeURIComponent(usernameCookie) : '게스트';
+
   let data;
   try {
     data = await fetchAIFeedbackResult(Number(solvedQuizId));
@@ -36,8 +43,6 @@ export default async function FeedbackPage({ params }: Props) {
     ),
   }));
 
-  const USER_NAME = '철수';
-
   return (
     <main className="flex flex-col justify-center m-5">
       <PreventBackNavigation />
@@ -45,7 +50,7 @@ export default async function FeedbackPage({ params }: Props) {
         content={solvedQuizDetail.content}
         category={solvedQuizDetail.quizCategory.name}
         difficultyLevel={solvedQuizDetail.difficultyLevel}
-        userName={USER_NAME}
+        userName={username}
         checklistCount={solvedQuizDetail.userChecklistProgress.checklistCount}
         checkedCount={solvedQuizDetail.userChecklistProgress.checkedCount}
       />
@@ -56,7 +61,7 @@ export default async function FeedbackPage({ params }: Props) {
       <FeedbackComplements items={aiFeedbackResult.complementsFeedback} />
       <FeedbackQuestions questions={aiFeedbackResult.followUpQuestions} />
       <ImportanceCheck
-        userName={USER_NAME}
+        userName={username}
         mainQuizId={solvedQuizDetail.mainQuizId}
         solvedQuizId={Number(solvedQuizId)}
         importance={solvedQuizDetail.importance}

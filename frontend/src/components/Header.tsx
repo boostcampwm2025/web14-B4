@@ -58,7 +58,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 flex justify-between items-center px-10 py-3 bg-white/80 backdrop-blur-md border-b border-[var(--color-gray-light)]">
       {/* 로고 영역 */}
       <Link
-        href="/"
+        href="/quizzes"
         className="flex items-center"
         draggable={false}
         onDragStart={(e) => e.preventDefault()}
@@ -74,7 +74,7 @@ export default function Header() {
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               className={`
                 ${commonButtonClass}
-                w-10 h-10 rounded-full overflow-hidden
+                w-10 h-10 rounded-full overflow-hidden cursor-pointer
                 ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary)] ring-offset-2 scale-105 shadow-md border-transparent' : ''}
               `}
             >
@@ -100,7 +100,7 @@ export default function Header() {
 
                   <button
                     onClick={handleLogout}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-gray-dark)] rounded-lg hover:bg-blue-50 hover:text-[var(--color-primary)] transition-colors"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-gray-dark)] rounded-lg hover:bg-blue-50 hover:text-[var(--color-primary)] transition-colors cursor-pointer"
                     draggable={false}
                     onDragStart={(e) => e.preventDefault()}
                   >
@@ -117,7 +117,7 @@ export default function Header() {
               ${commonButtonClass}
               px-6 py-2 rounded-full 
               border border-[var(--color-primary)]
-              text-[var(--color-primary)] text-sm font-bold
+              text-[var(--color-primary)] text-sm font-bold cursor-pointer
                           variant="secondary"
             size="cta"
             `}

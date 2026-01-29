@@ -20,8 +20,8 @@ export default async function Page() {
   };
 
   return (
-    <div className="min-h-screen max-w-6xl mx-auto">
-      <div className="space-y-3">
+    <div className="min-h-screen flex justify-center">
+      <div className="space-y-3 w-300 px-10">
         <MyProfile user={userData} />
         <QuizStatisticsSection
           comprehensionData={comprehensionResponse.comprehensionData}
