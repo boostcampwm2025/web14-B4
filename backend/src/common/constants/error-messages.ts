@@ -71,12 +71,6 @@ export const ERROR_MESSAGES = {
     status: 400,
     message: `답변이 너무 깁니다. ${MAX_USER_ANSWER_LENGTH}자 이하로 답변해주세요.`,
   },
-  // 피드백 접근 권한 없는 경우
-  FEEDBACK_ACCESS_DENIED: {
-    errorCode: 'FEEDBACK_ACCESS_DENIED',
-    status: 403,
-    message: '해당 피드백에 대한 접근 권한이 없습니다.',
-  },
 
   // 외부 API 공통
   EXTERNAL_API_SERVER_ERROR: {

@@ -218,7 +218,10 @@ export class FeedbackService {
   }
 
   async getAIFeedback(solvedQuizId: number, userId: number) {
-    const solvedQuiz = await this.solvedQuizRepository.getById(solvedQuizId);
+    const solvedQuiz = await this.solvedQuizRepository.findByIdAndUserId(
+      solvedQuizId,
+      userId,
+    );
 
     if (!solvedQuiz) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
@@ -226,10 +229,6 @@ export class FeedbackService {
 
     if (!solvedQuiz.aiFeedback) {
       throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
-    }
-
-    if (solvedQuiz.user.userId !== userId) {
-      throw new BusinessException(ERROR_MESSAGES.FEEDBACK_ACCESS_DENIED);
     }
 
     const mainQuiz = await this.getMainQuiz(solvedQuiz.mainQuiz.mainQuizId);
