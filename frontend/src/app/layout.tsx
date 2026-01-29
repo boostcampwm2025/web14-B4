@@ -3,6 +3,16 @@ import './globals.css';
 import ConditionalHeader from '@/components/ConditionalHeader';
 import ErrorToast from '@/components/ErrorToast';
 import { Suspense } from 'react';
+import type { Metadata } from 'next';
+
+export const metadata = {
+  title: 'CS뽁뽁',
+  description: 'CS 개념을 말로 설명하며, 스스로 사고하는 학습을 돕는 서비스',
+  openGraph: {
+    title: 'CS뽁뽁',
+    description: 'CS 개념을 말로 설명하며, 스스로 사고하는 학습을 돕는 서비스',
+  },
+};
 
 export default function RootLayout({
   children,
