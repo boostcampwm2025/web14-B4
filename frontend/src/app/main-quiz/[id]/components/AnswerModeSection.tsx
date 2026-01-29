@@ -61,7 +61,6 @@ function CardButton({ iconSrc, label, onClick }: CardButtonProps) {
 
 export default function AnswerModeSection({ quizId }: Props) {
   const [mode, setMode] = useState<AnswerMode | null>(null);
-
   const modeLabel =
     mode === 'voice' ? '음성 답변 모드' : mode === 'text' ? '텍스트 답변 모드' : null;
 
