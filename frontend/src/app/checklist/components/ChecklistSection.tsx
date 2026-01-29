@@ -30,7 +30,6 @@ export default function ChecklistSection({
     _hasHydrated,
     actions: { requestAiFeedback },
   } = useQuizStore();
-  const { clearSolvedQuizId } = useQuizStore();
   const resetAnalyzing = useQuizStore((s) => s.resetAnalyzing);
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
@@ -68,7 +67,6 @@ export default function ChecklistSection({
   const handleResetAndNavigate = (e: React.MouseEvent<HTMLButtonElement>) => {
     const confirmed = window.confirm('답변을 초기화하고 다시 풀겠습니까?');
     if (confirmed) {
-      clearSolvedQuizId();
       router.push(`/main-quiz/${mainQuizId}`);
     } else {
       e.preventDefault();
