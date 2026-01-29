@@ -1,7 +1,5 @@
 import { fetchQuiz, fetchQuizChecklistItems } from '@/services/apis/quizApi';
 import { getSpeechesByQuizId } from '@/services/apis/speechesApi';
-import dynamic from 'next/dynamic';
-
 import { QuizInfoBadge } from '@/components/QuizInfoBadge';
 import ChecklistSection from '../../components/ChecklistSection';
 
