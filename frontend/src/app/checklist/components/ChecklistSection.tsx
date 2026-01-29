@@ -29,8 +29,10 @@ export default function ChecklistSection({
     isAnalyzing,
     _hasHydrated,
     actions: { requestAiFeedback },
+    setMainQuizId,
   } = useQuizStore();
   const resetAnalyzing = useQuizStore((s) => s.resetAnalyzing);
+  const { mainQuizId: StorageMainQuizId } = useQuizStore();
 
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
   const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
@@ -39,7 +41,7 @@ export default function ChecklistSection({
   useEffect(() => {
     if (!_hasHydrated) return;
 
-    if (!solvedQuizId || solvedQuizId <= 0) {
+    if (StorageMainQuizId !== mainQuizId || !solvedQuizId || solvedQuizId <= 0) {
       toast.info('푼 퀴즈 정보가 존재하지 않아, 퀴즈 페이지로 이동합니다.', {
         position: 'top-center',
         autoClose: 2500,
@@ -50,7 +52,8 @@ export default function ChecklistSection({
       });
       router.push(`/quizzes`);
     }
-  }, [_hasHydrated, solvedQuizId, router]);
+    setMainQuizId(mainQuizId);
+  }, [_hasHydrated, solvedQuizId, mainQuizId, router]);
 
   useEffect(() => {
     return () => {
