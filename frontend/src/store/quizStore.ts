@@ -10,6 +10,9 @@ interface QuizStore {
   solvedQuizId: number | null;
   setSolvedQuizId: (id: number) => void;
   clearSolvedQuizId: () => void;
+  mainQuizId: number | null;
+  setMainQuizId: (id: number) => void;
+  clearMainQuizId: () => void;
   _hasHydrated: boolean;
   isAnalyzing: boolean;
   resetAnalyzing: () => void;
@@ -24,6 +27,10 @@ export const useQuizStore = create<QuizStore>()(
       solvedQuizId: null,
       setSolvedQuizId: (id: number) => set({ solvedQuizId: id }),
       clearSolvedQuizId: () => set({ solvedQuizId: null }),
+
+      mainQuizId: null,
+      setMainQuizId: (id: number) => set({ mainQuizId: id }),
+      clearMainQuizId: () => set({ mainQuizId: null }),
 
       isAnalyzing: false,
       resetAnalyzing: () => set({ isAnalyzing: false }),
@@ -48,6 +55,7 @@ export const useQuizStore = create<QuizStore>()(
       name: 'quiz-storage', // localStorage 키
       partialize: (state) => ({
         solvedQuizId: state.solvedQuizId,
+        mainQuizId: state.mainQuizId,
       }),
       onRehydrateStorage: () => (state) => {
         if (state) {
