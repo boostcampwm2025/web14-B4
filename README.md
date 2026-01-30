@@ -1,5 +1,6 @@
-<img width="3200" height="800" alt="image" src="https://github.com/user-attachments/assets/97022b39-9473-4cdf-a4d7-67abacc82f91"/>
+![CS 뽁뽁 배너](imgs/banner-cs-bbokbbok.png)
 <br><br>
+
 <p align="center"> 
  CS 개념을 직접 말로 설명하며 수동적인 암기에서 벗어나 
 </p>
@@ -8,7 +9,7 @@
 스스로 사고하고 학습하는 방법을 익히도록 돕는 서비스, <strong>CS 뽁뽁</strong>입니다.
 </p>
 
----
+<br><br>
 
 ### 🎯 프로젝트
 
@@ -59,7 +60,7 @@
 
 ## ☁ Infra Architecture
 
-![Infra 구조](imgs/infra-architectire.png)
+![Infra 구조](imgs/infra-architecture.png)
 
 ---
 
