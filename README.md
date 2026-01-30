@@ -1,17 +1,11 @@
-<h1 align="center">
-CS 뽁뽁
-</h1>
-
+<img width="3200" height="800" alt="image" src="https://github.com/user-attachments/assets/97022b39-9473-4cdf-a4d7-67abacc82f91"/>
+<br><br>
 <p align="center"> 
-💬 CS 개념을 직접 말로 설명하며
+ CS 개념을 직접 말로 설명하며 수동적인 암기에서 벗어나 
 </p>
 
 <p align="center">
-수동적인 암기에서 벗어나 
-</p>
-
-<p align="center">
-스스로 사고하고 학습하는 방법을 익히도록 돕는 서비스
+스스로 사고하고 학습하는 방법을 익히도록 돕는 서비스, <strong>CS 뽁뽁</strong>입니다.
 </p>
 
 ---
