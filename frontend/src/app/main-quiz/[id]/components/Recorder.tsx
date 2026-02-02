@@ -15,10 +15,8 @@ import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 import RecordedVideo from './record/RecordedVideo';
-import { useRecorderTimer } from '@/hooks/mainQuiz/useRecorderTimer';
-import RecorderTimer from './RecorderTimer';
 import Popup from '@/components/Popup';
-
+import RecorderTimerContainer from './RecorderTimerContainer';
 interface AudioRecorderProps {
   quizId: number;
   onSwitchToTextMode: () => void;
@@ -35,10 +33,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const { setSolvedQuizId } = useQuizStore();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
-
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
-  const timer = useRecorderTimer();
-
   const [message, setMessage] = useState<string | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -266,7 +261,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
       });
       startVideoRecording();
 
-      timer.startTimer();
       setStatus('recording');
     } catch {
       setMessage('녹음을 시작할 수 없습니다.');
@@ -278,13 +272,11 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     await stopRecording();
     stopVideoRecording();
     stopCamera();
-    timer.stopTimer();
   };
 
   const handleRetry = () => {
     resetRecording();
     resetVideoRecording();
-    timer.resetTimer();
     setStatus('idle');
     setMessage(null);
   };
@@ -306,15 +298,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     if (!audioBlob || !audioManifest) {
       return;
     }
-
-    if (timer.seconds > timer.maxSeconds) {
-      const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
-      alert(errMsg);
-      setError(errMsg);
-      handleRetry();
-      return;
-    }
-
     setStatus('submitting');
 
     try {
@@ -351,16 +334,11 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
 
   const isSubmitting = recordStatus === 'submitting';
 
-  useEffect(() => {
-    if (timer.isMaximumTime && recordStatus === 'recording') {
-      // setState 호출을 다음 렌더링 사이클로 지연
-      const timeoutId = setTimeout(() => {
-        handleStop();
-      }, 0);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [timer.isMaximumTime, recordStatus, handleStop]);
+  const handleTimeout = async () => {
+    const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
+    alert(errMsg);
+    await handleStop();
+  };
 
   return (
     <div>
@@ -421,10 +399,9 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
             />
 
             {/* 녹음 시간 */}
-            <RecorderTimer
-              seconds={timer.seconds}
-              maxSeconds={timer.maxSeconds}
+            <RecorderTimerContainer
               isRecording={recordStatus === 'recording'}
+              onTimeout={handleTimeout}
             />
 
             {/* 메시지 */}
