@@ -5,6 +5,11 @@ import { TestLoginDto } from './dto/test-login.dto';
 import type { Response, Request } from 'express';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import {
+  ACCESS_TOKEN_MAX_AGE,
+  REFRESH_TOKEN_MAX_AGE,
+  USERNAME_COOKIE_MAX_AGE,
+} from 'src/common/constants/auth.constants';
 import { Public } from './decorator/public.decorator';
 import { clearGuestUserIdCookie } from './utils/guest-user.util';
 @Controller('auth')
@@ -24,14 +29,14 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
     // UI 표시용으로 사용될 username
@@ -39,7 +44,7 @@ export class AuthController {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: USERNAME_COOKIE_MAX_AGE,
     });
 
     // 게스트 쿠키 삭제
@@ -66,21 +71,21 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
     res.cookie('username', user.username, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: USERNAME_COOKIE_MAX_AGE,
     });
 
     clearGuestUserIdCookie(res);
@@ -106,21 +111,21 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: REFRESH_TOKEN_MAX_AGE,
     });
 
     res.cookie('accessToken', newTokens.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
     res.cookie('username', newTokens.username, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
+      maxAge: USERNAME_COOKIE_MAX_AGE,
     });
     return { success: true };
   }

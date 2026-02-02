@@ -9,6 +9,11 @@ import { User, Provider } from 'src/datasources/entities/tb-user.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { BusinessException } from 'src/common/exceptions/business.exception';
 import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
+import {
+  ACCESS_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_TTL,
+} from 'src/common/constants/auth.constants';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import type { WinstonLogger } from 'nest-winston';
 import { logExternalApiError } from 'src/common/utils/external-api-error.util';
@@ -211,15 +216,19 @@ export class AuthService {
   private async issueTokens(uuid: string) {
     const payload: JwtPayload = { sub: uuid };
 
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '1h' });
-    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+    });
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: REFRESH_TOKEN_EXPIRES_IN,
+    });
 
     try {
       await this.redisClient.set(
         `RT:${uuid}`,
         refreshToken,
         'EX',
-        60 * 60 * 24 * 7,
+        REFRESH_TOKEN_TTL,
       );
     } catch {
       throw new BusinessException(ERROR_MESSAGES.TOKEN_UPDATE_FAILED);
@@ -241,7 +250,9 @@ export class AuthService {
 
     // AT만 새로 발급
     const newPayload: JwtPayload = { sub: uuid };
-    const accessToken = this.jwtService.sign(newPayload, { expiresIn: '1h' });
+    const accessToken = this.jwtService.sign(newPayload, {
+      expiresIn: ACCESS_TOKEN_EXPIRES_IN,
+    });
 
     // username 조회
     const user = await this.userRepository.findByUuid(uuid);

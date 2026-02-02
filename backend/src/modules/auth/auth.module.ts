@@ -9,6 +9,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { TokenRefreshMiddleware } from './middleware/token-refresh.middleware';
 import { NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { ACCESS_TOKEN_EXPIRES_IN } from 'src/common/constants/auth.constants';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { NestModule, MiddlewareConsumer } from '@nestjs/common';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1h' },
+        signOptions: { expiresIn: ACCESS_TOKEN_EXPIRES_IN },
       }),
     }),
   ],

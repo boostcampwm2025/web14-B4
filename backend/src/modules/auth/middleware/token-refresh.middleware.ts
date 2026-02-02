@@ -2,6 +2,10 @@ import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from '../auth.service';
+import {
+  ACCESS_TOKEN_MAX_AGE,
+  USERNAME_COOKIE_MAX_AGE,
+} from 'src/common/constants/auth.constants';
 
 @Injectable()
 export class TokenRefreshMiddleware implements NestMiddleware {
@@ -46,14 +50,14 @@ export class TokenRefreshMiddleware implements NestMiddleware {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1시간
+      maxAge: ACCESS_TOKEN_MAX_AGE,
     });
 
     res.cookie('username', tokens.username, {
       httpOnly: false,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
-      maxAge: 60 * 60 * 1000, // 1시간
+      maxAge: USERNAME_COOKIE_MAX_AGE,
     });
   }
 
