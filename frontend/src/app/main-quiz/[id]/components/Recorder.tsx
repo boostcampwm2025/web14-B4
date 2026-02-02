@@ -50,6 +50,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isTimeExceededPopupOpen, setIsTimeExceededPopupOpen] = useState(false);
 
   const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
     useAudioRecorder({
@@ -302,6 +303,11 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     setIsPopupOpen(false);
   };
 
+  const handleTimeExceededConfirm = () => {
+    setIsTimeExceededPopupOpen(false);
+    handleRetry();
+  };
+
   const handleSubmit = async () => {
     if (!audioBlob || !audioManifest) {
       return;
@@ -309,9 +315,8 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
 
     if (timer.seconds > timer.maxSeconds) {
       const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
-      alert(errMsg);
       setError(errMsg);
-      handleRetry();
+      setIsTimeExceededPopupOpen(true);
       return;
     }
 
@@ -356,6 +361,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
       // setState 호출을 다음 렌더링 사이클로 지연
       const timeoutId = setTimeout(() => {
         handleStop();
+        setIsTimeExceededPopupOpen(true);
       }, 0);
 
       return () => clearTimeout(timeoutId);
@@ -459,6 +465,15 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
         description="녹음중인 답변이 제출되지 않습니다."
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+
+      <Popup
+        isOpen={isTimeExceededPopupOpen}
+        title="녹음 시간 초과"
+        description="녹음 시간을 초과되어 녹음이 중지됩니다."
+        confirmText="확인"
+        onConfirm={handleTimeExceededConfirm}
+        singleButton
       />
     </div>
   );
