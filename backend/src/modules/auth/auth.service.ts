@@ -199,7 +199,12 @@ export class AuthService {
     }
 
     // 새 토큰 발급
-    return this.issueTokens(uuid);
+    const tokens = await this.issueTokens(uuid);
+    const user = await this.userRepository.findByUuid(uuid);
+    if (!user) {
+      throw new BusinessException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+    return { ...tokens, username: user.username };
   }
 
   // 토큰 발급 및 Redis 저장
