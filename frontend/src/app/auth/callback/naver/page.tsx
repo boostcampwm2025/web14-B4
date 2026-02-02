@@ -1,15 +1,24 @@
 'use client';
 
-import { useEffect, useRef, Suspense } from 'react';
+import { useEffect, useRef, Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Loader from '@/components/Loader';
+import Popup from '@/components/Popup';
 import { loginWithNaver } from '@/services/apis/authApi';
 import { verifyState } from '@/utils/oauth';
+
+type PopupType = 'stateError' | 'loginError' | null;
 
 function NaverLoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const requestSent = useRef(false);
+  const [popupType, setPopupType] = useState<PopupType>(null);
+
+  const handlePopupClose = () => {
+    setPopupType(null);
+    router.push('/');
+  };
 
   useEffect(() => {
     const code = searchParams.get('code');
@@ -18,8 +27,7 @@ function NaverLoginContent() {
     // state 검증
     if (code && state) {
       if (!verifyState(state)) {
-        alert('잘못된 요청입니다. State가 불일치합니다.');
-        router.push('/');
+        setTimeout(() => setPopupType('stateError'), 0);
         return;
       }
     }
@@ -33,8 +41,7 @@ function NaverLoginContent() {
         })
         .catch((err) => {
           console.error('로그인 실패:', err);
-          alert('로그인 처리에 실패했습니다.');
-          router.push('/');
+          setTimeout(() => setPopupType('loginError'), 0);
         });
     }
   }, [searchParams, router]);
@@ -42,6 +49,24 @@ function NaverLoginContent() {
   return (
     <div className="flex justify-center items-center h-screen">
       <Loader message="로그인 처리 중입니다..." />
+
+      <Popup
+        isOpen={popupType === 'stateError'}
+        title="잘못된 요청"
+        description="잘못된 요청입니다. State가 불일치합니다."
+        confirmText="확인"
+        onConfirm={handlePopupClose}
+        singleButton
+      />
+
+      <Popup
+        isOpen={popupType === 'loginError'}
+        title="로그인 실패"
+        description="로그인 처리에 실패했습니다."
+        confirmText="확인"
+        onConfirm={handlePopupClose}
+        singleButton
+      />
     </div>
   );
 }
