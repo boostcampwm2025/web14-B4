@@ -17,6 +17,7 @@ import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons'
 import RecordedVideo from './record/RecordedVideo';
 import Popup from '@/components/Popup';
 import RecorderTimerContainer from './RecorderTimerContainer';
+import { MAX_SPEECH_SECONDS } from '@/constants/speech.constants';
 interface AudioRecorderProps {
   quizId: number;
   onSwitchToTextMode: () => void;
@@ -335,7 +336,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const isSubmitting = recordStatus === 'submitting';
 
   const handleTimeout = async () => {
-    const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
+    const errMsg = `녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 다시 녹음해주세요.`;
     alert(errMsg);
     await handleStop();
   };
