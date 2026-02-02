@@ -227,6 +227,31 @@ export class AuthService {
     return { accessToken, refreshToken };
   }
 
+  // 미들웨어 전용 refresh 메서드
+  async refreshAccessTokenOnly(refreshToken: string) {
+    // RT의 JWT 서명 검증 및 페이로드 추출
+    const payload = this.jwtService.verify<JwtPayload>(refreshToken);
+    const uuid = payload.sub;
+
+    // Redis에 저장된 RT와 비교하여 유효성 검증
+    const redisRt = await this.redisClient.get(`RT:${uuid}`);
+    if (!redisRt || redisRt !== refreshToken) {
+      throw new BusinessException(ERROR_MESSAGES.REFRESH_TOKEN_INVALID);
+    }
+
+    // AT만 새로 발급
+    const newPayload: JwtPayload = { sub: uuid };
+    const accessToken = this.jwtService.sign(newPayload, { expiresIn: '1h' });
+
+    // username 조회
+    const user = await this.userRepository.findByUuid(uuid);
+    if (!user) {
+      throw new BusinessException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+
+    return { accessToken, username: user.username };
+  }
+
   // refreshToken의 JWT 서명 검증
   verifyRefreshToken(token: string): JwtPayload {
     try {
