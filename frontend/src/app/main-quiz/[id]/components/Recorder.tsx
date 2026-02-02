@@ -46,6 +46,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const [isVideoRecording, setIsVideoRecording] = useState(false);
   const [error, setError] = useState<string>('');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isTimeoutPopupOpen, setIsTimeoutPopupOpen] = useState(false);
 
   const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
     useAudioRecorder({
@@ -323,6 +324,19 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     }
   };
 
+  const handleTimeout = async () => {
+    setIsTimeoutPopupOpen(true);
+    await handleStop();
+  };
+
+  const handleTimeoutConfirm = () => {
+    setIsTimeoutPopupOpen(false);
+    setMessage(
+      `녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 녹음 내용을 확인한 후 다시 녹음해주세요.`,
+    );
+    // 여기서 바로 handleRetry()하면 사용자가 녹음 파일을 확인 할 수 없으므로 handleRetry()하지 않음
+  };
+
   const actionButtons = useRecordActionButtons({
     recordStatus,
     canRecord,
@@ -334,12 +348,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   });
 
   const isSubmitting = recordStatus === 'submitting';
-
-  const handleTimeout = async () => {
-    const errMsg = `녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 다시 녹음해주세요.`;
-    alert(errMsg);
-    await handleStop();
-  };
 
   return (
     <div>
@@ -437,6 +445,13 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
         description="녹음중인 답변이 제출되지 않습니다."
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+      <Popup
+        isOpen={isTimeoutPopupOpen}
+        title="녹음 시간이 초과되었습니다."
+        description={`녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 녹음 내용을 확인한 후 다시 녹음해주세요.`}
+        confirmText="확인"
+        onConfirm={handleTimeoutConfirm}
       />
     </div>
   );
