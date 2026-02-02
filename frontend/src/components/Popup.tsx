@@ -7,7 +7,7 @@ interface PopupProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
 }
 
 function Popup({
@@ -38,14 +38,16 @@ function Popup({
 
         {/* 버튼 영역 */}
         <div className="flex gap-5">
-          <Button
-            variant="secondary"
-            size="cta"
-            className="flex-1 rounded-[20px]"
-            onClick={onCancel}
-          >
-            {cancelText}
-          </Button>
+          {onCancel && (
+            <Button
+              variant="secondary"
+              size="cta"
+              className="flex-1 rounded-[20px]"
+              onClick={onCancel}
+            >
+              {cancelText}
+            </Button>
+          )}
 
           <Button
             variant="primary"
