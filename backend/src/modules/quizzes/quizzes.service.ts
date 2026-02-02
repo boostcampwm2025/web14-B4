@@ -18,6 +18,9 @@ import { ERROR_MESSAGES } from 'src/common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { mapSolvedQuizzesToImportanceData } from './mapper/response-mapper';
+import { CursorPaginatedResult } from 'src/common/interfaces/pagination.interface';
+import { QuizInfiniteScrollDto } from './dto/quiz-search.dto';
+import { createCursorPaginatedResult } from 'src/common/utils/pagination.util';
 
 @Injectable()
 export class QuizzesService {
@@ -30,24 +33,34 @@ export class QuizzesService {
   ) {}
 
   async getQuizzes(
-    category?: string,
-    difficulty?: DifficultyLevel,
-  ): Promise<MainQuiz[]> {
-    const where: FindOptionsWhere<MainQuiz> = {};
+    searchDto: QuizInfiniteScrollDto,
+  ): Promise<CursorPaginatedResult<MainQuiz>> {
+    const { cursor, limit, category, difficulty } = searchDto;
+    const take = limit + 1; // 다음 페이지 확인용 +1
 
-    if (category) {
-      where.quizCategory = { name: category };
+    const queryBuilder = this.quizRepository
+      .createQueryBuilder('quiz')
+      .leftJoinAndSelect('quiz.quizCategory', 'category') // 카테고리 조인
+      .orderBy('quiz.mainQuizId', 'ASC');
+
+    // 커서가 있으면 해당 ID 이후부터
+    if (cursor) {
+      queryBuilder.andWhere('quiz.mainQuizId > :cursor', { cursor });
+    }
+
+    if (category && typeof category === 'string') {
+      queryBuilder.andWhere('category.name = :category', { category });
     }
 
     if (difficulty) {
-      where.difficultyLevel = difficulty;
+      queryBuilder.andWhere('quiz.difficultyLevel = :difficulty', {
+        difficulty,
+      });
     }
 
-    return await this.quizRepository.find({
-      where,
-      relations: ['quizCategory'],
-      order: { mainQuizId: 'ASC' },
-    });
+    const data = await queryBuilder.take(take).getMany();
+
+    return createCursorPaginatedResult(data, limit, 'mainQuizId');
   }
 
   async getCategoriesWithCount(difficulty?: DifficultyLevel) {
