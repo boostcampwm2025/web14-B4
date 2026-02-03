@@ -7,12 +7,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import {
-  MainQuiz,
-  DifficultyLevel,
-} from '../../datasources/entities/tb-main-quiz.entity';
+import { DifficultyLevel } from '../../datasources/entities/tb-main-quiz.entity';
 import { MultipleChoicesResponseDto } from './dto/quiz-response.dto';
 import { Public } from '../auth/decorator/public.decorator';
+import { QuizInfiniteScrollDto } from './dto/quiz-search.dto';
 
 @Public()
 @Controller('quizzes')
@@ -20,14 +18,8 @@ export class QuizzesController {
   constructor(private readonly quizService: QuizzesService) {}
 
   @Get()
-  async getAllQuizzes(
-    @Query('category') category?: string,
-    @Query('difficulty') difficulty?: DifficultyLevel,
-  ) {
-    const result: MainQuiz[] = await this.quizService.getQuizzes(
-      category,
-      difficulty,
-    );
+  async getAllQuizzes(@Query() searchDto: QuizInfiniteScrollDto) {
+    const result = await this.quizService.getQuizzes(searchDto);
     return result;
   }
 
