@@ -20,13 +20,11 @@ export class TokenRefreshMiddleware implements NestMiddleware {
 
     // RT가 없으면 갱신 불가
     if (!refreshToken) {
-      console.log('RT 없음 → 진행');
       return next();
     }
 
     // AT가 없거나 만료된 경우
     if (!accessToken || this.isAccessTokenExpired(accessToken)) {
-      console.log('AT 없거나 만료 → 갱신 시도');
       try {
         const newTokens =
           await this.authService.refreshAccessTokenOnly(refreshToken);
