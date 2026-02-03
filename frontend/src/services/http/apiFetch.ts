@@ -77,6 +77,7 @@ export async function apiFetch<T>(
         credentials: 'include',
       });
     } catch (refreshError) {
+      document.cookie = 'username=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       throw new ApiError('세션이 만료되었습니다. 다시 로그인해주세요.', 401, 'TOKEN_EXPIRED');
     }
   }

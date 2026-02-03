@@ -7,6 +7,9 @@ import { PassportModule } from '@nestjs/passport';
 import { DatasourcesModule } from 'src/datasources/datasources.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { TokenRefreshMiddleware } from './middleware/token-refresh.middleware';
+import { NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { ACCESS_TOKEN_EXPIRES_IN } from 'src/common/constants/auth.constants';
 
 @Module({
   imports: [
@@ -18,12 +21,16 @@ import { JwtAuthGuard } from './guard/jwt-auth.guard';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '1h' },
+        signOptions: { expiresIn: ACCESS_TOKEN_EXPIRES_IN },
       }),
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, JwtAuthGuard],
+  providers: [AuthService, JwtStrategy, JwtAuthGuard, TokenRefreshMiddleware],
   exports: [AuthService, JwtAuthGuard],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(TokenRefreshMiddleware).forRoutes('*');
+  }
+}
