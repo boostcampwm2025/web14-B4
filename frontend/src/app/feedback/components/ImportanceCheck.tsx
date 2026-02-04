@@ -136,9 +136,10 @@ export default function ImportanceCheck({
               <button
                 key={opt.value}
                 type="button"
+                disabled={!config.selectable}
                 className={[
-                  'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl',
-                  'hover:scale-110',
+                  'group flex w-[180px] flex-col items-center rounded-2xl',
+                  config.selectable ? 'cursor-pointer hover:scale-110' : 'cursor-default',
                 ].join(' ')}
                 onClick={() => {
                   if (!config.selectable) return;
@@ -155,7 +156,9 @@ export default function ImportanceCheck({
                   className={[
                     isSelected
                       ? 'grayscale-0 opacity-100'
-                      : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
+                      : config.selectable
+                        ? 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100'
+                        : 'grayscale',
                   ].join(' ')}
                 />
 
