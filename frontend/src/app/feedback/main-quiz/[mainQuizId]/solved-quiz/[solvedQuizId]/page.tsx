@@ -55,6 +55,7 @@ export default async function FeedbackPage({ params }: Props) {
         checkedCount={solvedQuizDetail.userChecklistProgress.checkedCount}
       />
       <FeedbackKeywords
+        userName={username}
         keywords={mergedKeywords}
         defaultFeedback={aiFeedbackResult.keywordsFeedback}
       />

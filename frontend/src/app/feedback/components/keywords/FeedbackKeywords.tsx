@@ -4,11 +4,12 @@ import { useState } from 'react';
 import KeywordButton, { Keyword } from './KeywordButton';
 
 type Props = {
+  userName: string;
   keywords: Keyword[];
   defaultFeedback: string;
 };
 
-export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
+export default function FeedbackKeywords({ userName, keywords, defaultFeedback }: Props) {
   const [selectedKeyword, setSelectedKeyword] = useState<Keyword | null>(null);
   const [hoveredKeyword, setHoveredKeyword] = useState<Keyword | null>(null);
 
@@ -35,8 +36,9 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           <div className="lg:col-span-5 flex flex-wrap justify-center gap-3 content-start">
-            <p className="w-full text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
-              Keywords 클릭 시, 설명을 확인할 수 있어요
+            <p className="w-full text-xs text-[var(--color-gray-dark)] mb-2">
+              아래 키워드를 클릭해 개념 설명을 확인해보세요. <br />
+              회색 키워드는 {userName}님의 답변에서 언급되지 않은 개념이에요.
             </p>
             {keywords.map((keyword) => (
               <KeywordButton
