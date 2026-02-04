@@ -8,10 +8,6 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import {
-  allowedMimeTypes,
-  AUDIOFILE_MAX_SIZE_BYTES,
-} from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
@@ -24,7 +20,9 @@ import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.re
 import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
-} from 'src/common/constants/speech.constant';
+  AUDIOFILE_MAX_SIZE_BYTES,
+  allowedMimeTypes,
+} from 'src/common/constants/speech.constants';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트

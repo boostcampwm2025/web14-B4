@@ -22,7 +22,7 @@ import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { CreateSpeechTextAnswerRequestDto } from './dto/CreateSpeechTextAnswerRequest.dto';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
-import { AUDIOFILE_MAX_SIZE_BYTES } from './speeches.constants';
+import { AUDIOFILE_MAX_SIZE_BYTES } from 'src/common/constants/speech.constants';
 import { Public } from '../auth/decorator/public.decorator';
 import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
 import { User } from 'src/datasources/entities/tb-user.entity';
