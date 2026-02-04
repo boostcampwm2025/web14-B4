@@ -82,7 +82,7 @@ export default function TextAnswer({ quizId }: Props) {
       <div className="rounded-xl border border-gray-200 bg-white p-4">
         <textarea
           id="text-answer"
-          className="rounded-xl p-6 border-2 mb-6 w-full min-h-[400px] resize-none overflow-y-auto text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="rounded-xl p-6 border-2 mb-6 w-full min-h-[400px] resize-none overflow-y-auto text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 custom-scrollbar"
           style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
           value={text}
           onChange={handleChangeText}
