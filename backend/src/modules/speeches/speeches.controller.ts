@@ -74,35 +74,6 @@ export class SpeechesController {
     return new SttResponseDto(result.solvedQuizId, result.text);
   }
 
-  @Post('stt-csr')
-  @UseInterceptors(FileInterceptor('audio'))
-  async csrSpeechToText(
-    @OptionalCurrentUser() user: User | undefined,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-    @UploadedFile() recordFile: Express.Multer.File,
-    @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
-  ): Promise<SttResponseDto> {
-    if (!recordFile) {
-      throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
-    }
-
-    const userId = await getOrCreateGuestUserId(
-      user,
-      req,
-      res,
-      this.authService,
-    );
-
-    const result = await this.speechesService.csrSpeechToText(
-      recordFile,
-      mainQuizId,
-      userId,
-    );
-
-    return new SttResponseDto(result.solvedQuizId, result.text);
-  }
-
   @Patch(':mainQuizId')
   async updateSpeechText(
     @OptionalCurrentUser() user: User | undefined,
