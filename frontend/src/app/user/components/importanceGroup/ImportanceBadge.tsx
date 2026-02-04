@@ -1,4 +1,3 @@
-// components/ImportanceBadge.tsx
 'use client';
 
 import { Category } from '@/types/category.types';
