@@ -17,7 +17,7 @@ import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons'
 import RecordedVideo from './record/RecordedVideo';
 import Popup from '@/components/Popup';
 import RecorderTimerContainer from './RecorderTimerContainer';
-import { MAX_SPEECH_SECONDS } from '@/constants/speech.constants';
+import { MAX_SPEECH_SECONDS, AUDIO_MIMETYPE, AUDIO_FILE_NAME } from '@/constants/speech.constants';
 interface AudioRecorderProps {
   quizId: number;
   onSwitchToTextMode: () => void;
@@ -48,18 +48,17 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isTimeoutPopupOpen, setIsTimeoutPopupOpen] = useState(false);
 
-  const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
-    useAudioRecorder({
-      onRecorded: (blob) => {
-        if (!blob) {
-          setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
-          setStatus('idle');
-          return;
-        }
+  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
+    onRecorded: (blob) => {
+      if (!blob) {
+        setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
+        setStatus('idle');
+        return;
+      }
 
-        setStatus('recorded');
-      },
-    });
+      setStatus('recorded');
+    },
+  });
 
   const {
     micStatus,
@@ -297,16 +296,15 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   };
 
   const handleSubmit = async () => {
-    if (!audioBlob || !audioManifest) {
+    if (!audioBlob) {
       return;
     }
     setStatus('submitting');
-
     try {
       const { solvedQuizId } = await postSpeechesStt(quizId, {
         blob: audioBlob,
-        filename: audioManifest.filename,
-        mimeType: audioManifest.mimeType,
+        filename: AUDIO_FILE_NAME,
+        mimeType: AUDIO_MIMETYPE,
       });
       setSolvedQuizId(solvedQuizId);
 

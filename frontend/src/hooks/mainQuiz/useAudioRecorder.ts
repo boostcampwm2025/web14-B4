@@ -1,8 +1,8 @@
 'use client';
 
 import { useRef, useState, useEffect } from 'react';
-import { buildAudioFilename } from '@/utils/recorder';
 import RecordRTC from 'recordrtc';
+import { AUDIO_MIMETYPE } from '@/constants/speech.constants';
 
 type StartRecordingParams = {
   deviceId?: string;
@@ -12,19 +12,12 @@ type UseAudioRecorderParams = {
   onRecorded?: (result: { blob: Blob; url: string } | null) => void;
 };
 
-type RecordingManifest = {
-  mimeType: string;
-  extension: string;
-  filename: string;
-};
-
 export function useAudioRecorder(params?: UseAudioRecorderParams) {
   const audioStreamRef = useRef<MediaStream | null>(null);
   const audioUrlRef = useRef<string | null>(null);
 
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
-  const [audioManifest, setAudioManifest] = useState<RecordingManifest | null>(null);
 
   const recordRtcRef = useRef<RecordRTC | null>(null);
 
@@ -55,13 +48,11 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     // 상태 초기화
     setAudioUrl(null);
     setAudioBlob(null);
-    setAudioManifest(null);
   };
 
   const startRecording = async (startParams?: StartRecordingParams) => {
     // 기존 결과 정리
     setAudioBlob(null);
-    setAudioManifest(null);
     cleanupUrl();
     setAudioUrl(null);
 
@@ -76,7 +67,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
     // 녹음 시작
     const recordRtc = new RecordRTC(stream, {
       type: 'audio',
-      mimeType: 'audio/wav',
+      mimeType: AUDIO_MIMETYPE,
       numberOfAudioChannels: 1,
       recorderType: RecordRTC.StereoAudioRecorder,
       desiredSampRate: 16000, // 16kHz (용량 절감)
@@ -112,16 +103,7 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
       return;
     }
 
-    const actualMimeType = 'audio/wav';
-    const extension = 'wav';
-    const filename = buildAudioFilename(extension);
-
     setAudioBlob(blob);
-    setAudioManifest({
-      mimeType: actualMimeType,
-      extension,
-      filename,
-    });
 
     // 브라우저에서 재생 가능한 URL 생성
     const url = URL.createObjectURL(blob);
@@ -146,7 +128,6 @@ export function useAudioRecorder(params?: UseAudioRecorderParams) {
   return {
     audioUrl,
     audioBlob,
-    audioManifest,
     startRecording,
     stopRecording,
     resetRecording,
