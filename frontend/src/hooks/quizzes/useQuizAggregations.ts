@@ -1,4 +1,4 @@
-import { fetchAggregations } from '@/services/apis/quizApi';
+import { fetchAggregations, fetchQuizCategory } from '@/services/apis/quizApi';
 import { useQuery } from '@tanstack/react-query';
 
 interface QuizFilters {
@@ -12,6 +12,15 @@ interface AggregationsResponse {
     count: number;
   }>;
   total: number;
+}
+
+export function useQuizCategories() {
+  return useQuery({
+    queryKey: ['all-categories'],
+    queryFn: () => fetchQuizCategory(),
+    staleTime: Infinity, // 영구 캐시
+    gcTime: 1000 * 60 * 60 * 24, // 24시간 후 메모리에서 제거
+  });
 }
 
 export function useQuizAggregations(filters: QuizFilters) {

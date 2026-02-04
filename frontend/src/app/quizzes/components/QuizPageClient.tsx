@@ -8,7 +8,7 @@ import QuizGrid from './card/QuizGrid';
 import QuizHeader from './header/QuizHeader';
 import { Quiz } from '../types/quiz';
 import { fetchAggregations, fetchQuizCategory, fetchQuizzes } from '@/services/apis/quizApi';
-import { useQuizAggregations } from '@/hooks/quizzes/useQuizAggregations';
+import { useQuizAggregations, useQuizCategories } from '@/hooks/quizzes/useQuizAggregations';
 
 interface QuizPageClientProps {
   initialData: {
@@ -30,12 +30,7 @@ export default function QuizPageClient({ initialData, filters, username }: QuizP
   const { category, difficulty } = filters;
 
   // 전체 카테고리 조회 (캐싱)
-  const { data: allCategories } = useQuery({
-    queryKey: ['all-categories'],
-    queryFn: () => fetchQuizCategory(),
-    staleTime: Infinity, // 영구 캐시
-    gcTime: 1000 * 60 * 60 * 24, // 24시간 후 메모리에서 제거
-  });
+  const { data: allCategories } = useQuizCategories();
 
   // 집계 데이터 조회 (캐싱)
   const {
