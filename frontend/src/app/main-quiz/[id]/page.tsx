@@ -13,7 +13,7 @@ export default async function MainQuizPage({ params }: PageProps) {
 
   return (
     <main className="pb-10">
-      <div className="flex justify-center pt-5 pb-4">
+      <div className="flex justify-center pt-10 pb-4">
         <QuizInfoBadge
           size="sm"
           quizCategoryName={quiz.quizCategory.name}

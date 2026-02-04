@@ -41,14 +41,19 @@ export default async function ResultPage({
 
   return (
     <main>
-      <div className="flex justify-center pt-10">
+      <div className="flex justify-center pt-10 pb-4">
         <QuizInfoBadge
           quizCategoryName={quiz.quizCategory.name}
           difficultyLevel={quiz.difficultyLevel}
         />
       </div>
-      <div className="flex justify-center pt-10">
-        <h1 className="flex justify-center text-2xl font-semibold">{quiz.content}</h1>
+      <div className="flex justify-center px-10">
+        <h1
+          className="max-w-[900px] text-2xl font-semibold text-center leading-relaxed break-keep tracking-tight"
+          style={{ wordBreak: 'keep-all' }} // 단어가 잘리지 않게 설정
+        >
+          {quiz.content}
+        </h1>
       </div>
       {/* 상호작용 필요한 부분 - 클라이언트 컴포넌트 */}
       <ChecklistSection
