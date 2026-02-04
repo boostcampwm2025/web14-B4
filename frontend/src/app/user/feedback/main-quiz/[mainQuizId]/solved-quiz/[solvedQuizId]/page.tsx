@@ -1,10 +1,11 @@
-import { fetchAIFeedbackResult } from '@/services/apis/feedbackApi';
+import { fetchAIFeedbackResult, fetchSpeechText } from '@/services/apis/feedbackApi';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import FeedbackHeader from '@/app/feedback/components/FeedbackHeader';
 import FeedbackKeywords from '@/app/feedback/components/keywords/FeedbackKeywords';
 import FeedbackQuestions from '@/app/feedback/components/FeedbackQuestions';
 import FeedbackComplements from '@/app/feedback/components/complements/FeedbackComplements';
+import FeedbackMyAnswer from '@/app/feedback/components/FeedbackMyAnswer';
 import ImportanceCheck from '@/app/feedback/components/ImportanceCheck';
 import PreventBackNavigation from '@/components/PreventBackNavigation';
 import { ApiError } from '@/services/http/errors';
@@ -33,6 +34,11 @@ export default async function FeedbackPage({ params }: Props) {
     }
     redirect('/quizzes?error=not_found');
   }
+
+  const speechText = await fetchSpeechText(Number(solvedQuizId))
+    .then((res) => res.speechText)
+    .catch(() => '');
+
   const { solvedQuizDetail, aiFeedbackResult } = data;
 
   const mergedKeywords = solvedQuizDetail.keywords.map((k) => ({
@@ -54,6 +60,7 @@ export default async function FeedbackPage({ params }: Props) {
         checklistCount={solvedQuizDetail.userChecklistProgress.checklistCount}
         checkedCount={solvedQuizDetail.userChecklistProgress.checkedCount}
       />
+      {speechText && <FeedbackMyAnswer userName={username} speechText={speechText} />}
       <FeedbackKeywords
         userName={username}
         keywords={mergedKeywords}
