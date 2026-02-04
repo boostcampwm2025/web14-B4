@@ -12,12 +12,6 @@ interface MySpeechTextProps {
 export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechTextProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
-    }
-  }, [speechItem.speechText]);
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const speechTextValue = e.target.value;
 
@@ -42,8 +36,8 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
           ref={textareaRef}
           value={speechItem.speechText}
           onChange={handleChange}
-          className="rounded-xl p-6 border-2 mb-6 w-full min-h-[700px] resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400"
-          style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF', overflow: 'hidden' }}
+          className="rounded-xl p-6 border-2 mb-6 w-full h-[700px] resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto"
+          style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
         />
       </div>
       <div className="flex justify-end text-sm text-gray-500">
