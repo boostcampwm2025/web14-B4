@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -141,23 +141,55 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--color-accent-sky);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   html {
-    font-family: "Pretendard", sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
   body {
     @apply bg-background text-foreground;
   }
   @keyframes shake {
-    0% { transform: translateX(0) rotate(0deg); }
-    20% { transform: translateX(-3px) rotate(-2deg); }
-    40% { transform: translateX(3px) rotate(2deg); }
-    60% { transform: translateX(-2px) rotate(-1deg); }
-    80% { transform: translateX(2px) rotate(1deg); }
-    100% { transform: translateX(0) rotate(0deg); }
+    0% {
+      transform: translateX(0) rotate(0deg);
+    }
+    20% {
+      transform: translateX(-3px) rotate(-2deg);
+    }
+    40% {
+      transform: translateX(3px) rotate(2deg);
+    }
+    60% {
+      transform: translateX(-2px) rotate(-1deg);
+    }
+    80% {
+      transform: translateX(2px) rotate(1deg);
+    }
+    100% {
+      transform: translateX(0) rotate(0deg);
+    }
   }
 
   .shake {
