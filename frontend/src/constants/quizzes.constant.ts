@@ -49,7 +49,7 @@ export const LAYOUT = {
 
 // 스타일 클래스 상수
 export const BUTTON_STYLES = {
-  BASE: 'px-6 py-2 rounded-full text-lg transition-all duration-300 ease-out',
+  BASE: 'px-6 py-1 rounded-full text-lg transition-all duration-300 ease-out',
   INACTIVE: 'text-[var(--color-gray-dark)] hover:bg-[var(--color-gray-light)] hover:text-gray-700',
 } as const;
 
