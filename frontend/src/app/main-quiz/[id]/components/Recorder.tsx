@@ -8,7 +8,7 @@ import { postSpeechesStt } from '@/services/apis/speechesApi';
 import { ApiError } from '@/services/http/errors';
 import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
-import { getRecorderConfig } from '@/utils/recorder';
+import { getVideoRecorderConfig } from '@/utils/videoRecorderConfig';
 import Loader from '@/components/Loader';
 import CombinedPermissionConsentModal from './permission/CombinedPermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
@@ -159,7 +159,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     try {
       videoChunksRef.current = [];
 
-      const config = getRecorderConfig();
+      const config = getVideoRecorderConfig();
 
       const mediaRecorder = new MediaRecorder(
         stream,
