@@ -1,5 +1,7 @@
+import { QuizCategory } from '@/app/quizzes/types/quiz';
 import { fetchAggregations, fetchQuizCategory } from '@/services/apis/quizApi';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 interface QuizFilters {
   category?: string;
@@ -37,4 +39,16 @@ export function useQuizAggregations(filters: QuizFilters) {
     staleTime: 10 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });
+}
+
+export function useGetQuizCategoryWithCount(
+  allCategories?: QuizCategory[],
+  aggregations?: AggregationsResponse,
+) {
+  return useMemo(() => {
+    return allCategories?.map((category) => ({
+      ...category,
+      count: aggregations?.categories.find((a) => a.name === category.name)?.count || 0,
+    }));
+  }, [allCategories, aggregations]);
 }

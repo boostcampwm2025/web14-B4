@@ -1,14 +1,17 @@
 'use client';
 
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useMemo } from 'react';
 import DifficultyFilter from './filters/DifficultyFilter';
 import CategoryFilter from './filters/CategoryFilter';
 import QuizGrid from './card/QuizGrid';
 import QuizHeader from './header/QuizHeader';
 import { Quiz } from '../types/quiz';
-import { fetchAggregations, fetchQuizCategory, fetchQuizzes } from '@/services/apis/quizApi';
-import { useQuizAggregations, useQuizCategories } from '@/hooks/quizzes/useQuizAggregations';
+import {
+  useGetQuizCategoryWithCount,
+  useQuizAggregations,
+  useQuizCategories,
+} from '@/hooks/quizzes/useQuizCategoryFiler';
+import { useGetQuizzes, useInfiniteScroll } from '@/hooks/quizzes/useQuizScroll';
 
 interface QuizPageClientProps {
   initialData: {
@@ -33,60 +36,23 @@ export default function QuizPageClient({ initialData, filters, username }: QuizP
   const { data: allCategories } = useQuizCategories();
 
   // 집계 데이터 조회 (캐싱)
-  const {
-    data: aggregations,
-    isLoading: isLoadingAggregations,
-    error,
-  } = useQuizAggregations(filters);
+  const { data: aggregations } = useQuizAggregations(filters);
 
   // 병합
-  const categoriesWithCount = useMemo(() => {
-    return allCategories?.map((category) => ({
-      ...category,
-      count: aggregations?.categories.find((a) => a.name === category.name)?.count || 0,
-    }));
-  }, [allCategories, aggregations]);
+  const categoriesWithCount = useGetQuizCategoryWithCount(allCategories, aggregations);
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['quizzes', category, difficulty],
-    queryFn: async ({ pageParam }: { pageParam: string | null }) => {
-      const result = await fetchQuizzes({
-        cursor: pageParam ?? undefined,
-        limit: 20,
-        category,
-        difficulty,
-      });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useGetQuizzes(
+    category,
+    difficulty,
+  );
 
-      return {
-        data: result.data,
-        nextCursor: result.meta.nextCursor,
-        hasMore: result.meta.hasNextPage,
-      };
-    },
-    getNextPageParam: (lastPage) => {
-      return lastPage.hasMore ? lastPage.nextCursor : null;
-    },
-    initialPageParam: null,
+  // 퀴즈 불러오는 중이 보이는 순간
+
+  const observerRef = useInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
   });
-
-  const observerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const allQuizzes = data?.pages.flatMap((page) => page.data) ?? [];
 
