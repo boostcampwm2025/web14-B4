@@ -53,7 +53,7 @@ export default function ImportanceCheck({
   const [selected, setSelected] = useState<Importance | null>(importance);
   const [isSaving, setIsSaving] = useState(false);
 
-  const currentMode: Mode = mode ?? 'solve';
+  const currentMode: Mode = mode ?? 'default';
 
   const handleRetry = () => {
     if (isSaving) {
@@ -99,13 +99,18 @@ export default function ImportanceCheck({
       buttonText: '저장하고 다른 퀴즈 풀기',
       onClick: handleFinish,
       showRetry: true,
+      selectable: true,
     },
     report: {
       buttonText: '리포트로 돌아가기',
       onClick: handleGoReport,
       showRetry: false,
+      selectable: false,
     },
-  } satisfies Record<Mode, { buttonText: string; onClick: () => void; showRetry: boolean }>;
+  } satisfies Record<
+    Mode,
+    { buttonText: string; onClick: () => void; showRetry: boolean; selectable: boolean }
+  >;
 
   const config = modeConfig[currentMode];
 
@@ -135,7 +140,10 @@ export default function ImportanceCheck({
                   'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl',
                   'hover:scale-110',
                 ].join(' ')}
-                onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
+                onClick={() => {
+                  if (!config.selectable) return;
+                  setSelected((prev) => (prev === opt.value ? null : opt.value));
+                }}
                 aria-pressed={isSelected}
               >
                 <Image
