@@ -20,12 +20,19 @@ export default function FeedbackHeader({
   return (
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px]">
-        <div className="flex justify-center mb-4">
-          <QuizInfoBadge quizCategoryName={category} difficultyLevel={difficultyLevel} size="sm" />
+        <div className="flex justify-center pt-5 pb-4">
+          <QuizInfoBadge size="sm" quizCategoryName={category} difficultyLevel={difficultyLevel} />
         </div>
-        <h1 className="flex justify-center text-xl font-semibold text-center whitespace-pre-wrap mb-4">
-          {content}
-        </h1>
+
+        <div className="flex justify-center px-10 mb-4">
+          <h1
+            className="max-w-[900px] text-xl font-semibold text-center leading-relaxed break-keep tracking-tight"
+            style={{ wordBreak: 'keep-all' }}
+          >
+            {content}
+          </h1>
+        </div>
+
         <div className="text-center space-y-2 mb-5">
           <div className="flex justify-start px-2">
             <div className="inline-block bg-[var(--color-primary)] text-white text-sm px-4 py-2 rounded-full mt-1">
@@ -35,7 +42,7 @@ export default function FeedbackHeader({
 
           <div className="flex items-start px-2">
             <div className="text-left">
-              <p className="font-bold mb-1">
+              <p className="font-bold">
                 {userName}님, 체크리스트 {checklistCount}개 중{' '}
                 <span className="text-[var(--color-primary)]">{checkedCount}개</span>에
                 체크해주셨어요.
