@@ -91,6 +91,7 @@ export default function Header() {
                 <div className="p-1">
                   <Link
                     href="/user"
+                    onClick={() => setIsDropdownOpen(false)}
                     className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-gray-dark)] rounded-lg hover:bg-blue-50 hover:text-[var(--color-primary)] transition-colors"
                     draggable={false}
                     onDragStart={(e) => e.preventDefault()}
