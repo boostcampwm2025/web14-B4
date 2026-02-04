@@ -9,18 +9,9 @@ interface FeelingButtonProps {
 }
 
 const IMAGE_PATHS = {
-  LOW: {
-    blue: '/images/low-blue.svg',
-    gray: '/images/low-gray.svg',
-  },
-  NORMAL: {
-    blue: '/images/normal-blue.svg',
-    gray: '/images/normal-gray.svg',
-  },
-  HIGH: {
-    blue: '/images/high-blue.svg',
-    gray: '/images/high-gray.svg',
-  },
+  LOW: '/images/low-blue.svg',
+  NORMAL: '/images/normal-blue.svg',
+  HIGH: '/images/high-blue.svg',
 };
 
 export const FeelingButton: React.FC<FeelingButtonProps> = ({
@@ -29,10 +20,15 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
   selected,
   onClick,
 }) => {
-  const imagePath = IMAGE_PATHS[comprehensionLevel][selected ? 'blue' : 'gray'];
+  const imagePath = IMAGE_PATHS[comprehensionLevel];
 
   return (
-    <label className={`flex flex-col items-center gap-3 p-6 rounded-2xl cursor-pointer`}>
+    <label
+      className={[
+        'group flex flex-col items-center gap-3 p-6 rounded-2xl cursor-pointer',
+        'hover:scale-110',
+      ].join(' ')}
+    >
       <input
         type="radio"
         name="feeling"
@@ -47,11 +43,25 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
           alt={label}
           width={94}
           height={93}
-          className="object-contain"
+          className={[
+            'object-contain',
+            selected
+              ? 'grayscale-0 opacity-100'
+              : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
+          ].join(' ')}
           draggable={false}
         />
       </div>
-      <span className="text-base font-medium text-gray-700">{label}</span>
+      <span
+        className={[
+          'text-base font-medium',
+          selected
+            ? 'text-[var(--color-primary)]'
+            : 'text-gray-700 group-hover:text-[var(--color-primary)]',
+        ].join(' ')}
+      >
+        {label}
+      </span>
     </label>
   );
 };
