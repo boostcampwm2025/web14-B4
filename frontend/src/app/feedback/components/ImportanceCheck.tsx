@@ -167,7 +167,9 @@ export default function ImportanceCheck({
                     'mt-5 whitespace-pre-line text-center text-sm font-medium transition-colors',
                     isSelected
                       ? 'text-[var(--color-primary)]'
-                      : 'text-gray-600 group-hover:text-[var(--color-primary)]',
+                      : config.selectable
+                        ? 'text-gray-600 group-hover:text-[var(--color-primary)]'
+                        : 'text-gray-600',
                   ].join(' ')}
                 >
                   {opt.label}
