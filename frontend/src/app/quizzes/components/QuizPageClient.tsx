@@ -1,13 +1,14 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useMemo } from 'react';
 import DifficultyFilter from './filters/DifficultyFilter';
 import CategoryFilter from './filters/CategoryFilter';
 import QuizGrid from './card/QuizGrid';
 import QuizHeader from './header/QuizHeader';
-import { CategoryCountsResponseDto, Quiz } from '../types/quiz';
-import { fetchQuizzes } from '@/services/apis/quizApi';
+import { Quiz } from '../types/quiz';
+import { fetchAggregations, fetchQuizCategory, fetchQuizzes } from '@/services/apis/quizApi';
+import { useQuizAggregations } from '@/hooks/quizzes/useQuizAggregations';
 
 interface QuizPageClientProps {
   initialData: {
@@ -27,6 +28,29 @@ interface QuizPageClientProps {
 
 export default function QuizPageClient({ initialData, filters, username }: QuizPageClientProps) {
   const { category, difficulty } = filters;
+
+  // 전체 카테고리 조회 (캐싱)
+  const { data: allCategories } = useQuery({
+    queryKey: ['all-categories'],
+    queryFn: () => fetchQuizCategory(),
+    staleTime: Infinity, // 영구 캐시
+    gcTime: 1000 * 60 * 60 * 24, // 24시간 후 메모리에서 제거
+  });
+
+  // 집계 데이터 조회 (캐싱)
+  const {
+    data: aggregations,
+    isLoading: isLoadingAggregations,
+    error,
+  } = useQuizAggregations(filters);
+
+  // 병합
+  const categoriesWithCount = useMemo(() => {
+    return allCategories?.map((category) => ({
+      ...category,
+      count: aggregations?.categories.find((a) => a.name === category.name)?.count || 0,
+    }));
+  }, [allCategories, aggregations]);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey: ['quizzes', category, difficulty],
@@ -69,43 +93,7 @@ export default function QuizPageClient({ initialData, filters, username }: QuizP
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 모든 페이지의 퀴즈를 하나의 배열로 합치기
   const allQuizzes = data?.pages.flatMap((page) => page.data) ?? [];
-
-  // ⭐ 현재 조회된 데이터를 기반으로 카테고리 카운트 계산
-  const categoryCounts = useMemo((): CategoryCountsResponseDto => {
-    const categoryMap = new Map<
-      string,
-      {
-        quizCategoryId: number;
-        id: number;
-        name: string;
-        count: number;
-      }
-    >();
-
-    allQuizzes.forEach((quiz) => {
-      const categoryName = quiz.quizCategory.name;
-      const categoryId = quiz.quizCategory.quizCategoryId;
-
-      if (!categoryMap.has(categoryName)) {
-        categoryMap.set(categoryName, {
-          quizCategoryId: categoryId,
-          id: categoryId,
-          name: categoryName,
-          count: 0,
-        });
-      }
-
-      const category = categoryMap.get(categoryName)!;
-      category.count += 1;
-    });
-
-    return {
-      totalCount: allQuizzes.length,
-      categories: Array.from(categoryMap.values()),
-    };
-  }, [allQuizzes]);
 
   return (
     <div className="flex justify-center min-h-screen w-full">
@@ -116,7 +104,8 @@ export default function QuizPageClient({ initialData, filters, username }: QuizP
           <div className="flex justify-between items-center mb-6">
             <DifficultyFilter difficulty={difficulty} category={category} />
             <CategoryFilter
-              categoriesData={categoryCounts}
+              categories={categoriesWithCount}
+              total={aggregations?.total}
               category={category}
               difficulty={difficulty}
             />

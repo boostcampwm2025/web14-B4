@@ -1,20 +1,26 @@
 'use client';
 
-import { CategoryCountsResponseDto } from '../../types/quiz';
 import { FilterLink } from './FilterLink';
 import { cn } from '@/lib/utils';
 import { useWindowSize } from '@/hooks/mainQuiz/window/useWindowSize';
 import CategoryDropdown from './CategoryDropdown';
 import { DEFAULT_CATEGORY, LAYOUT } from '@/constants/quizzes.constant';
 
+interface CategoryAggregation {
+  name: string | null;
+  count: number;
+}
+
 interface CategoryFilterProps {
-  categoriesData?: CategoryCountsResponseDto;
+  categories?: CategoryAggregation[];
+  total?: number;
   category?: string;
   difficulty?: string;
 }
 
 export default function CategoryFilter({
-  categoriesData,
+  categories = [],
+  total = 0,
   category,
   difficulty,
 }: CategoryFilterProps) {
@@ -44,9 +50,14 @@ export default function CategoryFilter({
         : 'bg-gray-100 text-gray-500',
     );
 
-  const categories = [
-    { id: 0, name: DEFAULT_CATEGORY, count: categoriesData?.totalCount || 0 },
-    ...(categoriesData?.categories || []),
+  // 전체 카테고리 포함한 목록 생성
+  const allCategories = [
+    { id: 0, name: DEFAULT_CATEGORY, count: total },
+    ...categories.map((cat, index) => ({
+      id: index + 1,
+      name: cat.name ?? '미분류',
+      count: cat.count,
+    })),
   ];
 
   return (
@@ -58,13 +69,13 @@ export default function CategoryFilter({
       <div className="mb-7">
         {isCompact ? (
           <CategoryDropdown
-            categories={categories}
+            categories={allCategories}
             activeCategory={activeCategory}
             currentParams={currentParams}
           />
         ) : (
           <div className="flex gap-2 flex-wrap">
-            {categories.map((cat) => (
+            {allCategories.map((cat) => (
               <FilterLink
                 key={cat.id}
                 param="category"
