@@ -2,12 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DifficultyLevel, MainQuiz } from '../entities/tb-main-quiz.entity';
+import { z } from 'zod';
 
 export interface CategoryCountResult {
   id: string;
   name: string;
   count: string;
 }
+
+const AggregationItemSchema = z
+  .object({
+    category: z.string(),
+    count: z.string().transform((val) => Number(val)),
+  })
+  .strict();
+
+const AggregationsRawSchema = z.array(AggregationItemSchema);
+
+const AggregationsResultSchema = z.object({
+  categories: z.array(
+    z.object({
+      name: z.string().nullable(),
+      count: z.number(),
+    }),
+  ),
+  total: z.number(),
+});
+
+type AggregationsResult = z.infer<typeof AggregationsResultSchema>;
 
 @Injectable()
 export class MainQuizRepository extends Repository<MainQuiz> {
@@ -47,21 +69,41 @@ export class MainQuizRepository extends Repository<MainQuiz> {
       .getOne();
   }
 
-  getCategoriesWithCount(
+  async getAggregations(
     difficulty?: DifficultyLevel,
-  ): Promise<CategoryCountResult[]> {
-    const qb = this.createQueryBuilder('mq')
-      .leftJoin('mq.quizCategory', 'qc')
-      .select('qc.quizCategoryId', 'id')
-      .addSelect('qc.name', 'name')
-      .addSelect('COUNT(mq.mainQuizId)', 'count')
-      .groupBy('qc.quizCategoryId')
-      .addGroupBy('qc.name');
+  ): Promise<AggregationsResult> {
+    const baseQuery = this.createQueryBuilder('quiz').leftJoin(
+      'quiz.quizCategory',
+      'category',
+    );
 
     if (difficulty) {
-      qb.andWhere('mq.difficultyLevel = :difficulty', { difficulty });
+      baseQuery.andWhere('quiz.difficultyLevel = :difficulty', { difficulty });
     }
 
-    return qb.getRawMany<CategoryCountResult>();
+    const [categoriesRaw, total] = await Promise.all([
+      baseQuery
+        .clone()
+        .select('category.name', 'category')
+        .addSelect('COUNT(*)', 'count')
+        .groupBy('category.name')
+        .getRawMany(),
+
+      baseQuery.clone().getCount(),
+    ]);
+
+    // Raw 데이터 검증
+    const validated = AggregationsRawSchema.parse(categoriesRaw);
+
+    // 최종 결과 구조 변환 및 검증
+    const result = AggregationsResultSchema.parse({
+      categories: validated.map((c) => ({
+        name: c.category,
+        count: c.count,
+      })),
+      total,
+    });
+
+    return result;
   }
 }
