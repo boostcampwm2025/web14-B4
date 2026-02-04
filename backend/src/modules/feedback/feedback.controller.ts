@@ -46,4 +46,20 @@ export class FeedbackController {
     );
     return this.feedbackService.getAIFeedback(solvedQuizId, userId);
   }
+
+  @Get('/:solvedQuizId/speech-text')
+  async getSpeechText(
+    @OptionalCurrentUser() user: User | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+    @Param('solvedQuizId', ParseIntPipe) solvedQuizId: number,
+  ) {
+    const userId = await getOrCreateGuestUserId(
+      user,
+      req,
+      res,
+      this.authService,
+    );
+    return this.feedbackService.getSpeechText(solvedQuizId, userId);
+  }
 }
