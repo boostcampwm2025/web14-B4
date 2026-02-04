@@ -34,7 +34,7 @@ export default function FeedbackKeywords({ keywords, defaultFeedback }: Props) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-5 flex flex-wrap gap-3 content-start">
+          <div className="lg:col-span-5 flex flex-wrap justify-center gap-3 content-start">
             <p className="w-full text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
               Keywords 클릭 시, 설명을 확인할 수 있어요
             </p>
