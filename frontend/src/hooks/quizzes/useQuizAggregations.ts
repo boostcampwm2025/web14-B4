@@ -25,7 +25,7 @@ export function useQuizAggregations(filters: QuizFilters) {
 
       return data;
     },
-    staleTime: 3 * 60 * 1000, // 3분
-    gcTime: 10 * 60 * 1000,
+    staleTime: 10 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 }
