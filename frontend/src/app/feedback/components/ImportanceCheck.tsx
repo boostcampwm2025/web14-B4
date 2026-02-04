@@ -32,17 +32,28 @@ const OPTIONS: Option[] = [
   },
 ];
 
+type Mode = 'default' | 'report';
+
 type Props = {
   userName: string;
   mainQuizId: number;
   solvedQuizId: number;
   importance: Importance;
+  mode?: Mode;
 };
 
-export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, importance }: Props) {
+export default function ImportanceCheck({
+  userName,
+  mainQuizId,
+  solvedQuizId,
+  importance,
+  mode,
+}: Props) {
   const router = useRouter();
   const [selected, setSelected] = useState<Importance | null>(importance);
   const [isSaving, setIsSaving] = useState(false);
+
+  const currentMode: Mode = mode ?? 'solve';
 
   const handleRetry = () => {
     if (isSaving) {
@@ -78,6 +89,25 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
       setIsSaving(false);
     }
   };
+
+  const handleGoReport = () => {
+    router.push('/user');
+  };
+
+  const modeConfig = {
+    default: {
+      buttonText: '저장하고 다른 퀴즈 풀기',
+      onClick: handleFinish,
+      showRetry: true,
+    },
+    report: {
+      buttonText: '리포트로 돌아가기',
+      onClick: handleGoReport,
+      showRetry: false,
+    },
+  } satisfies Record<Mode, { buttonText: string; onClick: () => void; showRetry: boolean }>;
+
+  const config = modeConfig[currentMode];
 
   return (
     <section className="w-full">
@@ -138,12 +168,16 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
       </div>
 
       <div className="mx-auto mt-8 flex w-full max-w-[980px] items-center justify-between">
-        <Button variant="secondary" size="fixed" onClick={handleRetry}>
-          다시 풀기
-        </Button>
+        <div>
+          {config.showRetry && (
+            <Button variant="secondary" size="fixed" onClick={handleRetry}>
+              다시 풀기
+            </Button>
+          )}
+        </div>
 
-        <Button variant="primary" size="cta" onClick={handleFinish} disabled={!selected}>
-          저장하고 다른 퀴즈 풀기
+        <Button variant="primary" size="cta" onClick={config.onClick} disabled={!selected}>
+          {config.buttonText}
         </Button>
       </div>
     </section>
