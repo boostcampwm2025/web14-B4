@@ -79,7 +79,7 @@ export default function Header() {
               `}
             >
               <Image
-                src="/default-profile.svg"
+                src="/images/header-profile.svg"
                 alt="내 프로필"
                 width={40}
                 height={40}
