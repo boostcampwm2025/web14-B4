@@ -5,6 +5,7 @@ import ErrorToast from '@/components/ErrorToast';
 import Footer from '@/components/Footer';
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
+import QueryProvider from './providers/QueryProvider';
 
 export const metadata: Metadata = {
   title: 'CS뽁뽁',
@@ -23,12 +24,14 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className="bg-[var(--color-bg-default)] flex min-h-dvh flex-col">
-        <ConditionalHeader />
-        <Suspense fallback={null}>
-          <ErrorToast />
-        </Suspense>
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <QueryProvider>
+          <ConditionalHeader />
+          <Suspense fallback={null}>
+            <ErrorToast />
+          </Suspense>
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </QueryProvider>
         <ToastContainer />
       </body>
     </html>

@@ -118,7 +118,7 @@ export default function ChecklistSection({
   };
 
   return (
-    <div className="px-12 py-12 md:px-16 md:py-16 lg:px-24 lg:py-24 xl:px-32">
+    <div className="px-12 py-4 md:px-16 md:py-8 lg:px-24 lg:py-10 xl:px-32">
       {isAnalyzing && (
         <Loader
           message="CS 뽁뽁 생성 중..."
