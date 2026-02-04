@@ -21,25 +21,27 @@ export default function MyProfile({ user }: UserProfileProps) {
 
   return (
     <div className="mx-auto py-8">
-      <div className="flex items-start gap-6">
+      <div className="flex items-center gap-6">
         {/* 프로필 이미지 */}
         <div className="flex-shrink-0">
           {user.profileImage ? (
             <img
               src={user.profileImage}
               alt={`${user.name}의 프로필`}
-              className="w-20 h-20 rounded-full object-cover border-4 border-gray-100"
+              className="w-25 h-25 rounded-full object-cover border-4 border-gray-100"
             />
           ) : (
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-4 border-gray-100">
-              <span className="text-3xl font-bold text-white">{user.name.charAt(0)}</span>
-            </div>
+            <img
+              src="/images/default-profile.svg"
+              alt="기본 프로필"
+              className="w-25 h-25 rounded-full object-cover border-4 border-gray-100"
+            />
           )}
         </div>
 
         {/* 사용자 정보 */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-3 mb-2 flex-wrap">
+          <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-2xl font-bold text-gray-900">{user.name}</h2>
             {/* <span
               className="px-3 py-1 rounded-full text-xs font-semibold"
