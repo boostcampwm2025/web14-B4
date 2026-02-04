@@ -23,7 +23,7 @@ export default function CategoryFilter({
   const isCompact =
     width <
     LAYOUT.DIFFICULTY_COMPONENT_WIDTH +
-      (categoriesData?.categories.length ?? 0) * LAYOUT.CATEGORY_BUTTON_WIDTH;
+      (categories?.length ?? 0) * LAYOUT.CATEGORY_BUTTON_WIDTH * LAYOUT.EXTRA_MARGIN;
 
   const currentParams = { category, difficulty };
   const activeCategory = category || DEFAULT_CATEGORY;

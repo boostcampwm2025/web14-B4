@@ -45,6 +45,8 @@ export const DEFAULT_CATEGORY = '전체';
 export const LAYOUT = {
   DIFFICULTY_COMPONENT_WIDTH: 450,
   CATEGORY_BUTTON_WIDTH: 200,
+  EXTRA_MARGIN: 0.8,
+  EXTRA_MARGIN: 0.8,
 } as const;
 
 // 스타일 클래스 상수
