@@ -41,7 +41,7 @@ export function ComprehensionTableRow({ item }: ComprehensionTableRowProps) {
       <TableCell>
         <div className="flex items-center gap-3">
           <Progress value={(item.comprehensionScore / 5) * 100} className="flex-1" />
-          <div className="flex flex-col items-end gap-1">
+          <div className="flex flex-col items-center gap-1">
             <span className={`text-sm font-bold ${getScoreColor(item.comprehensionScore)}`}>
               {item.comprehensionScore.toFixed(2)} / 5
             </span>
