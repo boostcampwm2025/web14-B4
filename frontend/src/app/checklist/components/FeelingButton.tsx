@@ -25,7 +25,7 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
   return (
     <label
       className={[
-        'group flex flex-col items-center gap-3 p-6 rounded-2xl cursor-pointer',
+        'group flex flex-col items-center gap-3 p-6 rounded-2xl cursor-pointer transition-transform',
         'hover:scale-110',
       ].join(' ')}
     >
@@ -44,7 +44,7 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
           width={94}
           height={93}
           className={[
-            'object-contain',
+            'object-contain transition-all',
             selected
               ? 'grayscale-0 opacity-100'
               : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
@@ -54,7 +54,7 @@ export const FeelingButton: React.FC<FeelingButtonProps> = ({
       </div>
       <span
         className={[
-          'text-base font-medium',
+          'text-base font-medium transition-colors',
           selected
             ? 'text-[var(--color-primary)]'
             : 'text-gray-700 group-hover:text-[var(--color-primary)]',
