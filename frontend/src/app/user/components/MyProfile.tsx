@@ -20,7 +20,7 @@ export default function MyProfile({ user }: UserProfileProps) {
   };
 
   return (
-    <div className="mx-auto py-8">
+    <div className="mx-auto pt-8 pb-3">
       <div className="flex items-center gap-6">
         {/* 프로필 이미지 */}
         <div className="flex-shrink-0">
@@ -34,7 +34,7 @@ export default function MyProfile({ user }: UserProfileProps) {
             <img
               src="/images/default-profile.svg"
               alt="기본 프로필"
-              className="w-25 h-25 rounded-full object-cover border-4 border-gray-100"
+              className="w-20 h-20 rounded-full object-cover border-4 border-gray-100"
             />
           )}
         </div>
