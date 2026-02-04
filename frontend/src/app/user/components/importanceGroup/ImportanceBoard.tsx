@@ -26,7 +26,7 @@ export default function ImportanceBoard() {
   }, []);
 
   return (
-    <div className="mt-30 mb-50 bg-slate-100">
+    <div className="my-20 bg-slate-100">
       <div className="mb-6 flex items-center">
         <span className="rounded-full bg-blue-500 px-4 py-1.5 text-xl text-white shadow-md">
           중요도별 분석
