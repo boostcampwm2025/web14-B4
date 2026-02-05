@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { UserProfile } from '../types/user';
+import Popup from '@/components/Popup';
 
 export const mockUserData: UserProfile = {
   id: '1',
@@ -24,9 +26,14 @@ const GRADE_CONFIG = {
 
 export default function MyProfile({ user }: UserProfileProps) {
   const gradeInfo = GRADE_CONFIG[user.grade] || GRADE_CONFIG.bronze;
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
   const handleEdit = () => {
-    alert('프로필 수정');
+    setIsEditPopupOpen(true);
+  };
+
+  const handleEditPopupClose = () => {
+    setIsEditPopupOpen(false);
   };
 
   return (
@@ -89,6 +96,15 @@ export default function MyProfile({ user }: UserProfileProps) {
           </button>
         }
       </div>
+
+      <Popup
+        isOpen={isEditPopupOpen}
+        title="프로필 수정"
+        description="프로필 수정 기능은 준비 중입니다."
+        confirmText="확인"
+        onConfirm={handleEditPopupClose}
+        singleButton
+      />
     </div>
   );
 }

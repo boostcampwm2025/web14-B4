@@ -1,20 +1,28 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/Button';
 import Image from 'next/image';
 import { getNaverLoginUrl } from '@/utils/oauth';
 import { useRouter } from 'next/navigation';
+import Popup from '@/components/Popup';
 
 export default function Home() {
   const router = useRouter();
+  const [isErrorPopupOpen, setIsErrorPopupOpen] = useState(false);
+
   const handleNaverLogin = () => {
     const loginUrl = getNaverLoginUrl();
     if (loginUrl === '#') {
-      alert('로그인 설정 오류가 발생했습니다.');
+      setIsErrorPopupOpen(true);
       return;
     }
     router.push(loginUrl);
+  };
+
+  const handleErrorPopupClose = () => {
+    setIsErrorPopupOpen(false);
   };
 
   return (
@@ -54,6 +62,15 @@ export default function Home() {
           />
         </button>
       </div>
+
+      <Popup
+        isOpen={isErrorPopupOpen}
+        title="로그인 오류"
+        description="로그인 설정 오류가 발생했습니다."
+        confirmText="확인"
+        onConfirm={handleErrorPopupClose}
+        singleButton
+      />
     </div>
   );
 }

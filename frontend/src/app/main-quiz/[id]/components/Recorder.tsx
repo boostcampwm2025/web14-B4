@@ -452,6 +452,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
         description={`녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 녹음 내용을 확인한 후 다시 녹음해주세요.`}
         confirmText="확인"
         onConfirm={handleTimeoutConfirm}
+        singleButton
       />
     </div>
   );
