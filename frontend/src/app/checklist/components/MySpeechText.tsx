@@ -36,7 +36,7 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
           ref={textareaRef}
           value={speechItem.speechText}
           onChange={handleChange}
-          className="rounded-xl p-6 border-2 mb-3 w-full resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto"
+          className="rounded-xl p-6 border-2 mb-3 w-full resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto textarea-scrollbar"
           style={{ height: 600, backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
         />
       </div>

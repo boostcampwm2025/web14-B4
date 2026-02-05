@@ -89,26 +89,27 @@ export default function Header() {
                 w-10 h-10 rounded-full overflow-hidden cursor-pointer
                 ${isDropdownOpen ? 'ring-2 ring-[var(--color-primary)] ring-offset-2 scale-105 shadow-md border-transparent' : ''}
               `}
-              >
-                <Image
-                  src="/default-profile.svg"
-                  alt="내 프로필"
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              </button>
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-5 w-60 bg-white rounded-xl shadow-xl border border-[var(--color-gray-light)] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
-                  <div className="p-1">
-                    <Link
-                      href="/user"
-                      className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-gray-dark)] rounded-lg hover:bg-blue-50 hover:text-[var(--color-primary)] transition-colors"
-                      draggable={false}
-                      onDragStart={(e) => e.preventDefault()}
-                    >
-                      📄 리포트
-                    </Link>
+            >
+              <Image
+                src="/images/header-profile.svg"
+                alt="내 프로필"
+                width={40}
+                height={40}
+                className="object-cover"
+              />
+            </button>
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-5 w-60 bg-white rounded-xl shadow-xl border border-[var(--color-gray-light)] overflow-hidden animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                <div className="p-1">
+                  <Link
+                    href="/user"
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--color-gray-dark)] rounded-lg hover:bg-blue-50 hover:text-[var(--color-primary)] transition-colors"
+                    draggable={false}
+                    onDragStart={(e) => e.preventDefault()}
+                  >
+                    📄 리포트
+                  </Link>
 
                     <button
                       onClick={handleLogoutClick}

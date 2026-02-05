@@ -32,17 +32,28 @@ const OPTIONS: Option[] = [
   },
 ];
 
+type Mode = 'default' | 'report';
+
 type Props = {
   userName: string;
   mainQuizId: number;
   solvedQuizId: number;
   importance: Importance;
+  mode?: Mode;
 };
 
-export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, importance }: Props) {
+export default function ImportanceCheck({
+  userName,
+  mainQuizId,
+  solvedQuizId,
+  importance,
+  mode,
+}: Props) {
   const router = useRouter();
   const [selected, setSelected] = useState<Importance | null>(importance);
   const [isSaving, setIsSaving] = useState(false);
+
+  const currentMode: Mode = mode ?? 'default';
 
   const handleRetry = () => {
     if (isSaving) {
@@ -79,6 +90,30 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
     }
   };
 
+  const handleGoReport = () => {
+    router.push('/user');
+  };
+
+  const modeConfig = {
+    default: {
+      buttonText: '저장하고 다른 퀴즈 풀기',
+      onClick: handleFinish,
+      showRetry: true,
+      selectable: true,
+    },
+    report: {
+      buttonText: '리포트로 돌아가기',
+      onClick: handleGoReport,
+      showRetry: false,
+      selectable: false,
+    },
+  } satisfies Record<
+    Mode,
+    { buttonText: string; onClick: () => void; showRetry: boolean; selectable: boolean }
+  >;
+
+  const config = modeConfig[currentMode];
+
   return (
     <section className="w-full">
       <div className="mx-auto w-full max-w-[980px] rounded-2xl bg-white px-8 py-8 mb-5 shadow-[0_10px_30px_rgba(0,0,0,0.12)]">
@@ -101,11 +136,15 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
               <button
                 key={opt.value}
                 type="button"
+                disabled={!config.selectable}
                 className={[
-                  'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl',
-                  'transition-transform hover:scale-110',
+                  'group flex w-[180px] flex-col items-center rounded-2xl',
+                  config.selectable ? 'cursor-pointer hover:scale-110' : 'cursor-default',
                 ].join(' ')}
-                onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
+                onClick={() => {
+                  if (!config.selectable) return;
+                  setSelected((prev) => (prev === opt.value ? null : opt.value));
+                }}
                 aria-pressed={isSelected}
               >
                 <Image
@@ -118,7 +157,9 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
                     'object-contain transition-all',
                     isSelected
                       ? 'grayscale-0 opacity-100'
-                      : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
+                      : config.selectable
+                        ? 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100'
+                        : 'grayscale',
                   ].join(' ')}
                 />
 
@@ -127,7 +168,9 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
                     'mt-5 whitespace-pre-line text-center text-sm font-medium transition-colors',
                     isSelected
                       ? 'text-[var(--color-primary)]'
-                      : 'text-gray-600 group-hover:text-[var(--color-primary)]',
+                      : config.selectable
+                        ? 'text-gray-600 group-hover:text-[var(--color-primary)]'
+                        : 'text-gray-600',
                   ].join(' ')}
                 >
                   {opt.label}
@@ -139,12 +182,16 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
       </div>
 
       <div className="mx-auto mt-8 flex w-full max-w-[980px] items-center justify-between">
-        <Button variant="secondary" size="fixed" onClick={handleRetry}>
-          다시 풀기
-        </Button>
+        <div>
+          {config.showRetry && (
+            <Button variant="secondary" size="fixed" onClick={handleRetry}>
+              다시 풀기
+            </Button>
+          )}
+        </div>
 
-        <Button variant="primary" size="cta" onClick={handleFinish} disabled={!selected}>
-          저장하고 다른 퀴즈 풀기
+        <Button variant="primary" size="cta" onClick={config.onClick} disabled={!selected}>
+          {config.buttonText}
         </Button>
       </div>
     </section>

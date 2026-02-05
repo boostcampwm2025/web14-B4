@@ -251,6 +251,19 @@ export class FeedbackService {
     return result;
   }
 
+  async getSpeechText(solvedQuizId: number, userId: number) {
+    const solvedQuiz = await this.solvedQuizRepository.findByIdAndUserId(
+      solvedQuizId,
+      userId,
+    );
+
+    if (!solvedQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
+    }
+
+    return { speechText: solvedQuiz.speechText };
+  }
+
   // ai user prompt 텍스트 생성 함수
   private createTxtForAi(
     quizContent: string,

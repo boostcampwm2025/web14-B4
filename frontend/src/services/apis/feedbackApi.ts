@@ -59,3 +59,14 @@ export async function fetchAIFeedbackResult(solvedQuizId: number) {
   );
   return data;
 }
+
+export async function fetchSpeechText(solvedQuizId: number) {
+  const data = await apiFetch<{ speechText: string }>(
+    `/feedback/${solvedQuizId}/speech-text`,
+    {
+      method: 'GET',
+    },
+    { message: '나의 답변 조회를 실패했습니다.' },
+  );
+  return data;
+}
