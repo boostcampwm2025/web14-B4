@@ -17,10 +17,12 @@ export const ChecklistItem: React.FC<ChecklistItemProps> = ({
   return (
     <label
       htmlFor={id}
-      className={`flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors ${
-        checked ? 'bg-primary text-white' : 'text-gray-700'
-      }`}
-      style={{ backgroundColor: checked ? undefined : 'var(--color-bg-default)' }}
+      className={[
+        'group flex items-center gap-3 p-4 rounded-xl cursor-pointer transition-colors',
+        checked
+          ? 'bg-primary text-white'
+          : 'bg-[var(--color-bg-default)] text-gray-700 hover:bg-[var(--color-accent-sky)] hover:text-[var(--color-primary)]',
+      ].join(' ')}
     >
       <input
         type="checkbox"

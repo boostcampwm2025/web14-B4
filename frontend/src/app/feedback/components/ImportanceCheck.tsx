@@ -103,7 +103,7 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
                 type="button"
                 className={[
                   'group flex w-[180px] cursor-pointer flex-col items-center rounded-2xl',
-                  'hover:scale-110',
+                  'transition-transform hover:scale-110',
                 ].join(' ')}
                 onClick={() => setSelected((prev) => (prev === opt.value ? null : opt.value))}
                 aria-pressed={isSelected}
@@ -115,6 +115,7 @@ export default function ImportanceCheck({ userName, mainQuizId, solvedQuizId, im
                   height={93}
                   priority
                   className={[
+                    'object-contain transition-all',
                     isSelected
                       ? 'grayscale-0 opacity-100'
                       : 'grayscale brightness-90 contrast-125 opacity-80 group-hover:grayscale-0 group-hover:brightness-100 group-hover:contrast-100 group-hover:opacity-100',
