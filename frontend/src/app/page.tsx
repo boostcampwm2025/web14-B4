@@ -114,11 +114,11 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full flex flex-col bg-white">
+    <div className="w-full flex flex-col">
       {/* =============================================
           SECTION 1: Hero Section
          ============================================= */}
-      <section className="relative h-screen flex flex-col justify-between overflow-hidden">
+      <section className=" bg-white relative h-screen flex flex-col justify-between overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
             src="/wave-bg.svg"
