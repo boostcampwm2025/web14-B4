@@ -141,25 +141,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-/* 피드백 카드 내부용 스크롤바 */
-.feedback-scrollbar::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-
-.feedback-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.feedback-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--color-accent-sky);
-  border-radius: 10px;
-}
-
-.feedback-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
-}
-
 /* textarea 입력 영역용 스크롤바 */
 .textarea-scrollbar::-webkit-scrollbar {
   width: 15px;
