@@ -273,15 +273,30 @@ export class FeedbackService {
   ): string {
     const keywordsText = keywords.map((v) => v.keyword).join(', ');
 
-    const userPrompt = `
-    [퀴즈]
-    ${quizContent}
-    [사용자 답변]
-    ${userAnswer}
-    [사용자 체크리스트]
-    ${checklists.map((checklist) => `${checklist.checklistItem.content} : ${checklist.isChecked}`).join('\n')}
-    [핵심 키워드 목록]
-    ${keywordsText}
+    const userPrompt = `다음은 기술 퀴즈 평가에 필요한 정보입니다.
+각 섹션의 역할을 엄격히 구분하여 사용하세요.
+[중요 규칙]
+- includedKeywords 판단은 오직 [사용자 답변] 섹션만을 근거로 합니다.
+- [퀴즈], [사용자 체크리스트], [핵심 키워드 목록]은
+  평가 및 피드백 참고용 정보이며,
+  키워드 포함 여부 판단의 근거로 사용하면 안 됩니다.
+---
+[퀴즈] (문제 맥락 제공용 — 포함 판단 금지)
+${quizContent}
+---
+[사용자 답변] (유일한 판단 근거)
+${userAnswer}
+---
+[사용자 체크리스트] (자기평가 참고용 — 포함 판단 금지)
+${checklists
+  .map(
+    (checklist) =>
+      `${checklist.checklistItem.content} : ${checklist.isChecked}`,
+  )
+  .join('\n')}
+---
+[핵심 키워드 목록] (비교 기준 — 포함 판단 금지)
+${keywordsText}
     `;
 
     return userPrompt;
