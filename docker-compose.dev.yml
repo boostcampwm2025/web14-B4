@@ -5,11 +5,11 @@ services:
     image: postgres:15-alpine
     container_name: postgres-dev
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
-      POSTGRES_DB: csbokbok_db
+      POSTGRES_USER: dbuser
+      POSTGRES_PASSWORD: dbpass
+      POSTGRES_DB: csbbokbbok_db
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
@@ -19,7 +19,7 @@ services:
     container_name: redis-dev
     command: redis-server --requirepass root
     ports:
-      - '6379:6379'
+      - '6380:6379'
     networks:
       - app-network
   backend-dev:
@@ -56,7 +56,7 @@ services:
       - /app/.next # .next 폴더도 컨테이너 것 사용
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_API_URL=http://localhost:8080 # backend API URL
+      - NEXT_PUBLIC_API_BASE_URL=http://backend-dev:8080/api # backend API URL
       - WATCHPACK_POLLING=true # 파일 변경 감지 (Docker에서 필요)
     depends_on:
       - backend-dev
