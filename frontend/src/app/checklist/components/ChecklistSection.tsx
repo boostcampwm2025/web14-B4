@@ -156,7 +156,7 @@ export default function ChecklistSection({
         </Button>
 
         <Button variant="primary" size="fixed" onClick={handleSubmit}>
-          다음
+          피드백 받기
         </Button>
       </div>
 
