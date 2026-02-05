@@ -207,6 +207,27 @@
   }
 }
 
+
 .animate-wave-dance {
   animation: wave-dance 1s ease-in-out infinite;
+}
+
+
+@keyframes float-glow {
+  0% {
+    transform: translateY(3px);  /* 시작: 아래 */
+    filter: brightness(1);
+  }
+  50% {
+    transform: translateY(-3px);  /* 중간: 위 */
+    filter: brightness(1.2);
+  }
+  100% {
+    transform: translateY(3px);  /* 끝: 아래 */
+    filter: brightness(1);
+  }
+}
+
+.animate-float-glow {
+  animation: float-glow 2.5s ease-in-out infinite;
 }

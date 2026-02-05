@@ -354,7 +354,7 @@ export default function Home() {
             <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight">
               설명할 수 없다면,
               <br className="md:hidden" />
-              <span className="text-[var(--color-primary)]">아는 것이 아닙니다.</span>
+              <span className="text-[var(--color-primary)]"> 아는 것이 아닙니다.</span>
             </h2>
 
             <p className="text-gray-500 text-lg mb-10">
