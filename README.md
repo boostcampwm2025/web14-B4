@@ -225,13 +225,13 @@ NODE_ENV=production
 **Environment Variables**
 
 - 다음 값들은 직접 발급 및 설정이 필요합니다.
-- NEXT_PUBLIC_NAVER_CLIENT_ID: NAVER login API Client ID 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
-- GEMINI_API_KEY: Google AI Studio 발급 [(Gemini API 가이드 참고)](https://ai.google.dev/gemini-api/docs/api-key?hl=ko)
-- NAVER_CLOVA_SPEECH_INVOKE_URL: NAVER CLOVA Speech Invoke URL 발급 [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
-- NAVER_CLOVA_SPEECH_SECRET_KEY: NAVER CLOVA Speech Secret key 발급 [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
-- NAVER_CLIENT_ID: NAVER login API Client ID 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
-- NAVER_CLIENT_SECRET: NAVER login API Client secret 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
-- JWT_SECRET: NAVER login API JWT 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/login/devguide/devguide.md#3-5-3-jwk-key-%EB%B0%9C%EA%B8%89)
+- NEXT_PUBLIC_NAVER_CLIENT_ID: [(NAVER Login 개발 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- GEMINI_API_KEY: [(Gemini API 가이드 참고)](https://ai.google.dev/gemini-api/docs/api-key?hl=ko)
+- NAVER_CLOVA_SPEECH_INVOKE_URL: [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
+- NAVER_CLOVA_SPEECH_SECRET_KEY: [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
+- NAVER_CLIENT_ID: [(NAVER Login 개발 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- NAVER_CLIENT_SECRET: [(NAVER Login 개발 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- JWT_SECRET: [(NAVER Login 개발 가이드 참고)](https://developers.naver.com/docs/login/devguide/devguide.md#3-5-3-jwk-key-%EB%B0%9C%EA%B8%89)
 
 ### 2. 개발용 컨테이너 실행
 
