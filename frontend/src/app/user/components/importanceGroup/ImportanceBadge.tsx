@@ -1,4 +1,3 @@
-// components/ImportanceBadge.tsx
 'use client';
 
 import { Category } from '@/types/category.types';
@@ -15,7 +14,7 @@ export function ImportanceBadge({ item }: ImportanceBadgeProps) {
   const style = CATEGORY_STYLE_MAP[item.category as Category] ?? DEFAULT_CATEGORY_STYLE;
 
   const onClick = () => {
-    router.push(`/feedback/main-quiz/${item.mainQuizId}/solved-quiz/${item.solvedQuizId}`);
+    router.push(`/user/feedback/main-quiz/${item.mainQuizId}/solved-quiz/${item.solvedQuizId}`);
   };
 
   return (

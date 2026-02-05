@@ -31,7 +31,7 @@ type UploadAudio = {
 /**
  * 음성 파일을 STT 변환 API로 전송
  * - POST /speeches/stt
- * - form-data key: audio, filename: audio.webm
+ * - form-data key: audio, filename: audio.wav
  * - 응답: { solvedQuizId, text }
  */
 export async function postSpeechesStt(mainQuizId: number, audio: UploadAudio): Promise<SttResult> {

@@ -10,7 +10,7 @@ interface DonutChartProps {
 export default function DonutChart({ solvedData }: DonutChartProps) {
   const COLORS = [
     '#a8dadc', // 파스텔 청록
-    '#f1faee', // 아이보리
+    '#e1efdd', // 연연두
     '#e63946', // 빨강
     '#457b9d', // 파란색
     '#1d3557', // 진한 파랑
@@ -37,7 +37,7 @@ export default function DonutChart({ solvedData }: DonutChartProps) {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={300}>
       <PieChart>
         <Pie
           data={data}

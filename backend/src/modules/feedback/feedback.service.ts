@@ -24,7 +24,7 @@ import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
-} from 'src/common/constants/speech.constant';
+} from 'src/common/constants/speech.constants';
 import { SolvedState } from 'src/datasources/entities/tb-solved-quiz.entity';
 import { Transactional } from 'typeorm-transactional';
 
@@ -249,6 +249,19 @@ export class FeedbackService {
       aiFeedbackResult: solvedQuiz.aiFeedback,
     };
     return result;
+  }
+
+  async getSpeechText(solvedQuizId: number, userId: number) {
+    const solvedQuiz = await this.solvedQuizRepository.findByIdAndUserId(
+      solvedQuizId,
+      userId,
+    );
+
+    if (!solvedQuiz) {
+      throw new BusinessException(ERROR_MESSAGES.SOLVED_QUIZ_NOT_FOUND);
+    }
+
+    return { speechText: solvedQuiz.speechText };
   }
 
   // ai user prompt 텍스트 생성 함수

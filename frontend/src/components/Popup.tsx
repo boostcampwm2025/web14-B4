@@ -7,7 +7,8 @@ interface PopupProps {
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
-  onCancel: () => void;
+  onCancel?: () => void;
+  singleButton?: boolean;
 }
 
 function Popup({
@@ -18,13 +19,17 @@ function Popup({
   cancelText = '아니오',
   onConfirm,
   onCancel,
+  singleButton = false,
 }: PopupProps) {
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* 배경 오버레이 */}
-      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onCancel} />
+      <div
+        className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+        onClick={singleButton ? onConfirm : onCancel}
+      />
 
       {/* 팝업 컨테이너 */}
       <div className="relative w-full max-w-sm bg-white rounded-[35px] p-6 shadow-2xl animate-in fade-in zoom-in duration-200">
@@ -38,14 +43,16 @@ function Popup({
 
         {/* 버튼 영역 */}
         <div className="flex gap-5">
-          <Button
-            variant="secondary"
-            size="cta"
-            className="flex-1 rounded-[20px]"
-            onClick={onCancel}
-          >
-            {cancelText}
-          </Button>
+          {!singleButton && (
+            <Button
+              variant="secondary"
+              size="cta"
+              className="flex-1 rounded-[20px]"
+              onClick={onCancel}
+            >
+              {cancelText}
+            </Button>
+          )}
 
           <Button
             variant="primary"

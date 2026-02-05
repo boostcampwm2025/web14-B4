@@ -7,12 +7,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import {
-  MainQuiz,
-  DifficultyLevel,
-} from '../../datasources/entities/tb-main-quiz.entity';
 import { MultipleChoicesResponseDto } from './dto/quiz-response.dto';
 import { Public } from '../auth/decorator/public.decorator';
+import { QuizFilterDto, QuizInfiniteScrollDto } from './dto/quiz-search.dto';
+import { QuizCategory } from 'src/datasources/entities/tb-quiz-category.entity';
 
 @Public()
 @Controller('quizzes')
@@ -20,20 +18,29 @@ export class QuizzesController {
   constructor(private readonly quizService: QuizzesService) {}
 
   @Get()
-  async getAllQuizzes(
-    @Query('category') category?: string,
-    @Query('difficulty') difficulty?: DifficultyLevel,
-  ) {
-    const result: MainQuiz[] = await this.quizService.getQuizzes(
-      category,
-      difficulty,
-    );
+  async getAllQuizzes(@Query() searchDto: QuizInfiniteScrollDto) {
+    const result = await this.quizService.getQuizzes(searchDto);
     return result;
   }
 
+  /**
+   * 카테고리별 퀴즈 갯수
+   * @param filter 난이도
+   * @returns 카테고리 + 갯수 리스트
+   */
+  @Get('aggregations')
+  async getAggregations(@Query() filter: QuizFilterDto) {
+    const result = await this.quizService.getAggregations(filter);
+    return result;
+  }
+
+  /**
+   * 전체 퀴즈 카테고리 조회
+   * @returns 전체 카테고리 목록(id, name)
+   */
   @Get('categories')
-  getCategories(@Query('difficulty') difficulty?: DifficultyLevel) {
-    const result = this.quizService.getCategoriesWithCount(difficulty);
+  getCategories(): Promise<QuizCategory[]> {
+    const result = this.quizService.getQuizCategories();
     return result;
   }
 

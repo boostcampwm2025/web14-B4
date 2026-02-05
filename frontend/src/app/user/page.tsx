@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { cookies } from 'next/headers';
 import { getUserComprehensions, getUserSolvedStatistics } from '@/services/apis/usersApi';
 import QuizStatisticsSection from './components/QuizStatisticsSection';
-import MyProfile, { mockUserData } from './components/MyProfile';
+import MyProfile from './components/MyProfile';
 import ImportanceBoard from './components/importanceGroup/ImportanceBoard';
 
 export default async function Page() {
@@ -15,7 +15,6 @@ export default async function Page() {
   ]);
 
   const userData = {
-    ...mockUserData,
     name: username,
   };
 

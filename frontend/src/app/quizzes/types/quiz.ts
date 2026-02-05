@@ -20,12 +20,19 @@ export interface Quiz {
   quizCategory: QuizCategory;
 }
 
-export interface QuizCategoryWithCount extends QuizCategory {
-  id: number;
-  name: string;
-  count: number;
+// 페이지네이션 메타데이터
+export interface PaginationMeta {
+  nextCursor: string | null;
+  hasNextPage: boolean;
+  limit: number;
 }
+
+// 퀴즈 목록 응답 데이터
+export interface QuizListData {
+  data: Quiz[];
+  meta: PaginationMeta;
+}
+
 export interface CategoryCountsResponseDto {
-  totalCount: number;
-  categories: QuizCategoryWithCount[];
+  data: QuizCategory[];
 }

@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-const MAX_SECONDS = 120;
+import { MAX_SPEECH_SECONDS } from '@/constants/speech.constants';
 
 export function useRecorderTimer() {
   const [seconds, setSeconds] = useState(0);
@@ -11,7 +10,7 @@ export function useRecorderTimer() {
 
     intervalRef.current = setInterval(() => {
       setSeconds((prev) => {
-        if (prev >= MAX_SECONDS) {
+        if (prev >= MAX_SPEECH_SECONDS) {
           return prev;
         }
         return prev + 1;
@@ -39,10 +38,10 @@ export function useRecorderTimer() {
 
   return {
     seconds,
-    isMaximumTime: seconds >= MAX_SECONDS,
+    isMaximumTime: seconds >= MAX_SPEECH_SECONDS,
     startTimer,
     stopTimer,
     resetTimer,
-    maxSeconds: MAX_SECONDS,
+    maxSeconds: MAX_SPEECH_SECONDS,
   };
 }

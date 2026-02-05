@@ -1,6 +1,6 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
-@import "tailwindcss";
-@import "tw-animate-css";
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -141,23 +141,71 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+/* 피드백 카드 내부용 스크롤바 */
+.feedback-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.feedback-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.feedback-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-accent-sky);
+  border-radius: 10px;
+}
+
+.feedback-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
+/* textarea 입력 영역용 스크롤바 */
+.textarea-scrollbar::-webkit-scrollbar {
+  width: 15px;
+}
+
+.textarea-scrollbar::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin: 5px 0;
+}
+
+.textarea-scrollbar::-webkit-scrollbar-thumb {
+  border: 5px solid transparent;
+  border-radius: 10px;
+  background-color: var(--input);
+  background-clip: content-box;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
   html {
-    font-family: "Pretendard", sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
   body {
     @apply bg-background text-foreground;
   }
   @keyframes shake {
-    0% { transform: translateX(0) rotate(0deg); }
-    20% { transform: translateX(-3px) rotate(-2deg); }
-    40% { transform: translateX(3px) rotate(2deg); }
-    60% { transform: translateX(-2px) rotate(-1deg); }
-    80% { transform: translateX(2px) rotate(1deg); }
-    100% { transform: translateX(0) rotate(0deg); }
+    0% {
+      transform: translateX(0) rotate(0deg);
+    }
+    20% {
+      transform: translateX(-3px) rotate(-2deg);
+    }
+    40% {
+      transform: translateX(3px) rotate(2deg);
+    }
+    60% {
+      transform: translateX(-2px) rotate(-1deg);
+    }
+    80% {
+      transform: translateX(2px) rotate(1deg);
+    }
+    100% {
+      transform: translateX(0) rotate(0deg);
+    }
   }
 
   .shake {

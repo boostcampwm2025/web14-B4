@@ -26,7 +26,7 @@ export default function HexagonChart({ comprehensionData }: HexagonChartProps) {
   const data = convertToRadarData(comprehensionData);
 
   return (
-    <ResponsiveContainer width="100%" height={400}>
+    <ResponsiveContainer width="100%" height={300}>
       <RadarChart data={data}>
         <PolarGrid />
         <PolarAngleAxis dataKey="subject" />

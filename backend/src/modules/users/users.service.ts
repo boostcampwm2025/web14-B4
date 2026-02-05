@@ -16,7 +16,7 @@ import { UserChecklistProgress } from 'src/datasources/entities/tb-user-checklis
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-quiz.repository';
 import { BusinessException } from '../../common/exceptions/business.exception';
-import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constant';
+import { MAX_USER_ANSWER_LENGTH } from 'src/common/constants/speech.constants';
 import { BadRequestException } from '@nestjs/common';
 
 @Injectable()

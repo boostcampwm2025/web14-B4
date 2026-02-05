@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAudioRecorder } from '@/hooks/mainQuiz/useAudioRecorder';
 import { useMicrophoneManager } from '@/hooks/mainQuiz/useMicrophoneManager';
@@ -8,16 +8,16 @@ import { postSpeechesStt } from '@/services/apis/speechesApi';
 import { ApiError } from '@/services/http/errors';
 import { useQuizStore } from '@/store/quizStore';
 import { useVideoManager } from '@/hooks/mainQuiz/useVideoManager';
-import { getRecorderConfig } from '@/utils/recorder';
 import Loader from '@/components/Loader';
 import CombinedPermissionConsentModal from './permission/CombinedPermissionConsentModal';
 import MediaDeviceSelect from './MediaDeviceSelect';
 import RecordActionButtons from './buttons/RecordActionButtons';
 import { useRecordActionButtons } from '@/hooks/mainQuiz/useRecordActionButtons';
 import RecordedVideo from './record/RecordedVideo';
-import { useRecorderTimer } from '@/hooks/mainQuiz/useRecorderTimer';
-import RecorderTimer from './RecorderTimer';
 import Popup from '@/components/Popup';
+import RecorderTimerContainer from './RecorderTimerContainer';
+import { MAX_SPEECH_SECONDS, AUDIO_MIMETYPE, AUDIO_FILE_NAME } from '@/constants/speech.constants';
+import { useVideoRecorder } from '@/hooks/mainQuiz/useVideoRecorder';
 
 interface AudioRecorderProps {
   quizId: number;
@@ -35,34 +35,36 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   const { setSolvedQuizId } = useQuizStore();
 
   const [isConsentOpen, setIsConsentOpen] = useState(true);
-
   const [recordStatus, setStatus] = useState<RecordStatus>('idle');
-  const timer = useRecorderTimer();
-
   const [message, setMessage] = useState<string | null>(null);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const videoChunksRef = useRef<Blob[]>([]);
-  const [recordedVideoUrl, setRecordedVideoUrl] = useState<string | null>(null);
-
-  const [stream, setStream] = useState<MediaStream | null>(null);
-  const [isVideoRecording, setIsVideoRecording] = useState(false);
-  const [error, setError] = useState<string>('');
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isTimeoutPopupOpen, setIsTimeoutPopupOpen] = useState(false);
 
-  const { audioUrl, audioBlob, audioManifest, startRecording, stopRecording, resetRecording } =
-    useAudioRecorder({
-      onRecorded: (blob) => {
-        if (!blob) {
-          setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
-          setStatus('idle');
-          return;
-        }
+  const {
+    videoRef,
+    recordedVideoUrl,
+    isVideoRecording,
+    error,
+    setError,
+    setCameraStream,
+    stopCamera,
+    startVideoRecording,
+    stopVideoRecording,
+    resetVideoRecording,
+  } = useVideoRecorder();
 
-        setStatus('recorded');
-      },
-    });
+  const { audioUrl, audioBlob, startRecording, stopRecording, resetRecording } = useAudioRecorder({
+    onRecorded: (blob) => {
+      if (!blob) {
+        setMessage('녹음 파일 생성에 실패했습니다. 다시 시도해주세요.');
+        setStatus('idle');
+        return;
+      }
+
+      setStatus('recorded');
+    },
+  });
 
   const {
     micStatus,
@@ -109,122 +111,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     onSwitchToTextMode();
   };
 
-  // 선택한 카메라로 스트림 시작
-  const setCameraStream = async (deviceId?: string) => {
-    if (videoStatus !== 'granted') {
-      setError('카메라 권한이 필요합니다.');
-      return;
-    }
-
-    try {
-      // 기존 스트림 정리
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-
-      const newStream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          deviceId: deviceId ? { exact: deviceId } : undefined,
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-        },
-        audio: true,
-      });
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = newStream;
-        setStream(newStream);
-        setError('');
-      }
-    } catch (err) {
-      console.error('카메라 시작 오류:', err);
-      setError('카메라를 시작할 수 없습니다.');
-    }
-  };
-
-  // 카메라 중지
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach((track) => track.stop());
-      setStream(null);
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  };
-
-  // 녹화 시작
-  const startVideoRecording = () => {
-    if (!stream) {
-      setError('먼저 카메라를 시작해주세요.');
-      return;
-    }
-
-    try {
-      videoChunksRef.current = [];
-
-      const config = getRecorderConfig();
-
-      const mediaRecorder = new MediaRecorder(
-        stream,
-        config.mimeType ? { mimeType: config.mimeType } : {},
-      );
-
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          videoChunksRef.current.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(videoChunksRef.current, {
-          type: config.mimeType || 'video/webm',
-        });
-
-        // 기존 URL 정리
-        if (recordedVideoUrl) {
-          URL.revokeObjectURL(recordedVideoUrl);
-        }
-
-        const url = URL.createObjectURL(blob);
-        setRecordedVideoUrl(url);
-        videoChunksRef.current = [];
-      };
-
-      mediaRecorder.start();
-      mediaRecorderRef.current = mediaRecorder;
-      setIsVideoRecording(true);
-    } catch (err) {
-      console.error('녹화 시작 오류:', err);
-      setError('녹화를 시작할 수 없습니다.');
-    }
-  };
-
-  // 녹화 종료
-  const stopVideoRecording = () => {
-    if (mediaRecorderRef.current && isVideoRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current = null;
-      setIsVideoRecording(false);
-    }
-  };
-
-  // 비디오 녹화 초기화
-  const resetVideoRecording = () => {
-    if (mediaRecorderRef.current && isVideoRecording) {
-      mediaRecorderRef.current.stop();
-      mediaRecorderRef.current = null;
-      setIsVideoRecording(false);
-    }
-
-    if (recordedVideoUrl) {
-      URL.revokeObjectURL(recordedVideoUrl);
-    }
-
-    setRecordedVideoUrl(null);
-    videoChunksRef.current = [];
-  };
-
   // 디바이스 변경 시 카메라 재시작
   useEffect(() => {
     if (videoStatus === 'granted') {
@@ -242,10 +128,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     return () => {
       stopRecording();
       stopCamera();
-
-      if (recordedVideoUrl) {
-        URL.revokeObjectURL(recordedVideoUrl);
-      }
     };
   }, []);
 
@@ -266,7 +148,6 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
       });
       startVideoRecording();
 
-      timer.startTimer();
       setStatus('recording');
     } catch {
       setMessage('녹음을 시작할 수 없습니다.');
@@ -278,13 +159,11 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     await stopRecording();
     stopVideoRecording();
     stopCamera();
-    timer.stopTimer();
   };
 
   const handleRetry = () => {
     resetRecording();
     resetVideoRecording();
-    timer.resetTimer();
     setStatus('idle');
     setMessage(null);
   };
@@ -303,25 +182,15 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
   };
 
   const handleSubmit = async () => {
-    if (!audioBlob || !audioManifest) {
+    if (!audioBlob) {
       return;
     }
-
-    if (timer.seconds > timer.maxSeconds) {
-      const errMsg = '녹음 시간(3분)을 초과했습니다. 다시 녹음해주세요.';
-      alert(errMsg);
-      setError(errMsg);
-      handleRetry();
-      return;
-    }
-
     setStatus('submitting');
-
     try {
       const { solvedQuizId } = await postSpeechesStt(quizId, {
         blob: audioBlob,
-        filename: audioManifest.filename,
-        mimeType: audioManifest.mimeType,
+        filename: AUDIO_FILE_NAME,
+        mimeType: AUDIO_MIMETYPE,
       });
       setSolvedQuizId(solvedQuizId);
 
@@ -339,6 +208,19 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
     }
   };
 
+  const handleTimeout = async () => {
+    setIsTimeoutPopupOpen(true);
+    await handleStop();
+  };
+
+  const handleTimeoutConfirm = () => {
+    setIsTimeoutPopupOpen(false);
+    setMessage(
+      `녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 녹음 내용을 확인한 후 다시 녹음해주세요.`,
+    );
+    // 여기서 바로 handleRetry()하면 사용자가 녹음 파일을 확인 할 수 없으므로 handleRetry()하지 않음
+  };
+
   const actionButtons = useRecordActionButtons({
     recordStatus,
     canRecord,
@@ -351,19 +233,8 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
 
   const isSubmitting = recordStatus === 'submitting';
 
-  useEffect(() => {
-    if (timer.isMaximumTime && recordStatus === 'recording') {
-      // setState 호출을 다음 렌더링 사이클로 지연
-      const timeoutId = setTimeout(() => {
-        handleStop();
-      }, 0);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [timer.isMaximumTime, recordStatus, handleStop]);
-
   return (
-    <div>
+    <div className="w-full">
       {/* 제출 중 로딩 모달 */}
       {isSubmitting && (
         <Loader
@@ -380,7 +251,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
       />
 
       {/* 메인 컨텐츠: 좌우 레이아웃 */}
-      <div className="px-12 py-4 max-w-350">
+      <div className="px-12 py-4 max-w-250 mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* 비디오 */}
           <div className="space-y-6 lg:col-span-3">
@@ -421,10 +292,9 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
             />
 
             {/* 녹음 시간 */}
-            <RecorderTimer
-              seconds={timer.seconds}
-              maxSeconds={timer.maxSeconds}
+            <RecorderTimerContainer
               isRecording={recordStatus === 'recording'}
+              onTimeout={handleTimeout}
             />
 
             {/* 메시지 */}
@@ -459,6 +329,14 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
         description="녹음중인 답변이 제출되지 않습니다."
         onConfirm={handleConfirm}
         onCancel={handleCancel}
+      />
+      <Popup
+        isOpen={isTimeoutPopupOpen}
+        title="녹음 시간이 초과되었습니다."
+        description={`녹음 시간(${MAX_SPEECH_SECONDS}초)을 초과했습니다. 녹음 내용을 확인한 후 다시 녹음해주세요.`}
+        confirmText="확인"
+        onConfirm={handleTimeoutConfirm}
+        singleButton
       />
     </div>
   );

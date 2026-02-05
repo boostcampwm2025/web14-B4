@@ -8,12 +8,6 @@ import {
   UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CsrClovaSttResponse } from './dto/CsrClovaSttResponse.dto';
-import {
-  allowedMimeTypes,
-  CLOVA_STT,
-  AUDIOFILE_MAX_SIZE_BYTES,
-} from './speeches.constants';
 import { SolvedQuizRepository } from '../../datasources/repositories/tb-solved-quiz.repository';
 import { SttResponseDto } from './dto/SttResponseDto.dto';
 import { WINSTON_MODULE_NEST_PROVIDER, WinstonLogger } from 'nest-winston';
@@ -26,7 +20,9 @@ import { MainQuizRepository } from 'src/datasources/repositories/tb-main-quiz.re
 import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
-} from 'src/common/constants/speech.constant';
+  AUDIOFILE_MAX_SIZE_BYTES,
+  allowedMimeTypes,
+} from 'src/common/constants/speech.constants';
 
 type ClovaSpeechLongSyncResponse = {
   text: string; // 변환 텍스트
@@ -59,49 +55,6 @@ export class SpeechesService {
     @Inject(WINSTON_MODULE_NEST_PROVIDER)
     private readonly logger: WinstonLogger,
   ) {}
-
-  /**
-   * 음성 녹음을 텍스트로 변환하여 반환한다. - CSR 방식 (60초 처리 제한)
-   * @param audioFile : 음성 파일
-   * @param mainQuizId : 메인 퀴즈 id
-   * @param userId : 사용자 id
-   * @returns : 음성 파일을 텍스트로 변환한 문자열
-   */
-  async csrSpeechToText(
-    audioFile: Express.Multer.File,
-    mainQuizId: number,
-    userId: number,
-  ): Promise<{ solvedQuizId: number; text: string }> {
-    this.checkValidation(audioFile);
-
-    const audio: Buffer = audioFile.buffer;
-    let sttText: string;
-
-    try {
-      sttText = await this.csrSttWithClova(audio);
-    } catch {
-      throw new InternalServerErrorException(
-        '음성 인식(STT) 처리 중 오류가 발생했습니다.',
-      );
-    }
-
-    if (!sttText || sttText.trim().length === 0) {
-      throw new InternalServerErrorException(
-        'STT 변환 결과가 없습니다. 더 명확한 음성으로 다시 시도해주세요.',
-      );
-    }
-
-    const solvedQuiz = await this.solvedQuizRepository.createSolvedQuiz({
-      user: { userId: userId },
-      mainQuiz: { mainQuizId: mainQuizId },
-      speechText: sttText,
-    });
-
-    return {
-      solvedQuizId: solvedQuiz.solvedQuizId,
-      text: sttText,
-    };
-  }
 
   /**
    * 음성 텍스트를 수정한다.
@@ -198,36 +151,6 @@ export class SpeechesService {
     }
 
     return solvedQuiz;
-  }
-
-  /* 음성 buffer를 clova STT를 사용하여 텍스트로 변환 */
-  private async csrSttWithClova(audio: Buffer) {
-    const clientId = this.configService.get<string>('NAVER_CLOVA_CLIENT_ID');
-    const clientSecret = this.configService.get<string>(
-      'NAVER_CLOVA_CLIENT_SECRET',
-    );
-    const url = `${CLOVA_STT.BASE_URL}?lang=${CLOVA_STT.DEFAULT_LANG}`;
-
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'x-ncp-apigw-api-key-id': clientId || '',
-        'x-ncp-apigw-api-key': clientSecret || '',
-      },
-      body: audio as unknown as BodyInit,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new InternalServerErrorException(
-        `클로바 STT 변환 실패: ${errorText}`,
-      );
-    }
-
-    const sttResponse = (await response.json()) as CsrClovaSttResponse;
-
-    return sttResponse.text;
   }
 
   /* 녹음 파일의 유효성 검사 */
