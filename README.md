@@ -180,14 +180,14 @@ API_BASE_URL=http://localhost:8080/api
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api
 
 # [Naver OAuth - Frontend]
-NEXT_PUBLIC_NAVER_CLIENT_ID=
+NEXT_PUBLIC_NAVER_CLIENT_ID=naver_oauth_client_id_here
 NEXT_PUBLIC_NAVER_REDIRECT_URI=http://localhost:3000/auth/callback/naver
 ```
 
 **backend/.env**
 
 ```
-# dev DB (로컬에서 docker-compose.dev 접속 기준 정보)
+# dev DB (docker-compose.dev 접속 정보)
 DB_HOST=localhost
 DB_PORT=5433
 DB_USERNAME=dbuser
@@ -195,24 +195,24 @@ DB_PASSWORD=dbpass
 DB_DATABASE=csbbokbbok_db
 
 #[BE] GEMINI
-GEMINI_API_KEY=
+GEMINI_API_KEY=your_gemini_api_key_here
 
-#[BE] CLOVA SPEECH
-NAVER_CLOVA_SPEECH_INVOKE_URL=
-NAVER_CLOVA_SPEECH_SECRET_KEY=
+#[BE] CLOVA Speech
+NAVER_CLOVA_SPEECH_INVOKE_URL=your_naver_clova_speech_invoke_url_here
+NAVER_CLOVA_SPEECH_SECRET_KEY=your_naver_clova_speech_secret_key_here
 NAVER_CLOVA_SPEECH_DEFAULT_LANG=ko-KR
 
 # [Naver OAuth - Backend]
-NAVER_CLIENT_ID=
-NAVER_CLIENT_SECRET=
+NAVER_CLIENT_ID=naver_oauth_client_id_here
+NAVER_CLIENT_SECRET=naver_oauth_client_secret_here
 
-# [Redis] (로컬에서 docker-compose.dev 접속 기준 정보)
+# [Redis] (docker-compose.dev 접속 정보)
 REDIS_HOST=localhost
 REDIS_PORT=6380
 REDIS_PASSWORD=root
 
 #[BE] JWT
-JWT_SECRET=
+JWT_SECRET=your_jwt_secret_here
 
 #[BE] LOG
 LOG_LEVEL=debug
@@ -221,6 +221,17 @@ LOG_TO_FILE=false
 
 NODE_ENV=production
 ```
+
+**Environment Variables**
+
+- 다음 값들은 직접 발급 및 설정이 필요합니다.
+- NEXT_PUBLIC_NAVER_CLIENT_ID: NAVER login API Client ID 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- GEMINI_API_KEY: Google AI Studio 발급 [(Gemini API 가이드 참고)](https://ai.google.dev/gemini-api/docs/api-key?hl=ko)
+- NAVER_CLOVA_SPEECH_INVOKE_URL: NAVER CLOVA Speech Invoke URL 발급 [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
+- NAVER_CLOVA_SPEECH_SECRET_KEY: NAVER CLOVA Speech Secret key 발급 [(NAVER CLOVA Speech 가이드 참고)](https://guide.ncloud-docs.com/docs/clovaspeech-builder-long#api-%ED%98%B8%EC%B6%9C-%EC%A0%95%EB%B3%B4-%EB%B0%8F-%EB%8F%84%EB%A9%94%EC%9D%B8-%EC%A0%95%EB%B3%B4-%ED%99%95%EC%9D%B8)
+- NAVER_CLIENT_ID: NAVER login API Client ID 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- NAVER_CLIENT_SECRET: NAVER login API Client secret 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/common/openapiguide/appregister.md#%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%95%84%EC%9D%B4%EB%94%94%EC%99%80-%ED%81%B4%EB%9D%BC%EC%9D%B4%EC%96%B8%ED%8A%B8-%EC%8B%9C%ED%81%AC%EB%A6%BF-%ED%99%95%EC%9D%B8)
+- JWT_SECRET: NAVER login API JWT 발급 [(NAVER 개발자센터 가이드 참고)](https://developers.naver.com/docs/login/devguide/devguide.md#3-5-3-jwk-key-%EB%B0%9C%EA%B8%89)
 
 ### 2. 개발용 컨테이너 실행
 
@@ -240,7 +251,7 @@ npm run install:all
 
 ### 4. DB 마이그레이션 & 시드 데이터 생성
 
-- 프로젝트 root에서 아래 명령어 실행시 테이블 생성 및 샘플 퀴즈 데이터 seeding 수행
+- 프로젝트 root에서 아래 명령어 실행
 
 ```
 npm run db:init
