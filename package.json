@@ -10,7 +10,8 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\" \"!**/node_modules/**\" \"!**/dist/**\" \"!**/.next/**\"",
     "prepare": "husky || exit 0",
     "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
-    "test": "npm run test --workspaces"
+    "test": "npm run test --workspaces",
+    "db:init": "npm --prefix backend run migration:run && npm --prefix backend run seed"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.3.0",
