@@ -169,10 +169,6 @@
 **frontend/.env**
 
 ```
-# 프론트엔드 API URL 설정 (docker + nginx 사용)
-# API_BASE_URL=http://backend:8080/api
-# NEXT_PUBLIC_API_BASE_URL=/api
-
 NODE_ENV=production
 
 # local test용
@@ -187,12 +183,12 @@ NEXT_PUBLIC_NAVER_REDIRECT_URI=http://localhost:3000/auth/callback/naver
 **backend/.env**
 
 ```
-# dev
+# dev DB (로컬에서 docker-compose.dev 접속 기준 정보)
 DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=
-DB_PASSWORD=
-DB_DATABASE=
+DB_PORT=5433
+DB_USERNAME=dbuser
+DB_PASSWORD=dbpass
+DB_DATABASE=csbbokbbok_db
 
 NAVER_CLOVA_SPEECH_INVOKE_URL=
 NAVER_CLOVA_SPEECH_SECRET_KEY=
@@ -202,10 +198,10 @@ NAVER_CLOVA_SPEECH_DEFAULT_LANG=ko-KR
 NAVER_CLIENT_ID=
 NAVER_CLIENT_SECRET=
 
-# [Redis]
+# [Redis] (로컬에서 docker-compose.dev 접속 기준 정보)
 REDIS_HOST=localhost
-REDIS_PORT=6379
-REDIS_PASSWORD=
+REDIS_PORT=6380
+REDIS_PASSWORD=root
 
 #[BE] JWT
 JWT_SECRET=
@@ -220,17 +216,35 @@ NODE_ENV=production
 
 ### 2. 개발용 컨테이너 실행
 
+- DB, Redis 컨테이너 실행
+
 ```
-docker compose -f docker-compose.dev.yml up --build
+docker-compose -f docker-compose.dev.yml up -d --build postgres redis
 ```
 
-### 3. 접속
+### 4. DB 정보 초기화
+
+- 프로젝트 root에서 아래 명령어 실행시 테이블 생성 및 샘플 퀴즈 데이터 seeding 수행
+
+```
+npm run db:init
+```
+
+### 5. 서버 실행
+
+- 프로젝트 root에서 아래 명령어 실행
+
+```
+npm run dev
+```
+
+### 6. 접속
 
 - `Frontend` → `http://localhost:3000`
 - `Backend` → `http://localhost:8080`
-- `PostgreSQL` → `localhost:5432`
+- `PostgreSQL` → `localhost:5433`
 
-### 4. 종료
+### 7. 종료
 
 ```
 docker compose -f docker-compose.dev.yml down
