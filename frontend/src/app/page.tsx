@@ -216,11 +216,11 @@ export default function Home() {
             <ScrollReveal delay={200} direction="up">
               <div className="bg-white p-10 rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center group h-full relative overflow-hidden">
                 <div
-                  className="absolute w-50 h-50 bg-[var(--color-accent-sky)] rounded-full blur-[80px] opacity-70 top-[-15%] left-[-15%] animate-pulse"
-                  style={{ animationDelay: '1s' }}
+                  className="absolute w-50 h-50 bg-[var(--color-primary)] rounded-full blur-[80px] opacity-40 top-[-20%] left-[-10%] animate-pulse"
+                  style={{ animationDelay: '0.5s' }}
                 ></div>
                 <div
-                  className="absolute w-48 h-48 bg-[var(--color-primary)] rounded-full blur-[80px] opacity-50 bottom-[-10%] right-[-10%] animate-pulse"
+                  className="absolute w-48 h-48 bg-[var(--color-primary)] rounded-full blur-[80px] opacity-20 bottom-[-10%] right-[-10%] animate-pulse"
                   style={{ animationDelay: '1s' }}
                 ></div>
 
