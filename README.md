@@ -169,6 +169,10 @@
 **frontend/.env**
 
 ```
+# 프론트엔드 API URL 설정 (docker + nginx 사용)
+# API_BASE_URL=http://backend:8080/api
+# NEXT_PUBLIC_API_BASE_URL=/api
+
 NODE_ENV=production
 
 # local test용
@@ -226,7 +230,15 @@ NODE_ENV=production
 docker-compose -f docker-compose.dev.yml up -d --build postgres redis
 ```
 
-### 4. DB 정보 초기화
+### 3. 의존성 설치
+
+- 프로젝트 root에서 아래 명령어 실행
+
+```
+npm run install:all
+```
+
+### 4. DB 마이그레이션 & 시드 데이터 생성
 
 - 프로젝트 root에서 아래 명령어 실행시 테이블 생성 및 샘플 퀴즈 데이터 seeding 수행
 
