@@ -28,7 +28,7 @@ export default function BackToTopButton() {
         <div className="fixed bottom-0 right-0 mb-6 mr-6 z-10">
           <button
             onClick={jumpToTop}
-            className="bg-black text-white rounded-full p-2 hover:bg-gray-900 transition cursor-pointer"
+            className="bg-[var(--color-primary)] text-white rounded-full p-2 cursor-pointer"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
