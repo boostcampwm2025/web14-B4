@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { fetchAllQuizzes, fetchQuizzes } from '@/services/apis/quizApi';
 import { cookies } from 'next/headers';
 import QuizPageClient from './components/QuizPageClient';
+import BackToTopButton from './components/BackToTopButton';
 
 interface PageProps {
   searchParams: Promise<{
@@ -31,6 +32,7 @@ export default async function Page({ searchParams }: PageProps) {
           username={username}
         />
       </Suspense>
+      <BackToTopButton />
     </>
   );
 }
