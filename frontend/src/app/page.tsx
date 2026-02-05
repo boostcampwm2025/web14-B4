@@ -114,7 +114,7 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full flex flex-col font-pretendard bg-white">
+    <div className="w-full flex flex-col bg-white">
       {/* =============================================
           SECTION 1: Hero Section
          ============================================= */}
@@ -231,7 +231,7 @@ export default function Home() {
                       { h: '50%', d: '1.1s', r: 0.7 },
                       { h: '70%', d: '1.3s', r: 0.1 },
                       { h: '90%', d: '0.8s', r: 0.5 },
-                      { h: '100%', d: '1.0s', r: 0.9 }, // 중앙
+                      { h: '100%', d: '1.0s', r: 0.9 },
                       { h: '60%', d: '1.4s', r: 0.3 },
                       { h: '100%', d: '1.1s', r: 0.8 },
                       { h: '80%', d: '0.9s', r: 0.4 },
