@@ -24,7 +24,7 @@ import { logExternalApiError } from 'src/common/utils/external-api-error.util';
 import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
-} from 'src/common/constants/speech.constant';
+} from 'src/common/constants/speech.constants';
 import { SolvedState } from 'src/datasources/entities/tb-solved-quiz.entity';
 import { Transactional } from 'typeorm-transactional';
 

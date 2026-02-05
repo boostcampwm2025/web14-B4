@@ -33,12 +33,6 @@ export interface QuizListData {
   meta: PaginationMeta;
 }
 
-export interface QuizCategoryWithCount extends QuizCategory {
-  id: number;
-  name: string;
-  count: number;
-}
 export interface CategoryCountsResponseDto {
-  totalCount: number;
-  categories: QuizCategoryWithCount[];
+  data: QuizCategory[];
 }

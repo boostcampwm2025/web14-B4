@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Loader from '@/components/Loader';
 import { Button } from '@/components/Button';
+import Popup from '@/components/Popup';
 
 interface ChecklistSectionProps {
   mainQuizId: number;
@@ -37,6 +38,13 @@ export default function ChecklistSection({
   const [speechItem, setSpeechItem] = useState<SpeechItemDto>(initialSpeechItem);
   const [selectedFeeling, setSelectedFeeling] = useState<'LOW' | 'HIGH' | 'NORMAL'>('NORMAL');
   const [options, setOptions] = useState<ChecklistItem[]>(initialChecklistItems);
+
+  type PopupType = 'shortAnswer' | 'submitError' | null;
+  const [popupType, setPopupType] = useState<PopupType>(null);
+
+  const handlePopupClose = () => {
+    setPopupType(null);
+  };
 
   useEffect(() => {
     if (!_hasHydrated) return;
@@ -80,7 +88,7 @@ export default function ChecklistSection({
 
     const currentText = speechItem.speechText || '';
     if (currentText.trim().length < 50) {
-      alert('답변이 너무 짧습니다. 50자 이상 입력해주세요.');
+      setPopupType('shortAnswer');
       return;
     }
 
@@ -104,7 +112,7 @@ export default function ChecklistSection({
       if (success) {
         router.push(`/feedback/main-quiz/${mainQuizId}/solved-quiz/${solvedQuizId}`);
       } else {
-        alert('제출 및 AI 분석에 실패했습니다.');
+        setPopupType('submitError');
       }
     }
   };
@@ -151,6 +159,24 @@ export default function ChecklistSection({
           다음
         </Button>
       </div>
+
+      <Popup
+        isOpen={popupType === 'shortAnswer'}
+        title="답변 길이 부족"
+        description="답변이 너무 짧습니다. 50자 이상 입력해주세요."
+        confirmText="확인"
+        onConfirm={handlePopupClose}
+        singleButton
+      />
+
+      <Popup
+        isOpen={popupType === 'submitError'}
+        title="제출 실패"
+        description="제출 및 AI 분석에 실패했습니다."
+        confirmText="확인"
+        onConfirm={handlePopupClose}
+        singleButton
+      />
     </div>
   );
 }

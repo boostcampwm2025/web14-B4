@@ -22,7 +22,7 @@ import { SpeechItemDto } from './dto/SpeechItemDto.dto';
 import { ERROR_MESSAGES } from '../../common/constants/error-messages';
 import { CreateSpeechTextAnswerRequestDto } from './dto/CreateSpeechTextAnswerRequest.dto';
 import { CreateSpeechTextAnswerResponseDto } from './dto/CreateSpeechTextAnswerResponse.dto';
-import { AUDIOFILE_MAX_SIZE_BYTES } from './speeches.constants';
+import { AUDIOFILE_MAX_SIZE_BYTES } from 'src/common/constants/speech.constants';
 import { Public } from '../auth/decorator/public.decorator';
 import { OptionalCurrentUser } from '../auth/decorator/optional-current-user.decorator';
 import { User } from 'src/datasources/entities/tb-user.entity';
@@ -69,35 +69,6 @@ export class SpeechesController {
       {
         userAgent: typeof userAgent === 'string' ? userAgent : undefined,
       },
-    );
-
-    return new SttResponseDto(result.solvedQuizId, result.text);
-  }
-
-  @Post('stt-csr')
-  @UseInterceptors(FileInterceptor('audio'))
-  async csrSpeechToText(
-    @OptionalCurrentUser() user: User | undefined,
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-    @UploadedFile() recordFile: Express.Multer.File,
-    @Body('mainQuizId', ParseIntPipe) mainQuizId: number,
-  ): Promise<SttResponseDto> {
-    if (!recordFile) {
-      throw new BadRequestException(ERROR_MESSAGES.MISSING_RECORD_FILE);
-    }
-
-    const userId = await getOrCreateGuestUserId(
-      user,
-      req,
-      res,
-      this.authService,
-    );
-
-    const result = await this.speechesService.csrSpeechToText(
-      recordFile,
-      mainQuizId,
-      userId,
     );
 
     return new SttResponseDto(result.solvedQuizId, result.text);

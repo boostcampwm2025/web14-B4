@@ -31,13 +31,13 @@ export default function MySpeechText({ speechItem, setSpeechItem }: MySpeechText
       <p className="text-base mb-4 text-gray-500">
         다시 읽어보며 필요한 부분은 자유롭게 수정할 수 있어요 ✨
       </p>
-      <div className="mb-6">
+      <div>
         <textarea
           ref={textareaRef}
           value={speechItem.speechText}
           onChange={handleChange}
-          className="rounded-xl p-6 border-2 mb-6 w-full h-[700px] resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto textarea-scrollbar"
-          style={{ backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
+          className="rounded-xl p-6 border-2 mb-3 w-full resize-none text-gray-800 text-lg leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-400 overflow-y-auto textarea-scrollbar"
+          style={{ height: 600, backgroundColor: '#4278FF10', borderColor: '#4278FF' }}
         />
       </div>
       <div className="flex justify-end text-sm text-gray-500">

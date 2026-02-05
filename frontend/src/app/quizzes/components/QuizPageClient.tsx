@@ -1,13 +1,17 @@
 'use client';
 
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useRef, useMemo } from 'react';
 import DifficultyFilter from './filters/DifficultyFilter';
 import CategoryFilter from './filters/CategoryFilter';
 import QuizGrid from './card/QuizGrid';
 import QuizHeader from './header/QuizHeader';
-import { CategoryCountsResponseDto, Quiz } from '../types/quiz';
-import { fetchQuizzes } from '@/services/apis/quizApi';
+import { Quiz } from '../types/quiz';
+import {
+  useGetQuizCategoryWithCount,
+  useQuizAggregations,
+  useQuizCategories,
+} from '@/hooks/quizzes/useQuizCategoryFiler';
+import { useGetQuizzes, useInfiniteScroll } from '@/hooks/quizzes/useQuizScroll';
 
 interface QuizPageClientProps {
   initialData: {
@@ -28,84 +32,29 @@ interface QuizPageClientProps {
 export default function QuizPageClient({ initialData, filters, username }: QuizPageClientProps) {
   const { category, difficulty } = filters;
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['quizzes', category, difficulty],
-    queryFn: async ({ pageParam }: { pageParam: string | null }) => {
-      const result = await fetchQuizzes({
-        cursor: pageParam ?? undefined,
-        limit: 20,
-        category,
-        difficulty,
-      });
+  // 전체 카테고리 조회 (캐싱)
+  const { data: allCategories } = useQuizCategories();
 
-      return {
-        data: result.data,
-        nextCursor: result.meta.nextCursor,
-        hasMore: result.meta.hasNextPage,
-      };
-    },
-    getNextPageParam: (lastPage) => {
-      return lastPage.hasMore ? lastPage.nextCursor : null;
-    },
-    initialPageParam: null,
+  // 집계 데이터 조회 (캐싱)
+  const { data: aggregations } = useQuizAggregations(filters);
+
+  // 병합
+  const categoriesWithCount = useGetQuizCategoryWithCount(allCategories, aggregations);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useGetQuizzes(
+    category,
+    difficulty,
+  );
+
+  // 퀴즈 불러오는 중이 보이는 순간
+
+  const observerRef = useInfiniteScroll({
+    hasNextPage: hasNextPage ?? false,
+    isFetchingNextPage,
+    fetchNextPage,
   });
 
-  const observerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    if (observerRef.current) {
-      observer.observe(observerRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // 모든 페이지의 퀴즈를 하나의 배열로 합치기
   const allQuizzes = data?.pages.flatMap((page) => page.data) ?? [];
-
-  // ⭐ 현재 조회된 데이터를 기반으로 카테고리 카운트 계산
-  const categoryCounts = useMemo((): CategoryCountsResponseDto => {
-    const categoryMap = new Map<
-      string,
-      {
-        quizCategoryId: number;
-        id: number;
-        name: string;
-        count: number;
-      }
-    >();
-
-    allQuizzes.forEach((quiz) => {
-      const categoryName = quiz.quizCategory.name;
-      const categoryId = quiz.quizCategory.quizCategoryId;
-
-      if (!categoryMap.has(categoryName)) {
-        categoryMap.set(categoryName, {
-          quizCategoryId: categoryId,
-          id: categoryId,
-          name: categoryName,
-          count: 0,
-        });
-      }
-
-      const category = categoryMap.get(categoryName)!;
-      category.count += 1;
-    });
-
-    return {
-      totalCount: allQuizzes.length,
-      categories: Array.from(categoryMap.values()),
-    };
-  }, [allQuizzes]);
 
   return (
     <div className="flex justify-center min-h-screen w-full">
@@ -116,7 +65,8 @@ export default function QuizPageClient({ initialData, filters, username }: QuizP
           <div className="flex justify-between items-center mb-6">
             <DifficultyFilter difficulty={difficulty} category={category} />
             <CategoryFilter
-              categoriesData={categoryCounts}
+              categories={categoriesWithCount}
+              total={aggregations?.total}
               category={category}
               difficulty={difficulty}
             />

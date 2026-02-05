@@ -1,7 +1,7 @@
 import {
   MAX_USER_ANSWER_LENGTH,
   MIN_USER_ANSWER_LENGTH,
-} from 'src/common/constants/speech.constant';
+} from 'src/common/constants/speech.constants';
 
 export const ERROR_MESSAGES = {
   // 공통

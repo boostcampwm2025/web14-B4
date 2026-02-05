@@ -154,6 +154,7 @@ export default function ImportanceCheck({
                   height={93}
                   priority
                   className={[
+                    'object-contain transition-all',
                     isSelected
                       ? 'grayscale-0 opacity-100'
                       : config.selectable
