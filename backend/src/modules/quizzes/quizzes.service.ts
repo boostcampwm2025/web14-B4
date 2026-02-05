@@ -5,11 +5,7 @@ import {
   MultipleChoicesResponseDto,
 } from './dto/quiz-response.dto';
 import { QuizImportanceDataDto } from './dto/quiz-importance-response.dto';
-import {
-  MainQuiz,
-  DifficultyLevel,
-} from '../../datasources/entities/tb-main-quiz.entity';
-import { FindOptionsWhere } from 'typeorm';
+import { MainQuiz } from '../../datasources/entities/tb-main-quiz.entity';
 import { QuizKeyword } from 'src/datasources/entities/tb-quiz-keyword.entity';
 import { QuizKeywordRepository } from 'src/datasources/repositories/tb-quiz-keyword.repository';
 import { MultipleChoiceRepository } from 'src/datasources/repositories/tb-multiple-choice.repository';
@@ -19,14 +15,17 @@ import { SolvedQuizRepository } from 'src/datasources/repositories/tb-solved-qui
 import { UserRepository } from 'src/datasources/repositories/tb-user.repository';
 import { mapSolvedQuizzesToImportanceData } from './mapper/response-mapper';
 import { CursorPaginatedResult } from 'src/common/interfaces/pagination.interface';
-import { QuizInfiniteScrollDto } from './dto/quiz-search.dto';
+import { QuizFilterDto, QuizInfiniteScrollDto } from './dto/quiz-search.dto';
 import { createCursorPaginatedResult } from 'src/common/utils/pagination.util';
+import { QuizCategory } from 'src/datasources/entities/tb-quiz-category.entity';
+import { QuizCategoryRepository } from 'src/datasources/repositories/tb-quiz-category.repository';
 
 @Injectable()
 export class QuizzesService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly quizRepository: MainQuizRepository,
+    private readonly quizCategoryRepository: QuizCategoryRepository,
     private readonly quizKeywordRepository: QuizKeywordRepository,
     private readonly multipleChoiceRepository: MultipleChoiceRepository,
     private readonly solvedQuizRepository: SolvedQuizRepository,
@@ -63,25 +62,23 @@ export class QuizzesService {
     return createCursorPaginatedResult(data, limit, 'mainQuizId');
   }
 
-  async getCategoriesWithCount(difficulty?: DifficultyLevel) {
-    const where: FindOptionsWhere<MainQuiz> = {};
-
-    if (difficulty) where.difficultyLevel = difficulty;
-
-    const result = await this.quizRepository.getCategoriesWithCount(difficulty);
-
-    const categories = result.map((row) => ({
-      id: Number(row.id),
-      name: row.name,
-      count: Number(row.count ?? 0),
-    }));
-
-    const totalCount = result.reduce(
-      (total, category) => total + Number(category.count),
-      0,
+  async getAggregations(dto: QuizFilterDto) {
+    const { categories, total } = await this.quizRepository.getAggregations(
+      dto.difficulty,
     );
 
-    return { totalCount, categories };
+    return {
+      categories: categories.map((c) => ({
+        name: c.name,
+        count: c.count,
+      })),
+      total,
+    };
+  }
+
+  async getQuizCategories(): Promise<QuizCategory[]> {
+    const categories = await this.quizCategoryRepository.findAll();
+    return categories;
   }
 
   async findOne(id: number): Promise<MainQuiz | undefined> {

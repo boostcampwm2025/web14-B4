@@ -7,10 +7,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { QuizzesService } from './quizzes.service';
-import { DifficultyLevel } from '../../datasources/entities/tb-main-quiz.entity';
 import { MultipleChoicesResponseDto } from './dto/quiz-response.dto';
 import { Public } from '../auth/decorator/public.decorator';
-import { QuizInfiniteScrollDto } from './dto/quiz-search.dto';
+import { QuizFilterDto, QuizInfiniteScrollDto } from './dto/quiz-search.dto';
+import { QuizCategory } from 'src/datasources/entities/tb-quiz-category.entity';
 
 @Public()
 @Controller('quizzes')
@@ -23,9 +23,24 @@ export class QuizzesController {
     return result;
   }
 
+  /**
+   * 카테고리별 퀴즈 갯수
+   * @param filter 난이도
+   * @returns 카테고리 + 갯수 리스트
+   */
+  @Get('aggregations')
+  async getAggregations(@Query() filter: QuizFilterDto) {
+    const result = await this.quizService.getAggregations(filter);
+    return result;
+  }
+
+  /**
+   * 전체 퀴즈 카테고리 조회
+   * @returns 전체 카테고리 목록(id, name)
+   */
   @Get('categories')
-  getCategories(@Query('difficulty') difficulty?: DifficultyLevel) {
-    const result = this.quizService.getCategoriesWithCount(difficulty);
+  getCategories(): Promise<QuizCategory[]> {
+    const result = this.quizService.getQuizCategories();
     return result;
   }
 

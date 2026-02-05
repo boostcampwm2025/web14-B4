@@ -4,6 +4,7 @@ import {
   CategoryCountsResponseDto,
   DIFFICULTY_MAP,
   QuizListData,
+  QuizCategory,
 } from '@/app/quizzes/types/quiz';
 import { apiFetch } from '@/services/http/apiFetch';
 
@@ -16,6 +17,19 @@ interface FetchQuizzesParams {
   limit?: number;
   category?: string;
   difficulty?: string;
+}
+
+interface QuizFilters {
+  category?: string;
+  difficulty?: string;
+}
+
+interface AggregationsResponse {
+  categories: Array<{
+    name: string | null;
+    count: number;
+  }>;
+  total: number;
 }
 
 export async function fetchAllQuizzes(): Promise<QuizListData> {
@@ -55,16 +69,26 @@ export async function fetchQuizzes({
   return data;
 }
 
-export async function fetchCategoryCounts(difficulty?: string): Promise<CategoryCountsResponseDto> {
+export async function fetchAggregations(filters?: QuizFilters): Promise<AggregationsResponse> {
   const params = new URLSearchParams();
 
-  if (!!difficulty && difficulty in DIFFICULTY_MAP) {
-    params.append('difficulty', difficulty);
-  }
+  if (!!filters?.difficulty && filters.difficulty in DIFFICULTY_MAP)
+    params.append('difficulty', filters.difficulty);
 
-  const query = params.toString();
-  const data = await apiFetch<CategoryCountsResponseDto>(
-    `/quizzes/categories${query ? `?${query}` : ''}`,
+  const data = await apiFetch<AggregationsResponse>(
+    `/quizzes/aggregations?${params.toString()}`,
+    { method: 'GET', cache: 'no-store' },
+    { message: '카테고리 정보 응답 데이터가 없습니다.' },
+  );
+
+  return data;
+}
+
+export async function fetchQuizCategory(): Promise<QuizCategory[]> {
+  const params = new URLSearchParams();
+
+  const data = await apiFetch<QuizCategory[]>(
+    `/quizzes/categories`,
     { method: 'GET', cache: 'no-store' },
     { message: '카테고리 정보 응답 데이터가 없습니다.' },
   );
