@@ -14,19 +14,7 @@ export default function Footer() {
         {/* 하단 링크 영역 */}
         <div className="flex items-center gap-2">
           <span>© boostcamp2025 WEB14 B4 Team</span>
-          <span>/</span>
-
-          <Link
-            href="https://github.com/boostcampwm2025/web14-B4" // 추후 서비스 소개 페이지 연결
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:underline"
-          >
-            서비스 소개
-          </Link>
-
-          <span>/</span>
-
+          <span>|</span>
           <Link
             href="https://github.com/boostcampwm2025/web14-B4"
             target="_blank"
