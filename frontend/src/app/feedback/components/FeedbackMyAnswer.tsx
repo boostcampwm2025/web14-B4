@@ -86,8 +86,8 @@ export default function FeedbackMyAnswer({ userName, speechText }: Props) {
                 <div className="relative rounded-2xl bg-white p-6 border border-blue-200 shadow-inner">
                   <div className="absolute left-0 top-6 bottom-6 w-1 rounded-r-full bg-blue-600" />
 
-                  <div className="max-h-[200px] overflow-y-auto pr-2 feedback-scrollbar">
-                    <p className="pl-4 text-[15px] leading-8 text-slate-700 whitespace-pre-wrap break-keep font-medium">
+                  <div>
+                    <p className="pl-4 text-[15px] leading-8 text-slate-700 whitespace-pre-wrap break-all font-medium">
                       {speechText}
                     </p>
                   </div>

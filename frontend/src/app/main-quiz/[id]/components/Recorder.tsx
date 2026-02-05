@@ -252,7 +252,7 @@ export default function Recorder({ quizId, onSwitchToTextMode }: AudioRecorderPr
 
       {/* 메인 컨텐츠: 좌우 레이아웃 */}
       <div className="px-12 py-4 max-w-250 mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-3">
           {/* 비디오 */}
           <div className="space-y-6 lg:col-span-3">
             <div className="relative w-125 h-70 bg-gray-900 rounded-2xl overflow-hidden">
