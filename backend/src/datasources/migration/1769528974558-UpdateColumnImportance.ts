@@ -8,7 +8,7 @@ export class UpdateColumnImportance1769528974558 implements MigrationInterface {
       `UPDATE "tb_solved_quiz" SET "importance" = 'NORMAL' WHERE "importance" IS NULL`,
     );
     await queryRunner.query(
-      `DROP INDEX "public"."idx_solved_quiz_user_state_created"`,
+      `DROP INDEX IF EXISTS "public"."idx_solved_quiz_user_state_created"`,
     );
     await queryRunner.query(
       `ALTER TABLE "tb_solved_quiz" ALTER COLUMN "importance" SET NOT NULL`,
